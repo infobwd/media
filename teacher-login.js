@@ -1,19 +1,19 @@
 /**
- * JavaScript สำหรับหน้าล็อกอินครู
+ * JavaScript for teacher login page
  */
 
-// ตัวแปรสำหรับเก็บ Elements
+// Variables for storing elements
 let loginForm, emailInput, passwordInput, passwordToggle, rememberMeCheckbox;
 let loginBtn, loadingOverlay, connectionStatus;
 let demoAccountBtns;
 
-// ตัวแปรสำหรับการจัดการ
+// Management variables
 let loginAttempts = 0;
 const maxLoginAttempts = 5;
 let isSubmitting = false;
 
 /**
- * เริ่มต้นระบบ
+ * Initialize system
  */
 document.addEventListener('DOMContentLoaded', function() {
     initializeElements();
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * กำหนด Elements
+ * Initialize elements
  */
 function initializeElements() {
     // Form elements
@@ -44,7 +44,7 @@ function initializeElements() {
 }
 
 /**
- * กำหนด Event Listeners
+ * Initialize event listeners
  */
 function initializeEventListeners() {
     // Form submission
@@ -58,8 +58,8 @@ function initializeEventListeners() {
     }
     
     // Demo account buttons
-    demoAccountBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    demoAccountBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
             const email = btn.dataset.email;
             const password = btn.dataset.password;
             fillDemoAccount(email, password);
@@ -109,63 +109,65 @@ function initializeEventListeners() {
 }
 
 /**
- * ตรวจสอบ Session ที่มีอยู่แล้ว
+ * Check existing session
  */
 function checkExistingSession() {
     const currentTeacher = SessionManager.getCurrentTeacher();
     
     if (currentTeacher) {
-        // มี session อยู่แล้ว ให้ไปหน้า dashboard
-        showLoginSuccess('เข้าสู่ระบบอัตโนมัติ', `ยินดีต้อนรับกลับ ${currentTeacher.name}`);
-        setTimeout(() => {
+        // Has existing session, redirect to dashboard
+        showLoginSuccess('Auto login successful', 'Welcome back ' + currentTeacher.name);
+        setTimeout(function() {
             window.location.href = 'teacher-dashboard.html';
         }, 1500);
         return true;
     }
     
-    // ตรวจสอบ remember me
+    // Check remember me
     const rememberedEmail = localStorage.getItem('rememberedEmail');
     if (rememberedEmail && emailInput) {
         emailInput.value = rememberedEmail;
-        rememberMeCheckbox.checked = true;
+        if (rememberMeCheckbox) {
+            rememberMeCheckbox.checked = true;
+        }
     }
     
     return false;
 }
 
 /**
- * ตรวจสอบการเชื่อมต่อระบบ
+ * Check system connection
  */
 async function checkSystemConnection() {
     try {
-        updateConnectionStatus('กำลังตรวจสอบ...', 'checking');
+        updateConnectionStatus('Checking...', 'checking');
         
-        // ทดสอบการเชื่อมต่อ Google Sheets
+        // Test connection to Google Sheets
         await SheetsAPI.fetchData(CONFIG.SHEETS.TEACHERS);
         
-        updateConnectionStatus('เชื่อมต่อสำเร็จ', 'connected');
+        updateConnectionStatus('Connected successfully', 'connected');
         
     } catch (error) {
         console.error('Connection check failed:', error);
-        updateConnectionStatus('เชื่อมต่อไม่สำเร็จ', 'error');
+        updateConnectionStatus('Connection failed', 'error');
         
-        // แสดงข้อความแจ้งเตือน
+        // Show error message
         Utils.showError(
-            'การเชื่อมต่อมีปัญหา',
-            'ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต'
+            'Connection problem',
+            'Cannot connect to system. Please check your internet connection.'
         );
     }
 }
 
 /**
- * อัปเดตสถานะการเชื่อมต่อ
+ * Update connection status
  */
 function updateConnectionStatus(message, status) {
     if (!connectionStatus) return;
     
     connectionStatus.textContent = message;
     
-    // อัปเดตไอคอน
+    // Update icon
     const statusIcon = connectionStatus.parentElement.querySelector('.status-icon');
     if (statusIcon) {
         statusIcon.className = 'fas fa-database status-icon';
@@ -185,12 +187,12 @@ function updateConnectionStatus(message, status) {
 }
 
 /**
- * ตั้งค่าการตรวจสอบฟอร์ม
+ * Setup form validation
  */
 function setupFormValidation() {
-    // ตั้งค่า validation patterns
+    // Set validation patterns
     if (emailInput) {
-        emailInput.setAttribute('pattern', '[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,});
+        emailInput.setAttribute('pattern', '[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$');
     }
     
     if (passwordInput) {
@@ -199,28 +201,28 @@ function setupFormValidation() {
 }
 
 /**
- * จัดการการส่งฟอร์มล็อกอิน
+ * Handle login form submission
  */
 async function handleLogin(e) {
     e.preventDefault();
     
     if (isSubmitting) return;
     
-    // ตรวจสอบจำนวนครั้งที่พยายาม
+    // Check login attempts
     if (loginAttempts >= maxLoginAttempts) {
         Utils.showError(
-            'ถูกล็อคการใช้งาน',
-            `คุณพยายามเข้าสู่ระบบผิดเกิน ${maxLoginAttempts} ครั้ง กรุณารอ 15 นาทีแล้วลองใหม่`
+            'Account locked',
+            'You have tried to login incorrectly more than ' + maxLoginAttempts + ' times. Please wait 15 minutes and try again.'
         );
         return;
     }
     
     const formData = new FormData(loginForm);
-    const email = formData.get('email')?.trim();
-    const password = formData.get('password');
+    const email = formData.get('email') ? formData.get('email').trim() : '';
+    const password = formData.get('password') || '';
     const rememberMe = formData.get('rememberMe') === 'on';
     
-    // ตรวจสอบข้อมูล
+    // Validate form data
     if (!validateLoginForm(email, password)) {
         return;
     }
@@ -228,60 +230,60 @@ async function handleLogin(e) {
     try {
         isSubmitting = true;
         showLoading(true);
-        updateLoginButton('กำลังตรวจสอบ...', true);
+        updateLoginButton('Checking...', true);
         
-        // ส่งข้อมูลไปตรวจสอบ
+        // Send data for authentication
         const result = await authenticateTeacher(email, password);
         
         if (result.success) {
-            // บันทึก session
+            // Save session
             SessionManager.setCurrentTeacher(result.teacher);
             
-            // จดจำอีเมลถ้าผู้ใช้เลือก
+            // Remember email if user chose to
             if (rememberMe) {
                 localStorage.setItem('rememberedEmail', email);
             } else {
                 localStorage.removeItem('rememberedEmail');
             }
             
-            // รีเซ็ตจำนวนครั้งที่พยายาม
+            // Reset login attempts
             loginAttempts = 0;
             
-            // แสดงข้อความสำเร็จ
-            showLoginSuccess('เข้าสู่ระบบสำเร็จ', `ยินดีต้อนรับ ${result.teacher.name}`);
+            // Show success message
+            showLoginSuccess('Login successful', 'Welcome ' + result.teacher.name);
             
-            // เปลี่ยนหน้าหลังจาก 1.5 วินาที
-            setTimeout(() => {
+            // Redirect after 1.5 seconds
+            setTimeout(function() {
                 window.location.href = 'teacher-dashboard.html';
             }, 1500);
             
         } else {
-            throw new Error(result.message || 'การเข้าสู่ระบบล้มเหลว');
+            throw new Error(result.message || 'Login failed');
         }
         
     } catch (error) {
         console.error('Login error:', error);
         loginAttempts++;
         
-        let errorMessage = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+        let errorMessage = 'Incorrect email or password';
         
-        if (error.message.includes('ระงับ')) {
-            errorMessage = 'บัญชีของคุณถูกระงับการใช้งาน';
-        } else if (error.message.includes('เชื่อมต่อ')) {
-            errorMessage = 'ไม่สามารถเชื่อมต่อกับระบบได้';
+        if (error.message.includes('suspended')) {
+            errorMessage = 'Your account has been suspended';
+        } else if (error.message.includes('connection')) {
+            errorMessage = 'Cannot connect to system';
         }
         
-        Utils.showError('เข้าสู่ระบบไม่สำเร็จ', errorMessage);
+        Utils.showError('Login failed', errorMessage);
         
-        // เขย่าฟอร์ม
+        // Shake login card
         shakeLoginCard();
         
-        // แสดงจำนวนครั้งที่เหลือ
+        // Show remaining attempts
         const remainingAttempts = maxLoginAttempts - loginAttempts;
         if (remainingAttempts > 0 && remainingAttempts <= 2) {
             Utils.showAlert(
-                'คำเตือน',
-                `คุณสามารถพยายามได้อีก ${remainingAttempts} ครั้ง`,
+                'Warning',
+                'You can try ' + remainingAttempts + ' more times',
                 'warning'
             );
         }
@@ -289,33 +291,33 @@ async function handleLogin(e) {
     } finally {
         isSubmitting = false;
         showLoading(false);
-        updateLoginButton('เข้าสู่ระบบ', false);
+        updateLoginButton('Login', false);
     }
 }
 
 /**
- * ตรวจสอบข้อมูลการล็อกอิน
+ * Validate login form
  */
 function validateLoginForm(email, password) {
     let isValid = true;
     
-    // ตรวจสอบอีเมล
+    // Validate email
     if (!email) {
-        showInputError(emailInput, 'กรุณากรอกอีเมล');
+        showInputError(emailInput, 'Please enter email');
         isValid = false;
     } else if (!isValidEmail(email)) {
-        showInputError(emailInput, 'รูปแบบอีเมลไม่ถูกต้อง');
+        showInputError(emailInput, 'Invalid email format');
         isValid = false;
     } else {
         clearInputError(emailInput);
     }
     
-    // ตรวจสอบรหัสผ่าน
+    // Validate password
     if (!password) {
-        showInputError(passwordInput, 'กรุณากรอกรหัสผ่าน');
+        showInputError(passwordInput, 'Please enter password');
         isValid = false;
     } else if (password.length < 6) {
-        showInputError(passwordInput, 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+        showInputError(passwordInput, 'Password must be at least 6 characters');
         isValid = false;
     } else {
         clearInputError(passwordInput);
@@ -325,7 +327,7 @@ function validateLoginForm(email, password) {
 }
 
 /**
- * ตรวจสอบรูปแบบอีเมล
+ * Check email format
  */
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -333,17 +335,17 @@ function isValidEmail(email) {
 }
 
 /**
- * แสดงข้อผิดพลาดของ input
+ * Show input error
  */
 function showInputError(input, message) {
     if (!input) return;
     
     input.style.borderColor = '#e53e3e';
     
-    // ลบข้อผิดพลาดเดิม
+    // Remove existing error
     clearInputError(input);
     
-    // เพิ่มข้อผิดพลาดใหม่
+    // Add new error
     const errorElement = document.createElement('div');
     errorElement.className = 'input-error';
     errorElement.textContent = message;
@@ -355,7 +357,7 @@ function showInputError(input, message) {
 }
 
 /**
- * ล้างข้อผิดพลาดของ input
+ * Clear input error
  */
 function clearInputError(input) {
     if (!input) return;
@@ -369,7 +371,7 @@ function clearInputError(input) {
 }
 
 /**
- * ตรวจสอบสิทธิ์ครู
+ * Authenticate teacher
  */
 async function authenticateTeacher(email, password) {
     try {
@@ -395,7 +397,7 @@ async function authenticateTeacher(email, password) {
 }
 
 /**
- * ได้รับ IP Address ของผู้ใช้
+ * Get user IP address
  */
 async function getUserIP() {
     try {
@@ -408,7 +410,7 @@ async function getUserIP() {
 }
 
 /**
- * แสดง/ซ่อนรหัสผ่าน
+ * Toggle password visibility
  */
 function togglePasswordVisibility() {
     if (!passwordInput || !passwordToggle) return;
@@ -423,23 +425,25 @@ function togglePasswordVisibility() {
 }
 
 /**
- * กรอกข้อมูลบัญชีทดสอบ
+ * Fill demo account
  */
 function fillDemoAccount(email, password) {
     if (emailInput) emailInput.value = email;
     if (passwordInput) passwordInput.value = password;
     
-    // เพิ่มเอฟเฟกต์
-    emailInput?.focus();
-    setTimeout(() => passwordInput?.focus(), 100);
+    // Add effects
+    if (emailInput) emailInput.focus();
+    setTimeout(function() {
+        if (passwordInput) passwordInput.focus();
+    }, 100);
     
-    // ล้าง errors
+    // Clear errors
     clearInputError(emailInput);
     clearInputError(passwordInput);
 }
 
 /**
- * แสดง Loading
+ * Show loading
  */
 function showLoading(show) {
     if (!loadingOverlay) return;
@@ -452,7 +456,7 @@ function showLoading(show) {
 }
 
 /**
- * อัปเดตปุ่มล็อกอิน
+ * Update login button
  */
 function updateLoginButton(text, disabled) {
     if (!loginBtn) return;
@@ -467,7 +471,7 @@ function updateLoginButton(text, disabled) {
 }
 
 /**
- * แสดงข้อความสำเร็จ
+ * Show login success
  */
 function showLoginSuccess(title, message) {
     Swal.fire({
@@ -481,52 +485,56 @@ function showLoginSuccess(title, message) {
 }
 
 /**
- * เขย่า Login Card
+ * Shake login card
  */
 function shakeLoginCard() {
     const loginCard = document.querySelector('.login-card');
     if (loginCard) {
         loginCard.style.animation = 'shake 0.5s ease-in-out';
-        setTimeout(() => {
+        setTimeout(function() {
             loginCard.style.animation = '';
         }, 500);
     }
 }
 
 /**
- * การตรวจสอบ input แบบ real-time
+ * Real-time input validation
  */
 function validateEmail() {
-    const email = emailInput?.value.trim();
+    if (!emailInput) return;
+    const email = emailInput.value.trim();
     
     if (email && !isValidEmail(email)) {
-        showInputError(emailInput, 'รูปแบบอีเมลไม่ถูกต้อง');
+        showInputError(emailInput, 'Invalid email format');
     } else {
         clearInputError(emailInput);
     }
 }
 
 function validatePassword() {
-    const password = passwordInput?.value;
+    if (!passwordInput) return;
+    const password = passwordInput.value;
     
     if (password && password.length < 6) {
-        showInputError(passwordInput, 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+        showInputError(passwordInput, 'Password must be at least 6 characters');
     } else {
         clearInputError(passwordInput);
     }
 }
 
 /**
- * จัดการ Keyboard Shortcuts
+ * Handle keyboard shortcuts
  */
 function handleKeyboardShortcuts(e) {
-    // Enter ในช่อง input เพื่อส่งฟอร์ม
+    // Enter in input fields to submit form
     if (e.key === 'Enter' && (e.target === emailInput || e.target === passwordInput)) {
         e.preventDefault();
-        loginForm?.dispatchEvent(new Event('submit'));
+        if (loginForm) {
+            loginForm.dispatchEvent(new Event('submit'));
+        }
     }
     
-    // Ctrl+1 สำหรับบัญชีทดสอบแรก
+    // Ctrl+1 for first demo account
     if (e.ctrlKey && e.key === '1') {
         e.preventDefault();
         const firstDemoBtn = demoAccountBtns[0];
@@ -535,7 +543,7 @@ function handleKeyboardShortcuts(e) {
         }
     }
     
-    // Ctrl+2 สำหรับบัญชีทดสอบที่สอง
+    // Ctrl+2 for second demo account
     if (e.ctrlKey && e.key === '2') {
         e.preventDefault();
         const secondDemoBtn = demoAccountBtns[1];
@@ -546,22 +554,16 @@ function handleKeyboardShortcuts(e) {
 }
 
 /**
- * จัดการลิงก์ต่างๆ
+ * Handle various links
  */
 function handleForgotPassword(e) {
     e.preventDefault();
     
     Swal.fire({
-        title: 'ลืมรหัสผ่าน',
-        html: `
-            <p>กรุณาติดต่อผู้ดูแลระบบเพื่อรีเซ็ตรหัสผ่าน</p>
-            <br>
-            <p><strong>ติดต่อ:</strong></p>
-            <p>📧 admin@school.com</p>
-            <p>📞 02-123-4567</p>
-        `,
+        title: 'Forgot Password',
+        html: '<p>Please contact system administrator to reset your password</p><br><p><strong>Contact:</strong></p><p>📧 admin@school.com</p><p>📞 02-123-4567</p>',
         icon: 'info',
-        confirmButtonText: 'รับทราบ',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#667eea'
     });
 }
@@ -570,17 +572,10 @@ function handleContactSupport(e) {
     e.preventDefault();
     
     Swal.fire({
-        title: 'ติดต่อฝ่ายสนับสนุน',
-        html: `
-            <p>หากคุณมีปัญหาการใช้งาน กรุณาติดต่อ:</p>
-            <br>
-            <p><strong>ฝ่าย IT โรงเรียนบ้านวังด้ง</strong></p>
-            <p>📧 support@school.com</p>
-            <p>📞 02-123-4567 ต่อ 101</p>
-            <p>⏰ จันทร์-ศุกร์ 8:00-16:30 น.</p>
-        `,
+        title: 'Contact Support',
+        html: '<p>If you have any problems, please contact:</p><br><p><strong>IT Department</strong></p><p>📧 support@school.com</p><p>📞 02-123-4567 ext. 101</p><p>⏰ Mon-Fri 8:00-16:30</p>',
         icon: 'question',
-        confirmButtonText: 'รับทราบ',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#667eea'
     });
 }
@@ -589,21 +584,10 @@ function handlePrivacyPolicy(e) {
     e.preventDefault();
     
     Swal.fire({
-        title: 'นโยบายความเป็นส่วนตัว',
-        html: `
-            <div style="text-align: left; max-height: 300px; overflow-y: auto;">
-                <h4>การเก็บรวบรวมข้อมูล</h4>
-                <p>เราเก็บรวบรวมข้อมูลที่จำเป็นสำหรับการใช้งานระบบเท่านั้น</p>
-                
-                <h4>การใช้ข้อมูล</h4>
-                <p>ข้อมูลจะใช้เพื่อการศึกษาและพัฒนาการเรียนการสอนเท่านั้น</p>
-                
-                <h4>การรักษาความปลอดภัย</h4>
-                <p>เรามีมาตรการรักษาความปลอดภัยของข้อมูลอย่างเหมาะสม</p>
-            </div>
-        `,
+        title: 'Privacy Policy',
+        html: '<div style="text-align: left; max-height: 300px; overflow-y: auto;"><h4>Data Collection</h4><p>We collect only necessary data for system operation</p><h4>Data Usage</h4><p>Data is used for educational purposes only</p><h4>Security</h4><p>We have appropriate security measures for data protection</p></div>',
         icon: 'info',
-        confirmButtonText: 'รับทราบ',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#667eea'
     });
 }
@@ -612,21 +596,10 @@ function handleTermsOfService(e) {
     e.preventDefault();
     
     Swal.fire({
-        title: 'ข้อกำหนดการใช้งาน',
-        html: `
-            <div style="text-align: left; max-height: 300px; overflow-y: auto;">
-                <h4>การใช้งานระบบ</h4>
-                <p>ผู้ใช้ต้องใช้งานระบบเพื่อการศึกษาเท่านั้น</p>
-                
-                <h4>ความรับผิดชอบ</h4>
-                <p>ผู้ใช้ต้องรักษาความปลอดภัยของบัญชีผู้ใช้</p>
-                
-                <h4>การละเมิด</h4>
-                <p>การใช้งานที่ไม่เหมาะสมอาจถูกระงับการใช้งาน</p>
-            </div>
-        `,
+        title: 'Terms of Service',
+        html: '<div style="text-align: left; max-height: 300px; overflow-y: auto;"><h4>System Usage</h4><p>Users must use the system for educational purposes only</p><h4>Responsibility</h4><p>Users must maintain account security</p><h4>Violations</h4><p>Inappropriate use may result in account suspension</p></div>',
         icon: 'info',
-        confirmButtonText: 'รับทราบ',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#667eea'
     });
 }
@@ -635,36 +608,15 @@ function handleHelpCenter(e) {
     e.preventDefault();
     
     Swal.fire({
-        title: 'ศูนย์ช่วยเหลือ',
-        html: `
-            <div style="text-align: left;">
-                <h4>คำถามที่พบบ่อย</h4>
-                <p><strong>Q:</strong> ลืมรหัสผ่านทำอย่างไร?</p>
-                <p><strong>A:</strong> ติดต่อผู้ดูแลระบบเพื่อรีเซ็ต</p>
-                
-                <p><strong>Q:</strong> ระบบใช้งานไม่ได้?</p>
-                <p><strong>A:</strong> ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต</p>
-                
-                <p><strong>Q:</strong> ต้องการคู่มือการใช้งาน?</p>
-                <p><strong>A:</strong> ดาวน์โหลดได้ในระบบหลังเข้าสู่ระบบ</p>
-            </div>
-        `,
+        title: 'Help Center',
+        html: '<div style="text-align: left;"><h4>Frequently Asked Questions</h4><p><strong>Q:</strong> Forgot password?</p><p><strong>A:</strong> Contact administrator for reset</p><p><strong>Q:</strong> System not working?</p><p><strong>A:</strong> Check internet connection</p><p><strong>Q:</strong> Need user manual?</p><p><strong>A:</strong> Download from system after login</p></div>',
         icon: 'question',
-        confirmButtonText: 'รับทราบ',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#667eea'
     });
 }
 
-// เพิ่ม CSS สำหรับ shake animation
+// Add CSS for shake animation
 const style = document.createElement('style');
-style.textContent = `
-    @keyframes shake {
-        0%, 20%, 40%, 60%, 80%, 100% {
-            transform: translateX(0);
-        }
-        10%, 30%, 50%, 70%, 90% {
-            transform: translateX(-5px);
-        }
-    }
-`;
+style.textContent = '@keyframes shake { 0%, 20%, 40%, 60%, 80%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } }';
 document.head.appendChild(style);
