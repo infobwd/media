@@ -7,7 +7,7 @@
 const CONFIG = {
     SPREADSHEET_ID: '1YVZV9IN3K1bIXO0am28DHXONnQWFVs-gguHyYgsuXHQ', // เปลี่ยนเป็น ID ของคุณ
     BASE_URL: 'https://opensheet.elk.sh',
-    APPS_SCRIPT_URL: '', // ใส่ URL ของ Google Apps Script Web App
+    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby78K_kXW1YhVKO4EQMUuXo8D78d2mQuT6fphBAsxmoL_T86WkhZdILmhHkgw-BD-ac/exec', // ใส่ URL ของ Google Apps Script Web App
     SHEETS: {
         WORDS: 'คำ',
         WORDSETS: 'ชุดคำ',
