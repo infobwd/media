@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการคำศัพท์ - โรงเรียนบ้านวังด้ง</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="word-management.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-book"></i>
+                    จัดการคำศัพท์
+                </h1>
+            </div>
+            <div class="header-right">
+                <div class="teacher-info">
+                    <img src="https://via.placeholder.com/40" alt="Teacher" class="teacher-avatar" id="teacherAvatar">
+                    <span class="teacher-name" id="teacherName">ครูแอดมิน</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <a href="teacher-dashboard.html" class="nav-item">
+                <i class="fas fa-dashboard"></i>
+                <span>แดชบอร์ด</span>
+            </a>
+            <a href="word-management.html" class="nav-item active">
+                <i class="fas fa-book"></i>
+                <span>จัดการคำศัพท์</span>
+            </a>
+            <a href="wordset-management.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>จัดการชุดคำ</span>
+            </a>
+            <a href="student-analytics.html" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>สถิตินักเรียน</span>
+            </a>
+            <a href="classroom-management.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>จัดการห้องเรียน</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-container">
+            
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="ค้นหาคำศัพท์...">
+                </div>
+                <div class="action-buttons">
+                    <select class="filter-select" id="wordsetFilter">
+                        <option value="">ทุกชุดคำ</option>
+                    </select>
+                    <button class="btn btn-primary" id="addWordBtn">
+                        <i class="fas fa-plus"></i>
+                        เพิ่มคำศัพท์
+                    </button>
+                    <button class="btn btn-secondary" id="importBtn">
+                        <i class="fas fa-upload"></i>
+                        นำเข้า Excel
+                    </button>
+                    <button class="btn btn-success" id="exportBtn">
+                        <i class="fas fa-download"></i>
+                        ส่งออก
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalWords">0</div>
+                        <div class="stat-label">คำศัพท์ทั้งหมด</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalWordsets">0</div>
+                        <div class="stat-label">ชุดคำทั้งหมด</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="wordsWithImages">0</div>
+                        <div class="stat-label">คำที่มีรูปภาพ</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="wordsWithHints">0</div>
+                        <div class="stat-label">คำที่มีคำใบ้</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Words Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>รายการคำศัพท์</h2>
+                    <div class="table-actions">
+                        <button class="btn btn-outline" id="selectAllBtn">เลือกทั้งหมด</button>
+                        <button class="btn btn-danger" id="deleteSelectedBtn" disabled>
+                            <i class="fas fa-trash"></i>
+                            ลบที่เลือก
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table class="words-table" id="wordsTable">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-col">
+                                    <input type="checkbox" id="selectAllCheckbox">
+                                </th>
+                                <th class="sortable" data-sort="id">
+                                    ID <i class="fas fa-sort"></i>
+                                </th>
+                                <th class="sortable" data-sort="word">
+                                    คำศัพท์ <i class="fas fa-sort"></i>
+                                </th>
+                                <th>ชุดคำ</th>
+                                <th>รูปภาพ</th>
+                                <th>คำภาษาอังกฤษ</th>
+                                <th>คำใบ้</th>
+                                <th class="sortable" data-sort="created">
+                                    วันที่สร้าง <i class="fas fa-sort"></i>
+                                </th>
+                                <th class="actions-col">การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wordsTableBody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Loading -->
+                <div class="loading" id="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>กำลังโหลดข้อมูล...</span>
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <i class="fas fa-book-open"></i>
+                    <h3>ยังไม่มีคำศัพท์</h3>
+                    <p>เริ่มต้นสร้างคำศัพท์แรกของคุณ</p>
+                    <button class="btn btn-primary" onclick="openAddWordModal()">
+                        <i class="fas fa-plus"></i>
+                        เพิ่มคำศัพท์
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <button class="pagination-btn" id="prevBtn" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                    ก่อนหน้า
+                </button>
+                <div class="pagination-info">
+                    <span id="pageInfo">หน้า 1 จาก 1</span>
+                </div>
+                <button class="pagination-btn" id="nextBtn" disabled>
+                    ถัดไป
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Word Modal -->
+    <div class="modal" id="wordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">เพิ่มคำศัพท์ใหม่</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="wordForm">
+                    <input type="hidden" id="wordId" name="id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="wordText">คำศัพท์ <span class="required">*</span></label>
+                            <input type="text" id="wordText" name="word" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="wordsetSelect">ชุดคำ <span class="required">*</span></label>
+                            <select id="wordsetSelect" name="wordsetId" required>
+                                <option value="">เลือกชุดคำ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="englishWord">คำภาษาอังกฤษ</label>
+                            <input type="text" id="englishWord" name="englishWord">
+                        </div>
+                        <div class="form-group">
+                            <label for="englishHint">คำใบ้ภาษาอังกฤษ</label>
+                            <input type="text" id="englishHint" name="englishHint">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="highlightChars">ตัวอักษรที่ต้องการให้สีต่าง</label>
+                        <input type="text" id="highlightChars" name="highlightChars" 
+                               placeholder="เช่น: 1,3,5 (ตำแหน่งตัวอักษร)">
+                        <small class="form-help">ใส่หมายเลขตำแหน่งตัวอักษรที่ต้องการไฮไลต์ คั่นด้วยจุลภาค</small>
+                    </div>
+
+                    <!-- Image Upload Section -->
+                    <div class="form-group">
+                        <label>รูปภาพ</label>
+                        <div class="image-upload-area" id="imageUploadArea">
+                            <div class="image-upload-content">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>ลากไฟล์มาวางที่นี่ หรือ</p>
+                                <button type="button" class="btn btn-outline" onclick="document.getElementById('imageFile').click()">
+                                    เลือกไฟล์
+                                </button>
+                                <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                        
+                        <!-- Image URL Input -->
+                        <div class="form-group mt-3">
+                            <label for="imageUrl">หรือใส่ URL รูปภาพ</label>
+                            <input type="url" id="imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg">
+                        </div>
+                        
+                        <!-- Image Preview -->
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImg" src="" alt="Preview">
+                            <button type="button" class="remove-image" id="removeImage">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelBtn">ยกเลิก</button>
+                <button type="submit" form="wordForm" class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-save"></i>
+                    บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>นำเข้าคำศัพท์จาก Excel</h2>
+                <button class="modal-close" onclick="closeImportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="import-instructions">
+                    <h3>รูปแบบไฟล์ Excel ที่ต้องการ:</h3>
+                    <ul>
+                        <li>คอลัมน์ A: คำศัพท์</li>
+                        <li>คอลัมน์ B: ID ชุดคำ</li>
+                        <li>คอลัมน์ C: ตัวอักษรที่ต้องการให้สีต่าง</li>
+                        <li>คอลัมน์ D: ลิงก์รูปภาพ</li>
+                        <li>คอลัมน์ E: คำภาษาอังกฤษ</li>
+                        <li>คอลัมน์ F: คำใบ้ภาษาอังกฤษ</li>
+                    </ul>
+                </div>
+                
+                <div class="file-upload-area">
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" style="display: none;">
+                    <button type="button" class="btn btn-primary btn-large" onclick="document.getElementById('excelFile').click()">
+                        <i class="fas fa-file-excel"></i>
+                        เลือกไฟล์ Excel
+                    </button>
+                </div>
+                
+                <div class="import-preview" id="importPreview" style="display: none;">
+                    <h3>ตัวอย่างข้อมูลที่จะนำเข้า:</h3>
+                    <div class="preview-table"></div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeImportModal()">ยกเลิก</button>
+                <button type="button" class="btn btn-primary" id="confirmImportBtn" disabled>
+                    <i class="fas fa-upload"></i>
+                    นำเข้าข้อมูล
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="hiddenFileInput" style="display: none;" accept=".xlsx,.xls">
+
+    <!-- Scripts -->
+    <script src="shared-functions.js"></script>
+    <script src="word-management.js"></script>
+</body>
+</html>
