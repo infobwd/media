@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบ Scan QR Code - สารสนเทศการประชุม อบรม สัมมนา</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.20.0/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="qr_scanner.css">
+    <link rel="icon" href="https://raw.githubusercontent.com/infobwd/STUDENT-CARE/main/icons8-information-96.png" type="image/x-icon">
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.13/lottie.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Nav Section -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <img src="https://raw.githubusercontent.com/infobwd/STUDENT-CARE/main/icons8-information-96.png" alt="Logo" width="30" height="30" class="d-inline-block align-top"> สารสนเทศการประชุม อบรม สัมมนา
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        เมนู
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="registration.html"><i class="fas fa-clipboard-list"></i> ลงทะเบียน</a></li>
+                        <li><a class="dropdown-item" href="qr_scanner.html"><i class="fas fa-qrcode"></i> ระบบ Scan QR Code</a></li>
+                        <li><a class="dropdown-item" href="data_event.html"><i class="fas fa-database"></i> ข้อมูลการลงทะเบียน</a></li>
+                        <li><a class="dropdown-item" href="meet_info.html"><i class="fas fa-info-circle"></i> สารสนเทศการเข้าประชุม</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="d-flex flex-fill" role="search" action="search.html" method="get">
+                <input class="form-control me-2" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ค้นหาโดยรหัสนักเรียน" aria-label="Search" id="studentIdSearch" name="studentId">
+                <button class="btn btn-outline-light me-2" type="submit">ค้นหา</button>
+            </form>
+            <button id="fullscreenButton" class="btn btn-outline-light me-2">ขยายเต็มจอ</button>
+            <button id="fontSizeButton" class="btn btn-outline-light me-2">ก</button>
+            <button id="login-button" class="btn btn-primary"><i class="fab fa-line"></i> LINE Login</button>
+        </div>
+    </div>
+</nav>
+
+<div id="content-section" class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <h2 class="text-center">ระบบ Scan QR Code เพื่อเข้างานประชุม อบรม สัมมนา</h2>
+            <p id="currentDateTime" class="currentDateTime"></p>
+            <div id="event-dropdown-container" style="display: none;">
+                <select id="event-dropdown" class="form-select mb-3">
+                    <option value="">เลือกรายการอบรม</option>
+                </select>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div id="result" class="alert alert-info" style="display: none;"></div>
+                </div>
+            </div>
+            <div id="event-details" style="display: none;">
+                <h4 class="text-center mb-3">ข้อมูลคนเข้างาน ณ ปัจจุบัน: <span id="event-total"></span> คน</h4>
+                <h5 class="text-center mb-3">จัดโดย <span id="event-organization"></span></h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered event-table">
+                        <tr>
+                            <th>เป้าหมาย</th>
+                            <td id="event-target"></td>
+                            <th>ลงทะเบียน</th>
+                            <td id="event-registered"></td>
+                            <th>ชาย</th>
+                            <td id="event-male"></td>
+                            <th>หญิง</th>
+                            <td id="event-female"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+<ul class="profile-grid">
+  <!-- Profiles will be dynamically added here -->
+</ul>
+
+<!-- Footer Section -->
+<footer class="bg-light text-center text-lg-start">
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2024 สงวนลิขสิทธิ์:
+        <a class="text-dark" href="https://www.bwd.ac.th/">www.bwd.ac.th</a>
+    </div>
+</footer>
+
+<!-- User Profile and Buttons -->
+<div id="user-profile" style="display: none;">
+    <img id="profile-picture" src="" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+    <span id="profile-name" class="ms-2"></span>
+    <button id="logout-button" class="btn btn-sm btn-secondary ms-2">Logout</button>
+    <button id="share-button" class="btn btn-sm btn-success ms-2"><i class="fab fa-line"></i> Share</button>
+</div>
+<!-- Chat Button -->
+<!--     <button onclick="chatFunction()" id="chatBtn" title="Chat with us"><i class="fa fa-comments"></i></button> -->
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11"></div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Initial setup
+    $("#nav-container").load("navQR.html", function() {
+        initializeNavButtons();
+        initializeLiff();
+    });
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    // Fetch and display profiles
+    loadProfiles();
+
+    // Event listeners
+    $('#event-dropdown').change(function() {
+        const selectedEventId = $(this).val();
+        if (selectedEventId) {
+            const selectedEvent = eventData.find(event => event.ID === selectedEventId);
+            if (selectedEvent) {
+                displayEventDetails(selectedEvent);
+                $('#event-details').show();
+            }
+        } else {
+            $('#event-details').hide();
+        }
+    });
+});
+
+async function initializeLiff() {
+    try {
+        await liff.init({ liffId: '2005769714-vaJbZ3O3' });
+        if (liff.isLoggedIn()) {
+            await displayUserInfo();
+            $('#login-button').hide();
+            $('#user-profile').show();
+            $('#event-dropdown-container').show();
+            loadEventList();
+        } else {
+            $('#login-button').show();
+            $('#user-profile').hide();
+            $('#event-dropdown-container').hide();
+        }
+    } catch (error) {
+        console.error('LIFF initialization failed', error);
+    }
+}
+
+let eventData = []; // เก็บข้อมูลอีเวนต์ทั้งหมด
+
+function loadEventList() {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/Event')
+        .then(response => response.json())
+        .then(data => {
+            eventData = data; // เก็บข้อมูลทั้งหมด
+            const dropdown = $('#event-dropdown');
+            dropdown.empty();
+            dropdown.append('<option value="">เลือกรายการอบรม</option>');
+            data.forEach(event => {
+                dropdown.append(`<option value="${event.ID}">${event['ชื่องาน']}</option>`);
+            });
+        })
+        .catch(error => console.error('Error loading event list:', error));
+}
+
+function displayEventDetails(event) {
+    $('#event-organization').text(event['หน่วยงาน']);
+    $('#event-target').text(event['เป้าหมายจำนวนคน']).attr('data-label', 'เป้าหมาย');
+    $('#event-registered').text(event['ลงทะเบียน'] || '0').attr('data-label', 'ลงทะเบียน');
+    $('#event-male').text(event['ชาย'] || '0').attr('data-label', 'ชาย');
+    $('#event-female').text(event['หญิง'] || '0').attr('data-label', 'หญิง');
+
+    const totalAttendees = (parseInt(event['ชาย'] || '0') + 
+                            parseInt(event['หญิง'] || '0'));
+    $('#event-total').text(totalAttendees).attr('data-label', 'รวม');
+
+    $('#event-details').show();
+    // Scroll to event details
+    $('html, body').animate({
+        scrollTop: $("#event-details").offset().top
+    }, 500);
+}
+
+function logout() {
+    liff.logout();
+    $('#user-profile').hide();
+    $('#event-dropdown-container').hide();
+    $('#login-button').show();
+    window.location.reload();
+}
+
+async function displayUserInfo() {
+    try {
+        const profile = await liff.getProfile();
+        $('#profile-name').text(profile.displayName);
+        $('#profile-picture').attr('src', profile.pictureUrl).show();
+    } catch (error) {
+        console.error('Error getting profile', error);
+    }
+}
+
+function logout() {
+    liff.logout();
+    $('#user-profile').hide(); // ซ่อน user-profile เมื่อ logout
+    $('#login-button').show();
+    window.location.reload();
+}
+
+function initializeNavButtons() {
+    $('#fullscreenButton').click(function() {
+        toggleFullscreen();
+    });
+
+    $('#fontSizeButton').click(function() {
+        toggleFontSize();
+    });
+
+    $('#login-button').click(function() {
+        liff.login();
+    });
+
+    $('#logout-button').click(function() {
+        logout();
+    });
+
+    $('#share-button').click(function() {
+        shareQRScannerData();
+    });
+}
+
+function updateDateTime() {
+    const currentDateTime = new Date().toLocaleString('th-TH', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        weekday: 'long',
+        hour12: false
+    });
+    $('#currentDateTime').text(currentDateTime);
+}
+
+function shareQRScannerData() {
+    const profileName = $('#profile-name').text();
+    const currentDateTime = new Date().toLocaleString('th-TH', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        weekday: 'long',
+        hour12: false
+    });
+
+    const flexMessage = {
+        type: "flex",
+        altText: "ระบบ Scan QR Code โรงเรียนบ้านวังด้ง",
+        contents: {
+            type: "bubble",
+            body: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                    {
+                        type: "text",
+                        text: "ระบบ Scan QR Code",
+                        weight: "bold",
+                        size: "xl",
+                        align: "center"
+                    },
+                    {
+                        type: "text",
+                        text: "โรงเรียนบ้านวังด้ง",
+                        size: "md",
+                        align: "center",
+                        margin: "md"
+                    },
+                    {
+                        type: "text",
+                        text: "ฉันกำลังใช้ระบบ Scan QR Code สำหรับเช็คชื่อเข้าร่วมกิจกรรม!",
+                        wrap: true,
+                        margin: "lg"
+                    }
+                ]
+            },
+            footer: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                    {
+                        type: "text",
+                        text: "แชร์โดย: " + profileName,
+                        size: "sm",
+                        align: "center"
+                    },
+                    {
+                        type: "text",
+                        text: "เวลา: " + currentDateTime,
+                        size: "xs",
+                        color: "#aaaaaa",
+                        align: "center",
+                        margin: "md"
+                    },
+                    {
+                        type: "button",
+                        style: "primary",
+                        action: {
+                            type: "uri",
+                            label: "ไปที่ระบบ Scan QR Code",
+                            uri: "https://liff.line.me/YOUR-LIFF-ID-HERE" // แทนที่ด้วย LIFF URL ของคุณ
+                        },
+                        margin: "md"
+                    }
+                ]
+            }
+        }
+    };
+
+    liff.shareTargetPicker([flexMessage])
+        .then(() => {
+            console.log('Message shared successfully');
+        })
+        .catch((error) => {
+            console.error('Error sharing message:', error);
+        });
+}
+
+function loadProfiles() {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/ลงทะเบียน')
+        .then(response => response.json())
+        .then(data => {
+            const profileGrid = $('.profile-grid');
+            profileGrid.empty();
+            data.forEach(profile => {
+                profileGrid.append(`
+                    <li>
+                        <img src="${profile.ProfileUrl}" alt="${profile.DisplayName}" class="profile-pic">
+                        <div class="profile-name">${profile.DisplayName}</div>
+                    </li>
+                `);
+            });
+        })
+        .catch(error => console.error('Error loading profiles:', error));
+}
+</script>
+</body>
+</html>

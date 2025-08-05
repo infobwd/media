@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โจทย์คณิตคิดเลขเร็ว</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/2436/2436635.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-size: 18px;
+        }
+        nav {
+            background-color: #0066cc;
+            padding: 10px;
+            color: white;
+            font-family: 'Prompt', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        nav img {
+            margin-right: 10px;
+        }
+        .nav-center {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .main-container {
+            margin-top: 80px; /* Adjust based on the height of the navbar */
+        }
+        .question, #timer, #answer, #feedback {
+            font-size: 56px; /* Increase font size */
+            margin: 10px 0;
+        }
+        #timer img {
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        button, input, select {
+            font-size: 18px;
+            margin: 5px;
+            padding: 10px;
+            font-family: 'Sarabun', sans-serif;
+        }
+        .scoreboard {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .highlight {
+            background-color: #ffff00;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .quiz-container {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .icon-select {
+            font-size: 50px; /* Increase icon size */
+        }
+        #dateTime {
+            width: 100%;
+            text-align: center;
+            font-size: 24px; /* Increase date text size */
+            margin-top: 10px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .btn-group button {
+            width: 30%;
+        }
+        .floating-box {
+            position: fixed;
+            bottom: 100px; /* Adjust for footer height */
+            padding: 10px;
+            border-radius: 10px;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 20%;
+            max-width: 600px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .floating-box span {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .floating-box button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .floating-box .btn {
+            background-color: #ffd700;
+            color: #000;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        .floating-box.team-a {
+            background-color: #ffcccb;
+            left: 25%; /* Position to the left */
+        }
+        .floating-box.team-b {
+            background-color: #add8e6;
+            left: 75%; /* Position to the right */
+
+        }
+         
+        .settings-container {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            display: none;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+        .profile-pic {
+            border-radius: 50%;
+            margin-left: 5px; /* Reduced margin */
+            width: 40px; /* Smaller profile picture */
+            height: 40px; /* Smaller profile picture */
+        }
+        .nav-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px; /* Reduced padding */
+            border-radius: 5px;
+            margin-left: 5px; /* Reduced margin */
+            font-size: 14px; /* Smaller font size */
+        }
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+        .line-button {
+            background-color: #00c300;
+            color: white;
+            border: none;
+            padding: 5px 10px; /* Reduced padding */
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            font-size: 14px; /* Smaller font size */
+        }
+        .line-button img {
+            margin-right: 5px; /* Reduced margin */
+            width: 16px; /* Smaller icon */
+            height: 16px; /* Smaller icon */
+        }
+        .clap-icon {
+            font-size: 100px;
+            position: absolute;
+            animation: fadeInOut 2s ease-in-out;
+        }
+        @keyframes fadeInOut {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        .nav-toggle-button {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 10px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1001;
+        }
+        .team-icon-large {
+            font-size: 150px;
+            text-align: center;
+            display: none;
+            z-index: 1001;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .clap-buttons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        .clap-buttons button {
+            position: absolute;
+            pointer-events: auto;
+            font-size: 50px;
+        }
+        .font-size-controls {
+            margin: 10px;
+            text-align: center;
+        }
+        .font-size-controls button {
+            font-size: 20px;
+            padding: 5px 10px;
+            margin: 5px;
+        }
+      
+        #muteButton {
+            font-size: 18px; /* หรือขนาดที่เหมาะสมกับ nav bar ของคุณ */
+            padding: 5px 10px;
+            margin-right: 5px;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #f8f9fa;
+            padding: 10px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+        .footer-controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .footer-controls input[type="file"] {
+            margin-right: 10px;
+        }
+        .footer-controls span {
+            margin: 0 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .footer-controls span.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        #footerToggle {
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            nav {
+                font-size: 18px;
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-center {
+                display: none;
+            }
+            .nav-right {
+                width: 100%;
+                justify-content: center;
+                flex-direction: column;
+            }
+            .nav-button, .line-button {
+                font-size: 14px;
+                padding: 5px 10px;
+                margin: 5px 0;
+            }
+            .profile-pic {
+                width: 40px;
+                height: 40px;
+            }
+            .question, #timer, #answer, #feedback {
+                font-size: 36px;
+            }
+            .half {
+                width: 100%;
+                height: auto;
+            }
+            .btn-group button {
+                width: 30%;
+                font-size: 14px;
+                padding: 5px;
+            }
+            .floating-box {
+                width: 60%;
+            }
+            .floating-box span {
+                font-size: 18px;
+            }
+            #dateTime {
+                display: none;
+            }
+            .settings-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .settings-container select {
+                width: 90%;
+                margin-bottom: 10px;
+            }
+            .nav-toggle-button {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav id="navBar">
+        <div>
+            <img src="https://cdn-icons-png.flaticon.com/128/2436/2436635.png" alt="logo" width="50" height="50">
+            <span class="nav-center">โจทย์คณิตคิดในใจ โรงเรียนบ้านวังด้ง</span>
+        </div>
+        <div class="nav-right">
+            <button id="muteButton" class="nav-button" onclick="toggleMute()">🔊</button>
+            <button class="nav-button" onclick="changeFontSize()">ก</button>
+            <button id="fullscreenButton" class="nav-button" onclick="toggleFullScreen()">ขยายหน้าจอ</button>
+            <button class="line-button" onclick="shareScore()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/1200px-LINE_logo.svg.png" alt="LINE" width="20" height="20"> แชร์คะแนนผ่าน LINE
+            </button>
+            <button class="nav-button" onclick="logout()">Log Out</button>
+            <img id="profilePic" src="https://via.placeholder.com/50" alt="profile-pic" class="profile-pic">
+        </div>
+    </nav>
+    <button id="toggleNavButton" class="nav-toggle-button" onclick="toggleNavBar()">ซ่อนเมนู</button>
+    <div class="main-container">
+        <div id="dateTime"></div>
+        <div class="settings-container" align="center">
+            <select id="level" class="form-control d-inline w-25">
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+                <option value="4">Level 4</option>
+                <option value="5">Level 5</option>
+            </select>
+            <select id="questionType" class="form-control d-inline w-25">
+                <option value="add_sub_10">บวก ลบ ไม่เกิน 10</option>
+                <option value="add_sub_20">บวก ลบ ไม่เกิน 20</option>
+                <option value="add_sub_100">บวก ลบ ไม่เกิน 100</option>
+                <option value="multiply_100">คูณ ผลคูณไม่เกิน 100</option>
+                <option value="divide_50">หาร ผลหารไม่เกิน 50</option>
+                <option value="add_1000">บวก ผลบวกไม่เกิน 1000</option>
+                <option value="sub_1000">ลบ ตัวลบไม่เกิน 1000</option>
+                <option value="problem_solving">แก้โจทย์ปัญหา</option>
+                <option value="mixed">โจทย์แบบ Mixed</option>
+                <option value="add_sub_3_4_digit">บวก ลบ จำนวน 3-4 หลัก</option>
+                <option value="multiply_2_3_digit">คูณ จำนวน 2-3 หลัก</option>
+                <option value="divide_3_2_digit">หาร จำนวน 3 หลักด้วย 2 หลัก</option>
+            </select>
+            <select id="timerDuration" class="form-control d-inline w-25">
+                <option value="5">5 วินาที</option>
+                <option value="10">10 วินาที</option>
+                <option value="15">15 วินาที</option>
+                <option value="30">30 วินาที</option>
+            </select>
+        </div>
+        <div id="quiz" class="quiz-container" style="display: none;">
+            <button class="btn btn-success mt-3" onclick="startQuiz()">เริ่ม</button>
+            <div id="question" class="question mt-3"></div>
+            <div id="timer"><img src="https://cdn-icons-gif.flaticon.com/13373/13373711.gif" alt="timer"> <span id="timerText"></span></div>
+            <div id="answer"></div>
+            <div id="feedback"></div>
+            <button class="btn btn-info mt-3" onclick="showAnswerImmediately()" style="display:none;" id="showAnswerButton">ดูคำตอบ</button>
+            <button class="btn btn-warning mt-3" onclick="nextQuestion()" style="display:none;" id="nextButton">ข้อต่อไป</button>
+            <button class="btn btn-primary mt-3" onclick="showFeedback('ปรบมือ 👏')" style="display:none;" id="applauseButton">ปรบมือ 👏</button>
+            <button class="btn btn-secondary mt-3" onclick="showFeedback('สู้ใหม่ 💪')" style="display:none;" id="encouragementButton">สู้ใหม่ 💪</button>
+            <button class="btn btn-danger mt-3" onclick="resetTeams()" style="display:none;" id="resetButton">รีเซ็ตทีม</button>
+            <button class="btn btn-danger mt-3" onclick="endGame()" style="display:none;" id="endGameButton">จบเกม</button>
+            <button class="btn btn-dark mt-3" onclick="resetScores()" style="display:none;" id="resetScoresButton">รีเซ็ตคะแนน</button>
+            <div class="btn-group mt-3" role="group">
+                <button class="btn btn-outline-success" onclick="increaseScore('A')"><img src="https://img.icons8.com/ios-filled/24/000000/plus.png"/> เพิ่มคะแนนทีม A</button>
+                <button class="btn btn-outline-danger" onclick="decreaseScore('A')"><img src="https://img.icons8.com/ios-filled/24/000000/minus.png"/> ลดคะแนนทีม A</button>
+                <button class="btn btn-outline-success" onclick="increaseScore('B')"><img src="https://img.icons8.com/ios-filled/24/000000/plus.png"/> เพิ่มคะแนนทีม B</button>
+                <button class="btn btn-outline-danger" onclick="decreaseScore('B')"><img src="https://img.icons8.com/ios-filled/24/000000/minus.png"/> ลดคะแนนทีม B</button>
+            </div>
+        </div>
+        <div id="setup">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>ทีม A: </label>
+                        <input type="text" id="teamAName" class="form-control d-inline w-75" placeholder="ชื่อทีม A">
+                        <select id="teamAIcon" class="icon-select form-control d-inline w-25">
+                            <option value="🦁">🦁</option>
+                            <option value="🐯">🐯</option>
+                            <option value="🐼">🐼</option>
+                            <option value="🐨">🐨</option>
+                            <option value="🐸">🐸</option>
+                            <option value="⭐">⭐</option>
+                            <option value="🚀">🚀</option>
+                            <option value="⚽">⚽</option>
+                            <option value="🎸">🎸</option>
+                            <option value="🎨">🎨</option>
+                        </select>
+                        <textarea id="teamAMembers" rows="5" class="form-control mt-3" placeholder="สมาชิกทีม A"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label>ทีม B: </label>
+                        <input type="text" id="teamBName" class="form-control d-inline w-75" placeholder="ชื่อทีม B">
+                        <select id="teamBIcon" class="icon-select form-control d-inline w-25">
+                            <option value="🦁">🦁</option>
+                            <option value="🐯">🐯</option>
+                            <option value="🐼">🐼</option>
+                            <option value="🐨">🐨</option>
+                            <option value="🐸">🐸</option>
+                            <option value="⭐">⭐</option>
+                            <option value="🚀">🚀</option>
+                            <option value="⚽">⚽</option>
+                            <option value="🎸">🎸</option>
+                            <option value="🎨">🎨</option>
+                        </select>
+                        <textarea id="teamBMembers" rows="5" class="form-control mt-3" placeholder="สมาชิกทีม B"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>คะแนนตัดสิน: </label>
+                        <input type="number" id="winningScore" class="form-control w-25 d-inline" placeholder="คะแนนที่ใช้ตัดสิน">
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3" onclick="startTeamSelection()">เริ่ม</button>
+            </div>
+        </div>
+        <div id="teamA" class="half left" style="display:none;"></div>
+        <div id="teamB" class="half right" style="display:none;"></div>
+        
+        <div class="floating-box team-a" id="teamAScores" style="display: none;">
+            <span id="teamANameDisplay"></span>
+            <span id="teamAMembersDisplay" style="font-size: 18px; text-align: center;"></span>
+            <span id="scoreA">0</span>
+        </div>
+        <div class="floating-box team-b" id="teamBScores" style="display: none;">
+            <span id="teamBNameDisplay"></span>
+            <span id="teamBMembersDisplay" style="font-size: 18px; text-align: center;"></span>
+            <span id="scoreB">0</span>
+        
+        </div>
+
+        <div id="teamIconLarge" class="team-icon-large"></div>
+
+        <audio id="countdownSound" src="https://raw.githubusercontent.com/infobwd/wdconnect/main/clock-ticking-60-second-countdown-118231.mp3"></audio>
+        <audio id="applauseSound" src="https://raw.githubusercontent.com/infobwd/wdconnect/main/applause-small-audience-97257.mp3"></audio>
+        <audio id="encouragementSound" src="encouragement.mp3"></audio>
+    </div>
+
+<!-- Footer with audio controls -->
+<footer id="footer">
+    <div class="footer-controls">
+        <input type="file" id="audioFile" accept="audio/*">
+        <audio id="userAudio" controls></audio>
+        <div class="minimal-controls">
+            <span id="playAudio" onclick="playAudio()">▶️</span>
+            <span id="pauseAudio" onclick="pauseAudio()">⏸️</span>
+            <span id="stopAudio" onclick="stopAudio()">⏹️</span>
+            <span id="repeatAudio" onclick="repeatAudio()">🔁</span>
+        </div>
+    </div>
+    <button id="footerToggle" onclick="toggleFooter()">ย่อ</button>
+</footer>
+
+
+    <script>
+        let currentAnswer;
+        let timerInterval;
+        let scoreA = 0;
+        let scoreB = 0;
+        let winningScore = 0;
+        let fontSize = 56;
+
+        const userAudio = document.getElementById('userAudio');
+
+        document.getElementById('audioFile').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileURL = URL.createObjectURL(file);
+                userAudio.src = fileURL;
+                userAudio.play();
+            }
+        });
+
+        function playAudio() {
+            userAudio.play();
+        }
+
+        function pauseAudio() {
+            userAudio.pause();
+        }
+
+        function stopAudio() {
+            userAudio.pause();
+            userAudio.currentTime = 0;
+        }
+
+        function repeatAudio() {
+            userAudio.currentTime = 0;
+            userAudio.play();
+        }
+
+        function startTeamSelection() {
+    const teamIcons = ["🦁", "🐯", "🐼", "🐨", "🐸", "⭐", "🚀", "⚽", "🎸", "🎨"];
+    let teamAName = document.getElementById('teamAName').value.trim();
+    let teamBName = document.getElementById('teamBName').value.trim();
+    const teamAIcon = document.getElementById('teamAIcon').value;
+    const teamBIcon = document.getElementById('teamBIcon').value;
+    const teamAMembers = document.getElementById('teamAMembers').value;
+    const teamBMembers = document.getElementById('teamBMembers').value;
+    winningScore = parseInt(document.getElementById('winningScore').value);
+
+    // กำหนดชื่อทีมอัตโนมัติถ้าไม่ได้กรอก
+    if (!teamAName) teamAName = "ทีม A";
+    if (!teamBName) teamBName = "ทีม B";
+
+    // สุ่ม icon ถ้าไม่ได้เลือก และทำให้ไม่ซ้ำกัน
+    let availableIcons = [...teamIcons];
+    let randomIconA, randomIconB;
+
+    if (!teamAIcon || teamAIcon === teamBIcon) {
+        const randomIndex = Math.floor(Math.random() * availableIcons.length);
+        randomIconA = availableIcons[randomIndex];
+        availableIcons.splice(randomIndex, 1);
+    }
+
+    if (!teamBIcon || teamBIcon === teamAIcon) {
+        const randomIndex = Math.floor(Math.random() * availableIcons.length);
+        randomIconB = availableIcons[randomIndex];
+    }
+
+    const finalTeamAIcon = teamAIcon && teamAIcon !== teamBIcon ? teamAIcon : randomIconA;
+    const finalTeamBIcon = teamBIcon && teamBIcon !== teamAIcon ? teamBIcon : randomIconB;
+
+    document.getElementById('teamA').style.display = 'block';
+    document.getElementById('teamB').style.display = 'block';
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('quiz').style.display = 'block';
+    document.querySelector('.settings-container').style.display = 'block';
+
+    document.getElementById('teamAScores').style.backgroundColor = '#ffcccb'; // Light Coral
+    document.getElementById('teamBScores').style.backgroundColor = '#add8e6'; // Light Blue
+
+    document.getElementById('teamANameDisplay').innerHTML = `${finalTeamAIcon} ${teamAName}`;
+    document.getElementById('teamBNameDisplay').innerHTML = `${finalTeamBIcon} ${teamBName}`;
+
+    document.getElementById('teamAMembersDisplay').innerHTML = `สมาชิก: ${teamAMembers.split('\n').join(', ')}`;
+    document.getElementById('teamBMembersDisplay').innerHTML = `สมาชิก: ${teamBMembers.split('\n').join(', ')}`;
+
+    document.getElementById('teamAScores').style.display = 'flex'; // Show team scores
+    document.getElementById('teamBScores').style.display = 'flex'; // Show team scores
+
+    // รีเซ็ตคะแนน
+    resetScores();
+}
+
+
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function colorAnswer(answer) {
+    const colors = ["orange", "blue", "green", "red"];
+    const formattedAnswer = formatNumber(answer);
+    let colorIndex = 0;
+    const coloredAnswer = formattedAnswer.split('').reverse().map(char => {
+        if (char === ',') return char;
+        const coloredChar = `<span style="color: ${colors[colorIndex]}">${char}</span>`;
+        colorIndex = (colorIndex + 1) % colors.length;
+        return coloredChar;
+    }).reverse().join('');
+    return coloredAnswer;
+}      
+      
+// ฟังก์ชันสำหรับให้สีตัวเลขในโจทย์
+function colorDigits(question) {
+    const colors = ["orange", "blue", "green", "red"];
+    const parts = question.split(' ');
+    const coloredParts = parts.map(part => {
+        if (part.includes(',') || !isNaN(part.replace(',', ''))) {
+            let colorIndex = 0;
+            return part.split('').reverse().map(char => {
+                if (char === ',') return char;
+                const coloredChar = `<span style="color: ${colors[colorIndex]}">${char}</span>`;
+                colorIndex = (colorIndex + 1) % colors.length;
+                return coloredChar;
+            }).reverse().join('');
+        }
+        return part;
+    });
+    return coloredParts.join(' ');
+}
+
+// ฟังก์ชันหลักสำหรับสร้างโจทย์พื้นฐาน
+function generateQuestion(level, type) {
+    let num1, num2, operation;
+    level = parseInt(level);
+
+    switch(type) {
+        case 'add_sub_10':
+            num1 = Math.floor(Math.random() * (level * 2)) + 1;
+            num2 = Math.floor(Math.random() * (level * 2)) + 1;
+            operation = Math.random() < 0.5 ? '+' : '-';
+            if (operation === '-' && num1 < num2) [num1, num2] = [num2, num1];
+            break;
+        case 'add_sub_20':
+            num1 = Math.floor(Math.random() * (level * 4)) + 1;
+            num2 = Math.floor(Math.random() * (level * 4)) + 1;
+            operation = Math.random() < 0.5 ? '+' : '-';
+            if (operation === '-' && num1 < num2) [num1, num2] = [num2, num1];
+            break;
+        case 'add_sub_100':
+            num1 = Math.floor(Math.random() * (level * 20)) + 1;
+            num2 = Math.floor(Math.random() * (level * 20)) + 1;
+            operation = Math.random() < 0.5 ? '+' : '-';
+            if (operation === '-' && num1 < num2) [num1, num2] = [num2, num1];
+            break;
+        case 'multiply_100':
+            num1 = Math.floor(Math.random() * (level * 2)) + 1;
+            num2 = Math.floor(Math.random() * (level * 2)) + 1;
+            operation = '×';
+            break;
+        case 'divide_50':
+            num2 = Math.floor(Math.random() * level) + 2;
+            num1 = num2 * (Math.floor(Math.random() * level) + 1);
+            operation = '÷';
+            break;
+        case 'add_1000':
+            num1 = Math.floor(Math.random() * (level * 200)) + 1;
+            num2 = Math.floor(Math.random() * (level * 200)) + 1;
+            operation = '+';
+            currentAnswer = num1 + num2;
+            return colorDigits(`${formatNumber(num1)} ${operation} ${formatNumber(num2)} = ?`);
+        case 'sub_1000':
+            num1 = Math.floor(Math.random() * (level * 200)) + 1;
+            num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+            operation = '-';
+            currentAnswer = num1 - num2;
+            return colorDigits(`${formatNumber(num1)} ${operation} ${formatNumber(num2)} = ?`);
+        case 'problem_solving':
+            const problems = [
+                { 
+                    question: `ถ้าเขามีแอปเปิ้ล ${formatNumber(level * 5)} ลูก และเพื่อนให้แอปเปิ้ลเขาอีก ${formatNumber(level * 3)} ลูก เขามีแอปเปิ้ลทั้งหมดกี่ลูก?`, 
+                    answer: level * 8 
+                },
+                { 
+                    question: `ถ้าเขามีดินสอ ${formatNumber(level * 10)} แท่ง และเขาให้เพื่อนไป ${formatNumber(level * 4)} แท่ง เขามีดินสอเหลือกี่แท่ง?`, 
+                    answer: level * 6 
+                },
+                { 
+                    question: `มีลูกอม ${formatNumber(level * 15)} ลูก ถ้าให้เพื่อนคนละ ${formatNumber(level * 2)} ลูกแก่เพื่อน ${level} คน จะเหลือลูกอมกี่ลูก?`, 
+                    answer: level * 15 - level * level * 2 
+                },
+                { 
+                    question: `ถ้าเขามีเงิน ${formatNumber(level * 100)} บาท ซื้อของราคา ${formatNumber(level * 60)} บาท เหลือเงินเท่าไหร่?`, 
+                    answer: level * 40 
+                }
+            ];
+            const selectedProblem = problems[Math.floor(Math.random() * problems.length)];
+            currentAnswer = selectedProblem.answer;
+            return selectedProblem.question;
+        case 'mixed':
+            return generateMixedQuestion(level);
+    }
+
+    if (operation === '+') {
+        currentAnswer = num1 + num2;
+    } else if (operation === '-') {
+        currentAnswer = num1 - num2;
+    } else if (operation === '×') {
+        currentAnswer = num1 * num2;
+    } else if (operation === '÷') {
+        currentAnswer = num1 / num2;
+    }
+
+    return colorDigits(`${formatNumber(num1)} ${operation} ${formatNumber(num2)} = ?`);
+}
+
+function generateMixedQuestion(level) {
+    const operations = ['+', '-', '×', '÷'];
+    const operation = operations[Math.floor(Math.random() * operations.length)];
+    let num1, num2;
+
+    switch(operation) {
+        case '+':
+            num1 = Math.floor(Math.random() * (level * 50)) + 1;
+            num2 = Math.floor(Math.random() * (level * 50)) + 1;
+            currentAnswer = num1 + num2;
+            break;
+        case '-':
+            num1 = Math.floor(Math.random() * (level * 50)) + 51;
+            num2 = Math.floor(Math.random() * num1) + 1;
+            currentAnswer = num1 - num2;
+            break;
+        case '×':
+            num1 = Math.floor(Math.random() * (level * 3)) + 2;
+            num2 = Math.floor(Math.random() * (level * 3)) + 2;
+            currentAnswer = num1 * num2;
+            break;
+        case '÷':
+            num2 = Math.floor(Math.random() * level) + 2;
+            currentAnswer = Math.floor(Math.random() * level) + 1;
+            num1 = num2 * currentAnswer;
+            break;
+    }
+
+    return colorDigits(`${formatNumber(num1)} ${operation} ${formatNumber(num2)} = ?`);
+}
+
+// ฟังก์ชันสำหรับสร้างโจทย์ขั้นสูง
+function generateAdvancedQuestion(type, level) {
+    let num1, num2, operation, question, answer;
+    level = parseInt(level);
+
+    switch(type) {
+        case 'add_sub_3_4_digit':
+            num1 = Math.floor(Math.random() * (9000 * level / 5)) + 1000;
+            num2 = Math.floor(Math.random() * (9000 * level / 5)) + 1000;
+            operation = Math.random() < 0.5 ? '+' : '-';
+            if (operation === '-' && num1 < num2) [num1, num2] = [num2, num1];
+            question = `${formatNumber(num1)} ${operation} ${formatNumber(num2)} = ?`;
+            answer = operation === '+' ? num1 + num2 : num1 - num2;
+            break;
+        case 'multiply_2_3_digit':
+            num1 = Math.floor(Math.random() * (900 * level / 5)) + 100;
+            num2 = Math.floor(Math.random() * (90 * level / 5)) + 10;
+            question = `${formatNumber(num1)} × ${formatNumber(num2)} = ?`;
+            answer = num1 * num2;
+            break;
+        case 'divide_3_2_digit':
+            num2 = Math.floor(Math.random() * (90 * level / 5)) + 10;
+            answer = Math.floor(Math.random() * (90 * level / 5)) + 10;
+            num1 = num2 * answer;
+            while (num1 < 100 || num1 > 999) {
+                num2 = Math.floor(Math.random() * (90 * level / 5)) + 10;
+                answer = Math.floor(Math.random() * (90 * level / 5)) + 10;
+                num1 = num2 * answer;
+            }
+            question = `${formatNumber(num1)} ÷ ${formatNumber(num2)} = ?`;
+            break;
+    }
+
+    currentAnswer = answer;
+    return colorDigits(question);
+}
+
+function nextQuestion() {
+    const level = document.getElementById('level').value;
+    const type = document.getElementById('questionType').value;
+    const duration = parseInt(document.getElementById('timerDuration').value);
+    
+    let question;
+    if (['add_sub_3_4_digit', 'multiply_2_3_digit', 'divide_3_2_digit'].includes(type)) {
+        question = generateAdvancedQuestion(type, level);
+    } else {
+        question = generateQuestion(level, type);
+    }
+    
+    document.getElementById('question').innerHTML = question;
+    document.getElementById('answer').textContent = '';
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('nextButton').style.display = 'none';
+    document.getElementById('applauseButton').style.display = 'none';
+    document.getElementById('encouragementButton').style.display = 'none';
+    document.getElementById('resetButton').style.display = 'none';
+    document.getElementById('endGameButton').style.display = 'none';
+    document.getElementById('resetScoresButton').style.display = 'none';
+    document.getElementById('showAnswerButton').style.display = 'inline-block';
+    startTimer(duration);
+}       
+        function startTimer(duration) {
+            let timer = duration;
+            const countdownSound = document.getElementById('countdownSound');
+            if (!isMuted) {
+                countdownSound.play();
+            }
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                document.getElementById('timerText').textContent = timer > 0 ? timer : 'หมดเวลา';
+                if (--timer < 0) {
+                    clearInterval(timerInterval);
+                    showAnswer();
+                    countdownSound.pause();
+                    countdownSound.currentTime = 0;
+                }
+            }, 1000);
+        }
+
+        function showAnswer() {
+            const countdownSound = document.getElementById('countdownSound');
+            countdownSound.pause();
+            countdownSound.currentTime = 0;
+            document.getElementById('answer').innerHTML = `คำตอบ: ${colorAnswer(currentAnswer)}`;
+            document.getElementById('nextButton').style.display = 'inline-block';
+            document.getElementById('applauseButton').style.display = 'inline-block';
+            document.getElementById('encouragementButton').style.display = 'inline-block';
+            document.getElementById('resetButton').style.display = 'inline-block';
+            document.getElementById('endGameButton').style.display = 'inline-block';
+            document.getElementById('resetScoresButton').style.display = 'inline-block';
+            document.getElementById('showAnswerButton').style.display = 'none';
+        }
+      
+        function showAnswerImmediately() {
+            clearInterval(timerInterval);
+            showAnswer();
+        }
+
+        function startQuiz() {
+            addEventListeners();
+            nextQuestion();
+            document.querySelector('#quiz button').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+        }
+
+
+        let isMuted = false;
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const muteButton = document.getElementById('muteButton');
+            muteButton.textContent = isMuted ? '🔇' : '🔊';
+
+            // ปิด/เปิดเสียงของ audio elements ทั้งหมด
+            const audioElements = document.getElementsByTagName('audio');
+            for (let audio of audioElements) {
+                audio.muted = isMuted;
+            }
+
+            // ถ้าต้องการปิด/เปิดเสียงของวิดีโอด้วย (ถ้ามี)
+            const videoElements = document.getElementsByTagName('video');
+            for (let video of videoElements) {
+                video.muted = isMuted;
+            }
+        }
+
+        // ปรับฟังก์ชันที่เกี่ยวข้องกับการเล่นเสียง เช่น
+        function playSound(soundId) {
+            if (!isMuted) {
+                document.getElementById(soundId).play();
+            }
+        } 
+      
+       function showFeedback(message, teamIcon) {
+            document.getElementById('feedback').textContent = message;
+            const teamIconLarge = document.getElementById('teamIconLarge');
+            teamIconLarge.textContent = teamIcon;
+            teamIconLarge.style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('feedback').textContent = '';
+                teamIconLarge.style.display = 'none';
+            }, 2000);
+
+            if (message === 'ปรบมือ 👏') {
+                playSound('applauseSound');
+                displayClapButtons();
+            } else if (message === 'สู้ใหม่ 💪') {
+                playSound('encouragementSound');
+            }
+        }
+
+        function displayClapButtons() {
+            const clapButtonsContainer = document.createElement('div');
+            clapButtonsContainer.className = 'clap-buttons';
+            document.body.appendChild(clapButtonsContainer);
+
+            const clapIcons = ['👏', '👏🏻', '👏🏼', '👏🏽', '👏🏾', '👏🏿'];
+
+            for (let i = 0; i < 20; i++) {
+                const clapButton = document.createElement('button');
+                clapButton.textContent = clapIcons[Math.floor(Math.random() * clapIcons.length)];
+                clapButton.style.fontSize = `${Math.floor(Math.random() * 30) + 30}px`;
+                clapButton.style.top = `${Math.random() * 100}%`;
+                clapButton.style.left = `${Math.random() * 100}%`;
+                clapButton.onclick = () => clapButton.remove();
+                clapButtonsContainer.appendChild(clapButton);
+            }
+
+            setTimeout(() => {
+                clapButtonsContainer.remove();
+            }, 2000);
+        }
+
+          function increaseScore(team) {
+              if (team === 'A') {
+                  scoreA++;
+                  document.getElementById('scoreA').innerHTML = colorAnswer(scoreA);
+                  showFeedback('ปรบมือ 👏', document.getElementById('teamANameDisplay').textContent.split(' ')[0]);
+                  checkWinner('A', scoreA);
+              } else if (team === 'B') {
+                  scoreB++;
+                  document.getElementById('scoreB').innerHTML = colorAnswer(scoreB);
+                  showFeedback('ปรบมือ 👏', document.getElementById('teamBNameDisplay').textContent.split(' ')[0]);
+                  checkWinner('B', scoreB);
+              }
+          }
+
+          function decreaseScore(team) {
+              if (team === 'A') {
+                  scoreA--;
+                  document.getElementById('scoreA').innerHTML = colorAnswer(scoreA);
+              } else if (team === 'B') {
+                  scoreB--;
+                  document.getElementById('scoreB').innerHTML = colorAnswer(scoreB);
+              }
+          }
+
+        // ปรับฟังก์ชัน checkWinner
+          function checkWinner(team, score) {
+              if (!isNaN(winningScore) && winningScore > 0 && score >= winningScore) {
+                  Swal.fire({
+                      title: 'เรามีผู้ชนะแล้ว!',
+                      html: `ทีม ${team} ชนะด้วยคะแนน ${colorAnswer(score)}`,
+                      icon: 'success',
+                      confirmButtonText: 'ตกลง'
+                  });
+              }
+          }
+
+        // ปรับฟังก์ชัน resetScores
+        function resetScores() {
+            scoreA = 0;
+            scoreB = 0;
+            document.getElementById('scoreA').innerHTML = colorAnswer(scoreA);
+            document.getElementById('scoreB').innerHTML = colorAnswer(scoreB);
+        }
+        let lastClickTime = 0;
+        const doubleClickDelay = 300; // มิลลิวินาที
+
+        function changeFontSize() {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastClickTime < doubleClickDelay) {
+                // ป้องกันการทำงานถ้าเป็นดับเบิ้ลคลิก
+                return;
+            }
+            lastClickTime = currentTime;
+
+            const sizes = [56, 70, 84, 98, 112];
+            const currentSizeIndex = sizes.indexOf(fontSize);
+            fontSize = sizes[(currentSizeIndex + 1) % sizes.length];
+            document.getElementById('question').style.fontSize = `${fontSize}px`;
+            document.getElementById('timerText').style.fontSize = `${fontSize}px`;
+            document.getElementById('answer').style.fontSize = `${fontSize}px`;
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                document.getElementById('fullscreenButton').textContent = 'ย่อหน้าจอ';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    document.getElementById('fullscreenButton').textContent = 'ขยายหน้าจอ';
+                }
+            }
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const days = ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'];
+            const months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const day = days[now.getDay()];
+            const date = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear() + 543; // Convert to Buddhist year
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const dateTimeString = `${day} ที่ ${date} ${month} พ.ศ. ${year} เวลา ${hours}:${minutes}:${seconds}`;
+            document.getElementById('dateTime').textContent = dateTimeString;
+        }
+
+        // ปรับฟังก์ชัน shareScore
+        function shareScore() {
+            const liffId = '2005494853-kjApOeeQ';
+            const scoreA = parseInt(document.getElementById('scoreA').textContent);
+            const scoreB = parseInt(document.getElementById('scoreB').textContent);
+            const dateTime = document.getElementById('dateTime').textContent;
+            const message = `โจทย์คณิตคิดเลขเร็ว โรงเรียนบ้านวังด้ง\n\nคะแนนทีม A: ${formatNumber(scoreA)}\nคะแนนทีม B: ${formatNumber(scoreB)}\n${dateTime}\n\nคลิกเพื่อดูข้อมูลเพิ่มเติม: https://liff.line.me/2005494853-kjApOeeQ`;
+            liff.init({ liffId })
+                .then(() => {
+                    if (liff.isLoggedIn()) {
+                        liff.shareTargetPicker([
+                            {
+                                type: "text",
+                                text: message
+                            }
+                        ])
+                    } else {
+                        liff.login();
+                    }
+                })
+                .catch(err => {
+                    console.error('Error initializing LIFF:', err);
+                });
+        }
+
+        function resetTeams() {
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: 'ข้อมูลการแข่งขันจะหายไปทั้งหมดเพื่อพร้อมสำหรับการแข่งขันใหม่!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ใช่, เริ่มใหม่!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('teamAName').value = '';
+                    document.getElementById('teamBName').value = '';
+                    document.getElementById('teamAMembers').value = '';
+                    document.getElementById('teamBMembers').value = '';
+                    document.getElementById('setup').style.display = 'block';
+                    document.getElementById('quiz').style.display = 'none';
+                    document.querySelector('.settings-container').style.display = 'none';
+                    document.getElementById('teamAScores').style.display = 'none';
+                    document.getElementById('teamBScores').style.display = 'none';
+                    resetScores();
+                    Swal.fire('รีเซ็ต!', 'ข้อมูลการแข่งขันถูกรีเซ็ตแล้ว.', 'success');
+                }
+            });
+        }
+
+        // ปรับฟังก์ชัน endGame
+        function endGame() {
+            const scoreA = parseInt(document.getElementById('scoreA').textContent.replace(/,/g, ''));
+            const scoreB = parseInt(document.getElementById('scoreB').textContent.replace(/,/g, ''));
+
+            Swal.fire({
+                title: 'จบเกม!',
+                html: `การแข่งขันสิ้นสุดแล้ว<br>คะแนนทีม A: ${colorAnswer(scoreA)}<br>คะแนนทีม B: ${colorAnswer(scoreB)}<br>ขอบคุณที่เข้าร่วม!`,
+                icon: 'success',
+                confirmButtonText: 'ตกลง'
+            }).then(() => {
+                document.getElementById('setup').style.display = 'block';
+                document.getElementById('quiz').style.display = 'none';
+                document.querySelector('.settings-container').style.display = 'none';
+                document.getElementById('teamAScores').style.display = 'none';
+                document.getElementById('teamBScores').style.display = 'none';
+            });
+        }
+        function logout() {
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: 'คุณต้องการออกจากระบบ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ใช่, ออกจากระบบ!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    liff.logout();
+                    window.location.reload();
+                }
+            });
+        }
+
+        document.addEventListener('contextmenu', function(event) {
+            if (document.getElementById('teamAName').value && document.getElementById('teamBName').value) {
+                event.preventDefault();
+                nextQuestion();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space' && document.getElementById('teamAName').value && document.getElementById('teamBName').value) {
+                event.preventDefault();
+                showAnswerImmediately();
+            }
+        });
+      
+        // เพิ่ม event listeners ใน function ที่เหมาะสม เช่น ใน startQuiz หรือ document.addEventListener('DOMContentLoaded', ...)
+        function addEventListeners() {
+            // ป้องกันการแสดงเมนูคลิกขวา และเปลี่ยนโจทย์ข้อถัดไป
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                if (document.getElementById('quiz').style.display !== 'none') {
+                    nextQuestion();
+                }
+            });
+
+            // Spacebar เพื่อดูคำตอบ
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space' && document.getElementById('quiz').style.display !== 'none') {
+                    event.preventDefault();
+                    showAnswerImmediately();
+                }
+            });
+
+            // แยกการจัดการดับเบิ้ลคลิกออกมา
+            document.getElementById('quiz').addEventListener('dblclick', function(event) {
+                // ตรวจสอบว่าไม่ได้คลิกที่ปุ่มหรือองค์ประกอบอื่นๆ ที่ไม่ควรทำให้จบเกม
+                if (!event.target.closest('button') && !event.target.closest('input') && !event.target.closest('select')) {
+                    endGame();
+                }
+            });
+        }
+        setInterval(updateDateTime, 1000);
+
+        // LIFF initialization to get profile picture
+        function initializeLiff() {
+            const liffId = '2005494853-kjApOeeQ';
+            liff.init({ liffId })
+                .then(() => {
+                    if (liff.isLoggedIn()) {
+                        liff.getProfile()
+                            .then(profile => {
+                                document.getElementById('profilePic').src = profile.pictureUrl;
+                            })
+                            .catch(err => {
+                                console.error('Error getting profile:', err);
+                            });
+                    } else {
+                        liff.login();
+                    }
+                })
+                .catch(err => {
+                    console.error('Error initializing LIFF:', err);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeLiff);
+
+        function toggleNavBar() {
+            var navBar = document.getElementById('navBar');
+            var toggleButton = document.getElementById('toggleNavButton');
+            if (navBar.style.display === 'none') {
+                navBar.style.display = 'flex';
+                toggleButton.textContent = 'ซ่อนเมนู';
+            } else {
+                navBar.style.display = 'none';
+                toggleButton.textContent = 'แสดงเมนู';
+            }
+        }
+
+        function toggleFooter() {
+            var footer = document.getElementById('footer');
+            var footerToggle = document.getElementById('footerToggle');
+            if (footer.style.height === '20px') {
+                footer.style.height = 'auto';
+                footerToggle.textContent = 'ย่อ';
+            } else {
+                footer.style.height = '20px';
+                footerToggle.textContent = 'ขยาย';
+            }
+        }
+    </script>
+</body>
+</html>

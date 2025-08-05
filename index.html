@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สารสนเทศโรงเรียนบ้านวังด้ง</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.20.0/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="https://raw.githubusercontent.com/infobwd/STUDENT-CARE/main/icons8-information-96.png" type="image/x-icon">
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.13/lottie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script> <!-- Add this line -->
+
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav Section -->  
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+        <a class="navbar-brand" href="https://wd-information.glitch.me/">
+            <img src="https://raw.githubusercontent.com/infobwd/STUDENT-CARE/main/icons8-information-96.png" alt="Logo" width="30" height="30" class="d-inline-block align-top"> สารสนเทศโรงเรียนบ้านวังด้ง
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        เมนู
+                    </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="index.html"><i class="fas fa-info-circle"></i> ข้อมูลพื้นฐาน</a></li>
+                            <li><a class="dropdown-item" href="playaudion.html"><i class="fas fa-bullhorn"></i> ประชาสัมพันธ์ตัวน้อยบ้านวังด้ง</a></li>
+                            <li><a class="dropdown-item" href="qr_scanner.html"><i class="fas fa-qrcode"></i> ระบบ Scan QR Code</a></li>
+                        </ul>
+                </li>
+            </ul>
+            <form class="d-flex flex-fill" role="search" action="search.html" method="get">
+                <input class="form-control me-2" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ค้นหาโดยรหัสนักเรียน" aria-label="Search" id="studentIdSearch" name="studentId">
+                <button class="btn btn-outline-light me-2" type="submit">ค้นหา</button>
+            </form>
+            <button id="fullscreenButton" class="btn btn-outline-light me-2">ขยายเต็มจอ</button>
+            <button id="fontSizeButton" class="btn btn-outline-light me-2">ก</button>
+            <button id="login-button" class="btn btn-primary"><i class="fab fa-line"></i> LINE Login</button>
+        </div>
+    </div>
+</nav>
+<br>
+
+<div id="content-section" class="container mt-5" style="margin-top: 70px;">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+        <div class="text-start order-2 order-md-1">
+            <span id="currentDateTime" class="currentDateTime"></span>
+        </div>
+        <div class="text-end order-1 order-md-2">
+            <img id="profile-picture" src="" alt="Profile Picture" class="rounded-circle" width="50" height="50" style="display: none;">
+            <span id="profile-name" class="ms-2"></span>
+            <button id="logout-button" class="btn btn-secondary ms-2" style="display: none;">Logout</button>
+            <button id="share-button" class="btn btn-success ms-2" style="display: none;"><i class="fab fa-line"></i> Share</button>
+        </div>
+    </div>
+  <div class="mb-4 d-flex flex-wrap">
+    <div class="me-2 mb-2">
+        <h2>เลือกภาคเรียน</h2>
+        <select id="semesterDropdown" class="form-control"></select>
+    </div>
+    <div class="me-2 mb-2">
+        <h2>เลือกชั้น</h2>
+        <select id="classDropdown" class="form-control">
+            <option value="">ทั้งหมด</option>
+        </select>
+    </div>
+    <div class="me-2 mb-2">
+        <h2>เลือกวันที่</h2>
+        <input type="date" id="datePicker" class="form-control">
+    </div>
+</div>
+
+    <!-- Carousel ทุก ๆ 20 วิ เปลี่ยน 1 ครั้ง-->
+    <div id="infoCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="20000"> 
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#infoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="ข้อมูลนักเรียนปัจจุบัน"></button>
+            <button type="button" data-bs-target="#infoCarousel" data-bs-slide-to="1" aria-label="สถิติ [มาเรียน/มาทำงาน วันนี้]"></button>
+            <button type="button" data-bs-target="#infoCarousel" data-bs-slide-to="2" aria-label="สถิติการออมก่อนใช้"></button>
+            <button type="button" data-bs-target="#infoCarousel" data-bs-slide-to="3" aria-label="สถิติการออมก่อนใช้"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <h2 align="right">ข้อมูลนักเรียนปัจจุบัน</h2>
+                <ul class="box-info">
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2995/2995459.png" style="width: 80px; height: 80px;" alt="นักเรียนทั้งหมด">
+                        <span class="text">
+                            <p>นักเรียนทั้งหมด</p>
+                            <h3 id="totalStudents">0 <span style="font-size: 12px">(คน)</span></h3>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2995/2995657.png" style="width: 80px; height: 80px;" alt="นักเรียนชาย">
+                        <span class="text">
+                            <p>นักเรียนชาย</p>
+                            <h3 id="maleStudents">0 <span style="font-size: 12px">(คน)</span></h3>
+                            <p><span id="maleStudentsPercent">0%</span></p>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2995/2995462.png" style="width: 80px; height: 80px;" alt="นักเรียนหญิง">
+                        <span class="text">
+                            <p>นักเรียนหญิง</p>
+                            <h3 id="femaleStudents">0 <span style="font-size: 12px">(คน)</span></h3>
+                            <p><span id="femaleStudentsPercent">0%</span></p>
+                        </span>
+                    </li>
+                </ul>
+                <ul class="box-info">
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/3197/3197877.png" style="width: 80px; height: 80px;" alt="จำนวนห้องเรียน">
+                        <span class="text">
+                            <p>จำนวนห้องเรียน</p>
+                            <h3 id="classrooms">0 <span style="font-size: 12px">(ห้อง)</span></h3>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/5369/5369664.png" style="width: 80px; height: 80px;" alt="จำนวนครู">
+                        <span class="text">
+                            <p>จำนวนครู</p>
+                            <h3 id="teachers">0 <span style="font-size: 12px">(คน)</span></h3>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/16770/16770393.png" style="width: 80px; height: 80px;" alt="จำนวนครูต่อนักเรียน">
+                        <span class="text">
+                            <p>จำนวนครูต่อนักเรียน</p>
+                            <h3 id="teacherStudentRatio">0 <span style="font-size: 12px">(คน)</span></h3>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- สถิติ [มาเรียน/มาทำงาน วันนี้] -->
+            <div class="carousel-item">
+                <h2 align="right">สถิติการมาเรียนประจำวัน</h2>
+                <ul class="box-info">
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2995/2995459.png" style="width: 80px; height: 80px;" alt="นักเรียนทั้งหมด">
+                        <span class="text">
+                            <p>นักเรียนทั้งหมด</p>
+                            <h3 id="totalStudentsToday">0 <span style="font-size: 12px">(คน)</span></h3>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/6747/6747171.png" style="width: 80px; height: 80px;" alt="มาเรียน">
+                        <span class="text">
+                            <p>มาเรียน</p>
+                            <h3 id="studentsPresent">0 <span style="font-size: 12px">(คน)</span></h3>
+                            <p><span id="studentsPresentPercent">0%</span></p>
+                        </span>
+                    </li>
+                    <li id="studentsAbsentLi" class="box-info-item">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4743/4743222.png" style="width: 80px; height: 80px;" alt="ขาดเรียน">
+                        <span class="text">
+                            <p>ขาดเรียน</p>
+                            <h3 id="studentsAbsent">0 <span style="font-size: 12px">(คน)</span></h3>
+                            <p><span id="studentsAbsentPercent">0%</span></p>
+                        </span>
+                    </li>
+                     <li id="studentsNotPresentLi" class="box-info-item">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5256/5256714.png" style="width: 80px; height: 80px;" alt="ไม่มาเรียน">
+                        <span class="text">
+                            <p>ไม่มาเรียน</p>
+                            <h3 id="studentsNotPresent">0 <span style="font-size: 12px">(คน)</span></h3>
+                            <p><span id="studentsNotPresentPercent">0%</span></p>
+                        </span>
+                    </li>
+                  </ul>
+                  <ul class="box-info">
+                <!-- Add this inside the existing ul with id "studentsAbsent5DaysLi" -->
+                  <li id="studentsAbsent5DaysLi" class="box-info-item position-relative">
+                      <img src="https://cdn-icons-png.flaticon.com/512/10296/10296077.png" style="width: 80px; height: 80px;" alt="ร้อยละการไม่มาเรียนมากกว่า 40">
+                      <span class="text">
+                          <p>ร้อยละการไม่มาเรียนมากกว่า 35</p>
+                          <h3 id="studentsAbsent5Days">0 <span style="font-size: 12px">(คน)</span></h3>
+                          <p><span id="studentsAbsent5DaysPercent">0%</span></p>
+                      </span>
+                      <button id="shareButton5Days" class="btn btn-success position-absolute share-button" style="top: 0; right: 0; display: none;">
+                          <i class="fab fa-line"></i> แชร์ข้อมูลเพื่อติดตาม
+                      </button>
+                  </li>
+
+
+                  <!-- Add this inside the existing ul with id "studentsAbsent7DaysLi" -->
+                  <li id="studentsAbsent7DaysLi" class="box-info-item position-relative">
+                      <img src="https://cdn-icons-png.flaticon.com/512/10296/10296129.png" style="width: 80px; height: 80px;" alt="ขาดเรียนสะสมรวมเกิน 7 วัน/เดือน">
+                      <span class="text">
+                          <p>ขาดเรียนสะสมรวมเกิน 7 วัน/เดือน</p>
+                          <h3 id="studentsAbsent7Days">0 <span style="font-size: 12px">(คน)</span></h3>
+                          <p><span id="studentsAbsent7DaysPercent">0%</span></p>
+                      </span>
+                      <button id="shareButton7Days" class="btn btn-success position-absolute share-button" style="top: 0; right: 0; display: none;">
+                          <i class="fab fa-line"></i> แชร์ข้อมูลเพื่อติดตาม
+                      </button>
+                  </li>
+                   <li id="checkedClassroomsLi" class="box-info-item">
+                        <img src="https://cdn-icons-png.flaticon.com/512/16811/16811541.png" style="width: 80px; height: 80px;" alt="หอพัก">
+                        <span class="text">
+                            <p>จำนวนห้องที่เช็คเวลาแล้ว</p>
+                            <h3 id="checkedClassrooms">0 <span style="font-size: 12px">(ห้อง)</span></h3>
+                            <p><span id="checkedClassroomsPercent">0%</span></p>
+                        </span>
+                  </li>
+                </ul>
+            </div>
+
+            <!-- >สถิติการออมก่อนใช้ -->
+        <div class="carousel-item" id="savingStatsSlide">
+                <h2 align="right">สถิติการออมก่อนใช้</h2>
+                <ul class="box-info">
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2995/2995459.png" style="width: 80px; height: 80px;" alt="นักเรียนทั้งหมด">
+                        <span class="text">
+                            <p>นักเรียนทั้งหมด</p>
+                            <h3 id="totalStudentsSaving">0 <span style="font-size: 12px">(คน)</span></h3>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/10296/10296077.png" style="width: 80px; height: 80px;" alt="เปิดบัญชีกับโรงเรียน">
+                        <span class="text">
+                            <p>เปิดบัญชีกับโรงเรียน</p>
+                            <h3 id="schoolAccounts">0 <span style="font-size: 12px">(คน)</span></h3>
+                            <p><span id="schoolAccountsPercent">0%</span></p>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://raw.githubusercontent.com/infobwd/wdconnect/main/Logo%20แนวตั้ง.jpg" style="width: 80px; height: 80px;" alt="เปิดบัญชีกับธนาคารออมสิน">
+                        <span class="text">
+                            <p>เปิดบัญชีกับธนาคารออมสิน</p>
+                            <h3 id="bankAccounts">0 <span style="font-size: 12px">(คน)</span></h3>
+                            <p><span id="bankAccountsPercent">0%</span></p>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/4825/4825116.png" style="width: 80px; height: 80px;" alt="ฝากถอนวันนี้ (บาท)">
+                        <span class="text">
+                            <p>ฝากถอนวันนี้</p>
+                            <h3 id="transactionAmount">0 <span style="font-size: 12px">(บาท)</span></h3>
+                            <p><span id="transactionAmountPercent">0%</span></p>
+                        </span>
+                    </li>
+                </ul>
+                <ul class="box-info">
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/4825/4825116.png" style="width: 80px; height: 80px;" alt="ฝากถอนวันนี้ (บาท)">
+                        <span class="text">
+                            <p>ฝากถอนวันนี้ (บาท)</p>
+                            <h3 id="transactionAmountToday">0 <span style="font-size: 12px">(บาท)</span></h3>
+                        </span>
+                    </li>
+                    <li>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2108/2108625.png" style="width: 80px; height: 80px;" alt="ยอดเงินในธนาคารโรงเรียน (บาท)">
+                        <span class="text">
+                            <p>ยอดเงินในธนาคารโรงเรียน (บาท)</p>
+                            <h3 id="schoolBankAmount">0 <span style="font-size: 12px">(บาท)</span></h3>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+<!--          สถิติ งานที่ได้รับมอบหมาย -->
+        <!-- สถิติ งานที่ได้รับมอบหมาย -->
+<!-- สถิติ งานที่ได้รับมอบหมาย -->
+<div class="carousel-item" id="WorkSlide">
+    <h2 align="right">สถิติหนังสือราชการมอบหมายงาน</h2>
+    <ul class="box-info">
+        <li>
+            <img src="https://cdn-icons-png.flaticon.com/512/3176/3176395.png" style="width: 80px; height: 80px;" alt="งานทั้งหมด">
+            <span class="text">
+                <p>งานทั้งหมด</p>
+                <h3 id="totalTasks">0 <span style="font-size: 12px">(งาน)</span></h3>
+            </span>
+        </li>
+        <li>
+            <img src="https://cdn-icons-png.flaticon.com/512/2413/2413395.png" style="width: 80px; height: 80px;" alt="งานประจำเดือนนี้">
+            <span class="text">
+                <p>งานประจำเดือนนี้</p>
+                <h3 id="monthlyTasks">0 <span style="font-size: 12px">(งาน)</span></h3>
+                <p><span id="monthlyTasksPercent">0%</span></p>
+            </span>
+        </li>
+        <li id="completedTasksLi" class="box-info-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" style="width: 80px; height: 80px;" alt="เรียบร้อย">
+            <span class="text">
+                <p>เรียบร้อย</p>
+                <h3 id="completedTasks">0 <span style="font-size: 12px">(งาน)</span></h3>
+                <p><span id="completedTasksPercent">0%</span></p>
+            </span>
+        </li>
+        <li id="pendingTasksLi" class="box-info-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/1021/1021799.png" style="width: 80px; height: 80px;" alt="รอดำเนินการ">
+            <span class="text">
+                <p>รอดำเนินการ</p>
+                <h3 id="pendingTasks">0 <span style="font-size: 12px">(งาน)</span></h3>
+                <p><span id="pendingTasksPercent">0%</span></p>
+            </span>
+        </li>
+        <li id="myTasksLi" class="box-info-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/1534/1534938.png" style="width: 80px; height: 80px;" alt="งานของฉัน">
+            <span class="text">
+                <p>งานของฉัน</p>
+                <h3 id="myTasks">0 <span style="font-size: 12px">(งาน)</span></h3>
+                <p><span id="myTasksPercent">0%</span></p>
+            </span>
+        </li>
+        <li id="overdueTasksLi" class="box-info-item position-relative">
+            <img src="https://cdn-icons-png.flaticon.com/512/6897/6897039.png" style="width: 80px; height: 80px;" alt="เกินกำหนด">
+            <span class="text">
+                <p>เกินกำหนด</p>
+                <h3 id="overdueTasks">0 <span style="font-size: 12px">(งาน)</span></h3>
+                <p><span id="overdueTasksPercent">0%</span></p>
+            </span>
+            <button id="shareButtonOverdue" class="btn btn-danger position-absolute share-button" style="top: 0; right: 0; display: none;">
+                <i class="fas fa-exclamation-triangle"></i> แจ้งเตือน
+            </button>
+        </li>
+    </ul>
+    <ul class="box-info">
+        <li id="trainingTasksLi" class="box-info-item" style="cursor: pointer;">
+            <img src="https://cdn-icons-png.flaticon.com/512/3176/3176395.png" style="width: 80px; height: 80px;" alt="งานอบรม">
+            <span class="text">
+                <p>งานอบรม</p>
+                <h3 id="trainingTasks">0 <span style="font-size: 12px">(งาน)</span></h3>
+            </span>
+        </li>
+    </ul>
+</div>
+
+<!-- Modal สำหรับแสดงรายการงานอบรม -->
+<div class="modal fade" id="trainingTasksModal" tabindex="-1" aria-labelledby="trainingTasksModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trainingTasksModalLabel">รายการงานอบรม</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="assigneeDropdown" class="form-label">เลือก Assignee</label>
+                    <select id="assigneeDropdown" class="form-select">
+                        <option value="">ทั้งหมด</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="startDate" class="form-label">วันที่เริ่มต้น</label>
+                    <input type="date" id="startDate" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="endDate" class="form-label">วันที่สิ้นสุด</label>
+                    <input type="date" id="endDate" class="form-control">
+                </div>
+                <ul id="trainingTasksList" class="list-group"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                <button id="exportExcelBtn" type="button" class="btn btn-primary">Export to Excel</button>
+                <button id="shareToLineBtn" type="button" class="btn btn-success">Share to Line</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#infoCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#infoCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+  
+    <div class="mb-3 marquee">
+        <div><span id="newsTicker"></span></div>
+        <a href="news.html" class="news-button">อ่านข่าวทั้งหมด</a>
+    </div>
+</div>
+<br>
+<!-- Footer Section -->
+<div id="footer-container"></div>
+<!-- Chat Button -->
+<button onclick="chatFunction()" id="chatBtn" title="Chat with us"><i class="fa fa-comments"></i></button>
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script src="script.js"></script>
+<script>
+
+  
+function showToast(message, type = 'primary') {
+    const toastContainer = document.getElementById('toast-container');
+    const toastElement = document.createElement('div');
+    let toastClass;
+    
+    if (type === 'warning') {
+        toastClass = 'bg-warning text-dark';
+    } else if (type === 'success') {
+        toastClass = 'bg-success text-white';
+    } else {
+        toastClass = 'bg-primary text-white';
+    }
+    
+    toastElement.className = `toast align-items-center ${toastClass} border-0`;
+    toastElement.setAttribute('role', 'alert');
+    toastElement.setAttribute('aria-live', 'assertive');
+    toastElement.setAttribute('aria-atomic', 'true');
+
+    const toastBody = document.createElement('div');
+    toastBody.className = 'd-flex';
+    toastBody.innerHTML = `
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    `;
+
+    toastElement.appendChild(toastBody);
+    toastContainer.appendChild(toastElement);
+
+    const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+    toast.show();
+
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
+}
+
+
+
+function loadTransactionData(selectedDate) {
+    // Fetch transaction data
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/Sortรายการฝากและถอน')
+        .then(response => response.json())
+        .then(transactionData => {
+            // Filter transactions by selected date
+            const transactions = transactionData.filter(item => {
+                const [date, time] = item['วันที่'].split(', ');
+                const [day, month, year] = date.split('/');
+                const transactionDate = new Date(year - 543, month - 1, day).toISOString().split('T')[0];
+
+                const [selectedYear, selectedMonth, selectedDay] = selectedDate.split('-');
+                const selectedDateIso = new Date(selectedYear, selectedMonth - 1, selectedDay).toISOString().split('T')[0];
+
+                return transactionDate === selectedDateIso;
+            });
+
+            let totalBalance = 0;
+            const uniqueAccounts = new Set();
+
+            transactions.forEach(transaction => {
+                // Replace commas and convert to float
+                const amount = parseFloat(transaction['จำนวนเงิน'].replace(/,/g, ''));
+                uniqueAccounts.add(transaction['บัญชี']);
+                if (transaction['รายการ'] === 'ฝาก') {
+                    totalBalance += amount;
+                } else if (transaction['รายการ'] === 'ถอน') {
+                    totalBalance -= amount;
+                }
+            });
+
+            const transactionAmount = uniqueAccounts.size;
+
+            // Calculate the transaction amount percentage
+            const schoolAccounts = parseInt(document.getElementById('schoolAccounts').textContent.split(' ')[0]) || 0;
+            const transactionAmountPercent = schoolAccounts ? ((transactionAmount / schoolAccounts) * 100).toFixed(2) : 0;
+
+            const formatter = new Intl.NumberFormat('th-TH', {
+                style: 'currency',
+                currency: 'THB',
+            });
+
+            document.getElementById('transactionAmountToday').innerHTML = `${formatter.format(totalBalance)}`;
+            document.getElementById('transactionAmount').textContent = transactionAmount + ' บัญชี';
+            document.getElementById('transactionAmountPercent').textContent = transactionAmountPercent + '%';
+
+            // Show toast with the transaction amount and transaction amount percent
+            showToast(`ยอดฝากถอนวันนี้: ${formatter.format(totalBalance)}, คิดเป็น ${transactionAmountPercent}% ของบัญชีทั้งหมด`);
+
+            // Fetch account data for bank accounts and school bank amount
+            return fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/บัญชี');
+        })
+        .then(response => response.json())
+        .then(accountData => {
+            const selectedClass = document.getElementById('classDropdown').value;
+            let filteredAccounts = accountData;
+
+            if (selectedClass) {
+                filteredAccounts = filteredAccounts.filter(account => account['ห้อง'] === selectedClass);
+            }
+
+            const activeAccounts = filteredAccounts.filter(account => account['สถานะบัญชี'] === 'ปกติ');
+            const uniqueSchoolAccounts = activeAccounts.length;
+
+            const bankAccounts = filteredAccounts.filter(account => account['ออมสิน'] === 'TRUE').length;
+
+            document.getElementById('schoolAccounts').textContent = uniqueSchoolAccounts + ' บัญชี';
+            document.getElementById('bankAccounts').textContent = bankAccounts + ' บัญชี';
+
+            const schoolBankAmount = filteredAccounts.reduce((sum, account) => sum + parseFloat(account['จำนวนเงินคงเหลือ'].replace(/,/g, '')), 0);
+            const formatter = new Intl.NumberFormat('th-TH', {
+                style: 'currency',
+                currency: 'THB',
+            });
+            document.getElementById('schoolBankAmount').innerHTML = `${formatter.format(schoolBankAmount)}`;
+
+            // Calculate school accounts percent compared to total students saving
+            const totalStudentsSaving = parseInt(document.getElementById('totalStudentsSaving').textContent.split(' ')[0]) || 0;
+            const schoolAccountsPercent = totalStudentsSaving ? ((uniqueSchoolAccounts * 100) / totalStudentsSaving).toFixed(2) : 0;
+            document.getElementById('schoolAccountsPercent').textContent = schoolAccountsPercent + '%';
+
+            // Calculate the bank accounts percentage based on the school accounts
+            const bankAccountsPercent = uniqueSchoolAccounts ? ((bankAccounts / uniqueSchoolAccounts) * 100).toFixed(2) : 0;
+            document.getElementById('bankAccountsPercent').textContent = bankAccountsPercent + '%';
+
+            // Load the latest transaction data
+            loadLatestTransactionData();
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            document.getElementById('transactionAmountToday').textContent = 'Error loading data';
+            document.getElementById('transactionAmount').textContent = 'Error loading data';
+            document.getElementById('transactionAmountPercent').textContent = 'Error loading data';
+            document.getElementById('schoolBankAmount').textContent = 'Error loading data';
+            document.getElementById('bankAccountsPercent').textContent = 'Error loading data';
+        });
+}
+
+
+
+
+
+function loadLatestTransactionData() {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/Sortรายการฝากและถอน')
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                const today = new Date();
+                const todayDay = today.getDate();
+                const todayMonth = today.getMonth() + 1;
+                const todayYear = today.getFullYear() + 543; // Convert to Thai Buddhist calendar year
+                const classDropdown = document.getElementById('classDropdown');
+                const selectedClass = classDropdown.value;
+
+                // Filter today's transactions
+                let todayTransactions = data.filter(entry => {
+                    const [date, time] = entry['วันที่'].split(', ');
+                    const [day, month, year] = date.split('/').map(Number);
+                    return day === todayDay && month === todayMonth && year === todayYear;
+                });
+
+                // If a class is selected, further filter the transactions by the selected class
+                if (selectedClass && selectedClass !== "ทั้งหมด") {
+                    todayTransactions = todayTransactions.filter(entry => entry['ชั้น'] === selectedClass);
+                }
+
+                if (todayTransactions.length > 0) {
+                    // Sort today's transactions by time in descending order to get the latest
+                    todayTransactions.sort((a, b) => {
+                        const timeA = a['วันที่'].split(', ')[1];
+                        const timeB = b['วันที่'].split(', ')[1];
+                        return new Date(`1970-01-01T${timeB}Z`) - new Date(`1970-01-01T${timeA}Z`);
+                    });
+
+                    // Get the latest entry
+                    const latestEntry = todayTransactions[0];
+                    const account = latestEntry['บัญชี'];
+                    const studentClass = latestEntry['ชั้น'];
+                    const transactionType = latestEntry['รายการ'];
+                    // Replace commas and convert to float
+                    const amount = parseFloat(latestEntry['จำนวนเงิน'].replace(/,/g, '')).toFixed(2);
+                    const [date, time] = latestEntry['วันที่'].split(', ');
+
+                    const message = `วันที่: ${date}, เวลา: ${time}, บัญชี: ${account}, ชั้น: ${studentClass}, รายการ: ${transactionType}, จำนวนเงิน: ${amount} บาท`;
+                    showToast(message, 'success');
+                } else {
+                    showToast('ไม่พบข้อมูลล่าสุดสำหรับวันนี้', 'warning');
+                }
+            } else {
+                showToast('ไม่พบข้อมูลล่าสุด', 'warning');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching latest transaction data:', error);
+            showToast('Error loading data', 'warning');
+        });
+}
+
+
+
+
+
+/////จบอันล่าสุดที่ใช้งานได้ในการโชว์ ยอดรวมการฝากและยอดการฝากล่าสุด
+
+
+
+function loadStudentAttendanceData(selectedDate) {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/สถิติมาเรียนแต่ละวัน')
+        .then(response => response.json())
+        .then(attendanceData => {
+            const classDropdown = document.getElementById('classDropdown');
+            const selectedClass = classDropdown.value || "ทั้งหมด";
+
+            if (selectedClass !== "ทั้งหมด") {
+                attendanceData = attendanceData.filter(record => record['ชั้น'] === selectedClass);
+            }
+
+            const selectedDateObj = new Date(selectedDate);
+            const selectedDay = String(selectedDateObj.getDate());
+            const selectedMonth = String(selectedDateObj.getMonth() + 1);
+            const selectedYear = String(selectedDateObj.getFullYear() + 543);
+            const selectedDateThai = `${selectedDay}/${selectedMonth}/${selectedYear}`;
+
+            const attendanceRecords = attendanceData.filter(item => item['วันที่'].trim() === selectedDateThai);
+
+            let studentsPresent = 0;
+            let studentsAbsent = 0;
+            let absentStudentsDetails = '';
+
+            attendanceRecords.forEach(record => {
+                studentsPresent += parseInt(record['มาเช้า']) || 0;
+                studentsPresent += parseInt(record['มา']) || 0;
+                studentsPresent += parseInt(record['สาย']) || 0;
+                studentsAbsent += parseInt(record['ขาด']) || 0;
+
+                if (parseInt(record['ขาด']) > 0) {
+                    absentStudentsDetails += `${record['ชั้น']} - ${record['ขาด'] } คน<br>`;
+                }
+            });
+
+            const totalStudents = parseInt(document.getElementById('totalStudentsToday').textContent.split(' ')[0]) || 0;
+            const studentsPresentPercent = totalStudents ? ((studentsPresent / totalStudents) * 100).toFixed(2) : 0;
+            const studentsAbsentPercent = totalStudents ? ((studentsAbsent / totalStudents) * 100).toFixed(2) : 0;
+
+            document.getElementById('studentsPresent').textContent = studentsPresent + ' คน';
+            document.getElementById('studentsPresentPercent').textContent = studentsPresentPercent + '%';
+            document.getElementById('studentsAbsent').textContent = studentsAbsent + ' คน';
+            document.getElementById('studentsAbsentPercent').textContent = studentsAbsentPercent + '%';
+
+            // Initialize and show popover for studentsAbsent
+            const popoverElement = document.getElementById('studentsAbsentLi');
+            if (popoverElement) {
+                popoverElement.setAttribute('data-bs-content', absentStudentsDetails || 'ไม่มีนักเรียนที่ขาดเรียน');
+                // Dispose of any existing popover instance to avoid conflicts
+                const existingPopover = bootstrap.Popover.getInstance(popoverElement);
+                if (existingPopover) {
+                    existingPopover.dispose();
+                }
+                // Initialize the popover
+                const popover = new bootstrap.Popover(popoverElement, {
+                    trigger: 'click',
+                    html: true,
+                    placement: 'right'
+                });
+                // Show the popover on click
+                popoverElement.addEventListener('click', () => {
+                    popover.toggle();
+                });
+                // Hide the popover when clicking outside
+                document.addEventListener('click', (event) => {
+                    if (!popoverElement.contains(event.target)) {
+                        popover.hide();
+                    }
+                });
+            }
+
+            loadStudentsAbsent5Days(selectedClass);
+            loadStudentsAbsent7Days(selectedClass, selectedDate);
+            loadStudentsNotPresent(selectedClass, selectedDate);
+        })
+        .catch(error => {
+            console.error('Error fetching attendance data:', error);
+            document.getElementById('studentsPresent').textContent = 'Error loading data';
+            document.getElementById('studentsPresentPercent').textContent = 'Error loading data';
+            document.getElementById('studentsAbsent').textContent = 'Error loading data';
+            document.getElementById('studentsAbsentPercent').textContent = 'Error loading data';
+        });
+}
+
+
+function loadStudentsAbsent5Days(selectedClass) {
+    const attendanceStatsUrl = 'https://opensheet.elk.sh/1MpKSwVsPrm6u-7m9D39ReJGXJwLnjYJSAuTk1t-tRDc/สถิติการมาเรียน';
+    const attendanceCheckUrl = 'https://opensheet.elk.sh/1MpKSwVsPrm6u-7m9D39ReJGXJwLnjYJSAuTk1t-tRDc/เช็คมาเรียน';
+
+    Promise.all([
+        fetch(attendanceStatsUrl).then(response => response.json()),
+        fetch(attendanceCheckUrl).then(response => response.json())
+    ]).then(([attendanceStatsData, attendanceCheckData]) => {
+        if (selectedClass !== "ทั้งหมด") {
+            attendanceStatsData = attendanceStatsData.filter(record => record['ชั้น'] === selectedClass);
+        }
+
+        const lastAbsenceMap = {};
+        attendanceCheckData.forEach(record => {
+            const studentId = record['รหัส'];
+            const recordDateParts = record['วันที่'].split('/');
+            const recordDate = new Date(recordDateParts[2] - 543, recordDateParts[1] - 1, recordDateParts[0]);
+
+            if (!lastAbsenceMap[studentId] || recordDate > lastAbsenceMap[studentId]) {
+                lastAbsenceMap[studentId] = recordDate;
+            }
+        });
+
+        // Sort the attendance statistics data by absence rate in descending order
+        attendanceStatsData.sort((a, b) => parseFloat(b['ร้อยละไม่มาเรียน']) - parseFloat(a['ร้อยละไม่มาเรียน']));
+
+        let studentsAbsent5Days = 0;
+        let absentStudentsDetails = '';
+
+        attendanceStatsData.forEach(record => {
+            const studentId = record['เลขประจำตัวนักเรียน'];
+            const absenceRate = parseFloat(record['ร้อยละไม่มาเรียน']);
+            if (absenceRate >= 35) {
+                studentsAbsent5Days++;
+                const studentName = record['ชื่อ สกุล.'];
+                const studentClass = record['ชั้น'];
+                const absenceDays = record['รวม ขาด และ ลา'];
+                const lastAbsenceDate = lastAbsenceMap[studentId] ? lastAbsenceMap[studentId].toLocaleDateString('th-TH') : 'N/A';
+                absentStudentsDetails += `${studentName} - ${studentClass} - รวม ขาด และ ลา ${absenceDays} วัน (${absenceRate}%) - ขาดล่าสุด: ${lastAbsenceDate}<br>`;
+            }
+        });
+
+        document.getElementById('studentsAbsent5Days').textContent = studentsAbsent5Days + ' คน';
+
+        const totalStudents = parseInt(document.getElementById('totalStudentsToday').textContent.split(' ')[0]) || 0;
+        const studentsAbsent5DaysPercent = totalStudents ? ((studentsAbsent5Days / totalStudents) * 100).toFixed(2) : 0;
+        document.getElementById('studentsAbsent5DaysPercent').textContent = studentsAbsent5DaysPercent + '%';
+
+        const popoverElement = document.getElementById('studentsAbsent5DaysLi');
+        if (popoverElement) {
+            popoverElement.setAttribute('data-bs-content', absentStudentsDetails || 'ไม่มีนักเรียนที่มีร้อยละการไม่มาเรียนมากกว่า 35');
+            const existingPopover = bootstrap.Popover.getInstance(popoverElement);
+            if (existingPopover) {
+                existingPopover.dispose();
+            }
+            const popover = new bootstrap.Popover(popoverElement, {
+                trigger: 'click',
+                html: true,
+                placement: 'right'
+            });
+            popoverElement.addEventListener('click', () => {
+                popover.toggle();
+            });
+            document.addEventListener('click', (event) => {
+                if (!popoverElement.contains(event.target)) {
+                    popover.hide();
+                }
+            });
+        }
+
+        if (studentsAbsent5Days > 0) {
+            document.getElementById('shareButton5Days').style.display = 'block';
+        } else {
+            document.getElementById('shareButton5Days').style.display = 'none';
+        }
+    }).catch(error => {
+        console.error('Error fetching attendance data:', error);
+        document.getElementById('studentsAbsent5Days').textContent = 'Error loading data';
+    });
+}
+
+
+
+
+
+
+
+function loadStudentsAbsent7Days(selectedClass, selectedDate) {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/เช็คมาเรียน')
+        .then(response => response.json())
+        .then(attendanceCheckData => {
+            if (selectedClass !== "ทั้งหมด") {
+                attendanceCheckData = attendanceCheckData.filter(record => record['ชั้น'] === selectedClass);
+            }
+
+            const studentAbsences = {};
+            const selectedDateObj = new Date(selectedDate);
+            const selectedMonth = selectedDateObj.getMonth() + 1;
+            const selectedYear = selectedDateObj.getFullYear();
+
+            attendanceCheckData.forEach(record => {
+                const recordDateParts = record['วันที่'].split('/');
+                const recordMonth = parseInt(recordDateParts[1]);
+                const recordYear = parseInt(recordDateParts[2]) - 543;
+                const recordDate = new Date(recordYear, recordMonth - 1, recordDateParts[0]);
+
+                if (recordMonth === selectedMonth && recordYear === selectedYear) {
+                    const studentId = record['รหัส'];
+                    if (record['สถานะ'] === 'ขาด') {
+                        if (!studentAbsences[studentId]) {
+                            studentAbsences[studentId] = { count: 0, lastDate: recordDate };
+                        }
+                        studentAbsences[studentId].count++;
+                        if (recordDate > studentAbsences[studentId].lastDate) {
+                            studentAbsences[studentId].lastDate = recordDate;
+                        }
+                    }
+                }
+            });
+
+            const studentsSorted = Object.keys(studentAbsences).sort((a, b) => studentAbsences[b].count - studentAbsences[a].count);
+
+            let studentsAbsent7Days = 0;
+            let absentStudentsDetails = '';
+            for (let studentId of studentsSorted) {
+                if (studentAbsences[studentId].count >= 7) {
+                    studentsAbsent7Days++;
+                    const student = attendanceCheckData.find(record => record['รหัส'] === studentId);
+                    const studentTotalAbsences = studentAbsences[studentId].count;
+                    const totalSchoolDays = 200; // Replace with actual number of school days if known
+                    const absencePercentage = ((studentTotalAbsences / totalSchoolDays) * 100).toFixed(2);
+                    const lastAbsenceDate = studentAbsences[studentId].lastDate.toLocaleDateString('th-TH');
+                    absentStudentsDetails += `${student['รายชื่อนักเรียน']} - ${student['ชั้น']} - ขาด ${studentTotalAbsences} วัน (${absencePercentage}%) - ขาดล่าสุด: ${lastAbsenceDate}<br>`;
+                }
+            }
+
+            document.getElementById('studentsAbsent7Days').textContent = studentsAbsent7Days + ' คน';
+
+            const totalStudents = parseInt(document.getElementById('totalStudentsToday').textContent.split(' ')[0]) || 0;
+            const studentsAbsent7DaysPercent = totalStudents ? ((studentsAbsent7Days / totalStudents) * 100).toFixed(2) : 0;
+            document.getElementById('studentsAbsent7DaysPercent').textContent = studentsAbsent7DaysPercent + '%';
+
+            // Initialize and show popover for studentsAbsent7Days
+            const popoverElement = document.getElementById('studentsAbsent7DaysLi');
+            if (popoverElement) {
+                popoverElement.setAttribute('data-bs-content', absentStudentsDetails || 'ไม่มีนักเรียนที่ขาดเรียนสะสมรวมเกิน 7 วัน');
+                const existingPopover = bootstrap.Popover.getInstance(popoverElement);
+                if (existingPopover) {
+                    existingPopover.dispose();
+                }
+                const popover = new bootstrap.Popover(popoverElement, {
+                    trigger: 'click',
+                    html: true,
+                    placement: 'right'
+                });
+                popoverElement.addEventListener('click', () => {
+                    popover.toggle();
+                });
+                document.addEventListener('click', (event) => {
+                    if (!popoverElement.contains(event.target)) {
+                        popover.hide();
+                    }
+                });
+            }
+
+            // Show share button if there are absent students
+            if (studentsAbsent7Days > 0) {
+                document.getElementById('shareButton7Days').style.display = 'block';
+            } else {
+                document.getElementById('shareButton7Days').style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching attendance check data:', error);
+            document.getElementById('studentsAbsent7Days').textContent = 'Error loading data';
+        });
+}
+
+
+  function shareFlexMessage(absentDetails, category) {
+    liff.init({ liffId: '2005494853-aVVwJPPd' })
+        .then(() => {
+            if (liff.isLoggedIn()) {
+                const currentDate = new Date();
+                const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+                const thaiDays = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+                const dateStr = `วัน${thaiDays[currentDate.getDay()]}ที่ ${currentDate.getDate()} ${thaiMonths[currentDate.getMonth()]} ${currentDate.getFullYear() + 543} เวลา ${currentDate.getHours()}:${currentDate.getMinutes()} น.`;
+
+                const createBubble = (details, index) => {
+                    const [info, lastAbsence] = details.split("ขาดล่าสุด: ");
+                    const [name, classInfo, absenceInfo] = info.split(" - ");
+                    const genderImage = name.trim().startsWith("เด็กชาย") 
+                        ? "https://cdn-icons-png.flaticon.com/512/2995/2995657.png" 
+                        : "https://cdn-icons-png.flaticon.com/512/2995/2995462.png";
+                    return {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                            {
+                                type: "box",
+                                layout: "horizontal",
+                                contents: [
+                                    {
+                                        type: "image",
+                                        url: genderImage,
+                                        size: "sm",
+                                        flex: 0
+                                    },
+                                    {
+                                        type: "text",
+                                        text: `ชื่อ: ${name.trim()}`,
+                                        weight: "bold",
+                                        size: "sm",
+                                        color: "#555555",
+                                        wrap: true,
+                                        margin: "md"
+                                    },
+                                    {
+                                        type: "image",
+                                        url: "https://cdn-icons-png.flaticon.com/128/9946/9946319.png",
+                                        size: "sm",
+                                        action: {
+                                            type: "uri",
+                                            uri: "tel:+123456789" // Placeholder phone number
+                                        },
+                                        flex: 0,
+                                        margin: "sm"
+                                    }
+                                ]
+                            },
+                            {
+                                type: "text",
+                                text: `ชั้น: ${classInfo.trim()} - ${absenceInfo.trim()}`,
+                                size: "sm",
+                                color: "#555555",
+                                wrap: true,
+                                margin: "md"
+                            },
+                            {
+                                type: "text",
+                                text: `ขาดล่าสุด: ${lastAbsence.trim()}`,
+                                size: "sm",
+                                color: "#555555",
+                                wrap: true,
+                                margin: "md"
+                            },
+                            {
+                                type: "separator",
+                                margin: "md"
+                            }
+                        ],
+                        backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#ffffff' // Alternating background colors
+                    };
+                };
+
+                const flexContents = absentDetails.map((detail, index) => createBubble(detail, index));
+
+                const flexMessage = {
+                    type: "flex",
+                    altText: `รายละเอียด ${category}`,
+                    contents: absentDetails.length > 5 ? {
+                        type: "carousel",
+                        contents: flexContents.map(content => ({
+                            type: "bubble",
+                            size: "giga",
+                            body: {
+                                type: "box",
+                                layout: "vertical",
+                                contents: [
+                                    {
+                                        type: "text",
+                                        text: `นักเรียนขาดเรียน ${category}`,
+                                        weight: "bold",
+                                        size: "md",
+                                        color: "#000000",
+                                        wrap: true,
+                                        margin: "md"
+                                    },
+                                    content,
+                                    {
+                                        type: "box",
+                                        layout: "vertical",
+                                        contents: [
+                                            {
+                                                type: "text",
+                                                text: "เปรียบเธอนั้นเหมือนลูกหลาน",
+                                                size: "sm",
+                                                align: "end",
+                                                color: "#aaaaaa",
+                                                wrap: true,
+                                                margin: "md"
+                                            },
+                                            {
+                                                type: "text",
+                                                text: "โรงเรียนบ้านวังด้ง",
+                                                size: "sm",
+                                                align: "end",
+                                                color: "#007bff",
+                                                wrap: true,
+                                                action: {
+                                                    type: "uri",
+                                                    uri: "https://liff.line.me/2005494853-4dby7rr9"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }))
+                    } : {
+                        type: "bubble",
+                        size: "giga",
+                        body: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                {
+                                    type: "text",
+                                    text: `นักเรียนขาดเรียน ${category}`,
+                                    weight: "bold",
+                                    size: "md",
+                                    color: "#000000",
+                                    wrap: true,
+                                    margin: "md"
+                                },
+                                ...flexContents,
+                                {
+                                    type: "box",
+                                    layout: "vertical",
+                                    contents: [
+                                        {
+                                            type: "text",
+                                            text: "เปรียบเธอนั้นเหมือนลูกหลาน",
+                                            size: "sm",
+                                            align: "end",
+                                            color: "#aaaaaa",
+                                            wrap: true,
+                                            margin: "md"
+                                        },
+                                        {
+                                            type: "text",
+                                            text: "โรงเรียนบ้านวังด้ง",
+                                            size: "sm",
+                                            align: "end",
+                                            color: "#007bff",
+                                            wrap: true,
+                                            action: {
+                                                type: "uri",
+                                                uri: "https://liff.line.me/2005494853-4dby7rr9"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                };
+
+                liff.shareTargetPicker([flexMessage])
+                    .then(() => showToast("แชร์ข้อมูลสำเร็จ", "success"))
+                    .catch((err) => {
+                        console.error('LIFF Share Error:', err);
+                        showToast("การแชร์ข้อมูลล้มเหลว", "warning");
+                    });
+            } else {
+                liff.login();
+            }
+        })
+        .catch((err) => {
+            console.error('LIFF Init Error:', err);
+            showToast("การเชื่อมต่อ Line ล้มเหลว", "warning");
+        });
+}
+
+
+
+// เรียกใช้ฟังก์ชั่น loadStudentsAbsent5Days และ loadStudentsAbsent7Days ที่เหมาะสมในที่ที่ต้องการ
+
+function loadStudentsNotPresent(selectedClass, selectedDate) {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/เช็คมาเรียน')
+        .then(response => response.json())
+        .then(attendanceCheckData => {
+            const selectedDateObj = new Date(selectedDate);
+            const selectedDay = selectedDateObj.getDate();
+            const selectedMonth = selectedDateObj.getMonth() + 1;
+            const selectedYear = selectedDateObj.getFullYear();
+            const selectedDateIso = new Date(selectedYear, selectedMonth - 1, selectedDay).toISOString().split('T')[0];
+
+            let filteredAttendanceData = attendanceCheckData;
+            if (selectedClass !== "ทั้งหมด" && selectedClass !== "") {
+                filteredAttendanceData = filteredAttendanceData.filter(record => record['ชั้น'] === selectedClass);
+            }
+
+            const studentsNotPresent = filteredAttendanceData.filter(record => {
+                const [day, month, year] = record['วันที่'].split('/');
+                if (!day || !month || !year) {
+                    return false;
+                }
+                const recordDateIso = new Date(year - 543, month - 1, day).toISOString().split('T')[0];
+                return recordDateIso === selectedDateIso && (record['สถานะ'] === 'ขาด' || record['สถานะ'] === 'ลา');
+            });
+
+            const totalStudents = parseInt(document.getElementById('totalStudentsToday').textContent.split(' ')[0]) || 0;
+            const studentsNotPresentCount = studentsNotPresent.length;
+            const studentsNotPresentPercent = totalStudents ? ((studentsNotPresentCount / totalStudents) * 100).toFixed(2) : 0;
+
+            let absentStudentsDetails = '';
+            studentsNotPresent.forEach(student => {
+                absentStudentsDetails += `${student['รายชื่อนักเรียน']} - ${student['ชั้น']} - ${student['สถานะ']}<br>`;
+            });
+
+            document.getElementById('studentsNotPresent').textContent = studentsNotPresentCount + ' คน';
+            document.getElementById('studentsNotPresentPercent').textContent = studentsNotPresentPercent + '%';
+
+            // Initialize and show popover for studentsNotPresent
+            const popoverElement = document.getElementById('studentsNotPresentLi');
+            if (popoverElement) {
+                popoverElement.setAttribute('data-bs-content', absentStudentsDetails || 'ไม่มีนักเรียนที่ไม่มาเรียน');
+                // Dispose of any existing popover instance to avoid conflicts
+                const existingPopover = bootstrap.Popover.getInstance(popoverElement);
+                if (existingPopover) {
+                    existingPopover.dispose();
+                }
+                // Initialize the popover
+                const popover = new bootstrap.Popover(popoverElement, {
+                    trigger: 'click',
+                    html: true,
+                    placement: 'right'
+                });
+                // Show the popover on click
+                popoverElement.addEventListener('click', () => {
+                    popover.toggle();
+                });
+                // Hide the popover when clicking outside
+                document.addEventListener('click', (event) => {
+                    if (!popoverElement.contains(event.target)) {
+                        popover.hide();
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching attendance check data:', error);
+            document.getElementById('studentsNotPresent').textContent = 'Error loading data';
+            document.getElementById('studentsNotPresentPercent').textContent = 'Error loading data';
+        });
+}
+  
+function loadCheckedClassrooms(selectedDate) {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/เช็คมาเรียน')
+        .then(response => response.json())
+        .then(attendanceCheckData => {
+            const selectedDateObj = new Date(selectedDate);
+            const selectedDay = selectedDateObj.getDate();
+            const selectedMonth = selectedDateObj.getMonth() + 1;
+            const selectedYear = selectedDateObj.getFullYear();
+            const selectedDateIso = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+
+            // Filter attendance data by the selected date
+            const filteredAttendanceData = attendanceCheckData.filter(record => {
+                const [day, month, year] = record['วันที่'].split('/');
+                if (!day || !month || !year) {
+                    return false;
+                }
+                const recordDateIso = `${year - 543}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                return recordDateIso === selectedDateIso;
+            });
+
+            // Get unique classrooms
+            const uniqueClasses = new Set();
+            filteredAttendanceData.forEach(record => uniqueClasses.add(record['ชั้น']));
+
+            const checkedClassrooms = uniqueClasses.size;
+            const totalClassrooms = 9; // Total number of classrooms
+            const checkedClassroomsPercent = ((checkedClassrooms / totalClassrooms) * 100).toFixed(2);
+
+            // Determine classrooms that were not checked
+            const allClasses = ['อ.1', 'อ.2', 'อ.3', 'ป.1', 'ป.2', 'ป.3', 'ป.4', 'ป.5', 'ป.6'];
+            const uncheckedClasses = allClasses.filter(cls => !uniqueClasses.has(cls)).join(', ');
+
+            document.getElementById('checkedClassrooms').textContent = checkedClassrooms + ' ห้อง';
+            document.getElementById('checkedClassroomsPercent').textContent = checkedClassroomsPercent + '%';
+
+            const popoverElement = document.getElementById('checkedClassroomsLi');
+            if (popoverElement) {
+                popoverElement.setAttribute('data-bs-content', uncheckedClasses || 'ไม่มีชั้นที่ไม่ได้เช็คเวลา');
+                // Dispose of any existing popover instance to avoid conflicts
+                const existingPopover = bootstrap.Popover.getInstance(popoverElement);
+                if (existingPopover) {
+                    existingPopover.dispose();
+                }
+                // Initialize the popover
+                const popover = new bootstrap.Popover(popoverElement, {
+                    trigger: 'click',
+                    placement: 'right'
+                });
+                // Show the popover on click
+                popoverElement.addEventListener('click', () => {
+                    popover.toggle();
+                });
+                // Hide the popover when clicking outside
+                document.addEventListener('click', (event) => {
+                    if (!popoverElement.contains(event.target)) {
+                        popover.hide();
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching checked classrooms data:', error);
+            document.getElementById('checkedClassrooms').textContent = 'Error loading data';
+            document.getElementById('checkedClassroomsPercent').textContent = 'Error loading data';
+        });
+}
+
+function loadWorkData() {
+    console.log('Loading work data...');
+    fetch('https://opensheet.elk.sh/1_R9dMeRH-oBIvEFKltuLb3R7vy4p0cW2c8bBZAsEW2g/AsanaToSheet')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Data fetched:', data);
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
+            let totalTasks = data.length;
+            let monthlyTasks = 0;
+            let completedTasks = 0;
+            let pendingTasks = 0;
+            let overdueTasks = 0;
+            let myTasks = 0;
+
+            data.forEach(task => {
+                const dueDate = new Date(task['Due Date']);
+                
+                // ตรวจสอบว่างานเป็นของผู้ใช้ที่ login หรือไม่
+                if (task['LINE UID'] === lineUID) {
+                    myTasks++;
+                }
+
+                // ตรวจสอบงานของเดือนปัจจุบัน
+                if (dueDate.getMonth() === currentMonth && dueDate.getFullYear() === currentYear) {
+                    monthlyTasks++;
+
+                    if (task['Completed'] === 'Yes') {
+                        completedTasks++;
+                    } else {
+                        pendingTasks++;
+                        if (dueDate < currentDate) {
+                            overdueTasks++;
+                        }
+                    }
+                }
+            });
+
+            console.log('Calculated values:', { totalTasks, monthlyTasks, completedTasks, pendingTasks, overdueTasks, myTasks });
+
+            // อัปเดต DOM
+            updateDOM('totalTasks', totalTasks);
+            updateDOM('monthlyTasks', monthlyTasks);
+            updateDOM('completedTasks', completedTasks);
+            updateDOM('pendingTasks', pendingTasks);
+            updateDOM('overdueTasks', overdueTasks);
+            updateDOM('myTasks', myTasks);
+
+            // คำนวณและอัปเดตเปอร์เซ็นต์
+            updatePercentage('monthlyTasksPercent', monthlyTasks, totalTasks);
+            updatePercentage('completedTasksPercent', completedTasks, monthlyTasks);
+            updatePercentage('pendingTasksPercent', pendingTasks, monthlyTasks);
+            updatePercentage('overdueTasksPercent', overdueTasks, monthlyTasks);
+            updatePercentage('myTasksPercent', myTasks, totalTasks);
+
+            // แสดงหรือซ่อนปุ่มแจ้งเตือนงานที่เกินกำหนด
+            const shareButton = document.getElementById('shareButtonOverdue');
+            if (shareButton) {
+                shareButton.style.display = overdueTasks > 0 ? 'block' : 'none';
+            }
+
+            // Load training tasks
+            loadTrainingTasks();
+        })
+        .catch(error => {
+            console.error('Error fetching work data:', error);
+            ['totalTasks', 'monthlyTasks', 'completedTasks', 'pendingTasks', 'overdueTasks', 'myTasks'].forEach(id => {
+                updateDOM(id, 'Error');
+            });
+            ['monthlyTasksPercent', 'completedTasksPercent', 'pendingTasksPercent', 'overdueTasksPercent', 'myTasksPercent'].forEach(id => {
+                document.getElementById(id).textContent = 'Error';
+            });
+        });
+}
+
+// ฟังก์ชันโหลดงานอบรม
+function loadTrainingTasks() {
+    fetch('https://opensheet.elk.sh/1VeekGuTOhM81fvFBGZzv_T2Jyws8TF5Yvbejv_fYVpI/AsanaToSheet')
+        .then(response => response.json())
+        .then(data => {
+            const assigneeDropdown = document.getElementById('assigneeDropdown');
+            const selectedAssignee = assigneeDropdown.value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            let filteredTasks = data.filter(task => task['Name'].includes('อบรม') && (selectedAssignee ? task['Assignee'] === selectedAssignee : task['LINE UID'] === lineUID));
+
+            if (startDate) {
+                filteredTasks = filteredTasks.filter(task => new Date(task['Due Date']) >= new Date(startDate));
+            }
+
+            if (endDate) {
+                filteredTasks = filteredTasks.filter(task => new Date(task['Due Date']) <= new Date(endDate));
+            }
+
+            const trainingTasksCount = filteredTasks.length;
+            updateDOM('trainingTasks', trainingTasksCount);
+
+            // สร้างรายการงานอบรม
+            let trainingTasksList = '';
+            filteredTasks.forEach((task, index) => {
+                trainingTasksList += `
+                    <li class="list-group-item">
+                        ${index + 1}. <a href="${task['LINK']}" target="_blank">${task['Name']}</a> - ${task['dueDateThai']}
+                    </li>`;
+            });
+
+            // แสดงรายการงานอบรมใน modal
+            const trainingTasksUl = document.getElementById('trainingTasksList');
+            trainingTasksUl.innerHTML = trainingTasksList;
+        })
+        .catch(error => {
+            console.error('Error fetching training tasks:', error);
+            updateDOM('trainingTasks', 'Error');
+        });
+}
+
+
+// Helper function to update DOM elements
+function updateDOM(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.textContent = value + ' งาน';
+    }
+}
+
+// Helper function to update percentage
+function updatePercentage(id, part, total) {
+    const element = document.getElementById(id);
+    if (element) {
+        const percent = total ? ((part / total) * 100).toFixed(2) : 0;
+        element.textContent = percent + '%';
+    }
+}
+
+// ฟังก์ชันสำหรับการส่งออกไฟล์ Excel
+function exportToExcel() {
+    const tableExport = document.createElement('table');
+    const trainingTasks = document.getElementById('trainingTasksList').children;
+    
+    for (let task of trainingTasks) {
+        const row = tableExport.insertRow();
+        const columns = task.textContent.split(' - ');
+        columns.forEach((col, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = col;
+        });
+    }
+
+    const wb = XLSX.utils.table_to_book(tableExport, { sheet: "Sheet JS" });
+    XLSX.writeFile(wb, 'training_tasks.xlsx');
+}
+
+// Event listener สำหรับเปิด modal
+document.getElementById('trainingTasksLi').addEventListener('click', function() {
+    const trainingTasksModal = new bootstrap.Modal(document.getElementById('trainingTasksModal'));
+    loadAssignees(); // Load assignees into the dropdown
+    trainingTasksModal.show();
+});
+
+// Event listener สำหรับปุ่ม Export to Excel
+document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+
+// Load Assignees into the dropdown
+function loadAssignees() {
+    fetch('https://opensheet.elk.sh/1VeekGuTOhM81fvFBGZzv_T2Jyws8TF5Yvbejv_fYVpI/AsanaToSheet')
+        .then(response => response.json())
+        .then(data => {
+            const assignees = [...new Set(data.map(task => task['Assignee']))];
+            const assigneeDropdown = document.getElementById('assigneeDropdown');
+            assigneeDropdown.innerHTML = '<option value="">ทั้งหมด</option>';
+
+            assignees.forEach(assignee => {
+                const option = document.createElement('option');
+                option.value = assignee;
+                option.textContent = assignee;
+                assigneeDropdown.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching assignees:', error);
+        });
+}
+  
+// Event listeners for filtering tasks
+document.getElementById('assigneeDropdown').addEventListener('change', loadTrainingTasks);
+document.getElementById('startDate').addEventListener('change', loadTrainingTasks);
+document.getElementById('endDate').addEventListener('change', loadTrainingTasks);
+
+
+  
+  
+// ฟังก์ชันสำหรับแชร์ไปยัง Line
+// function shareTrainingTasksToLine() {
+//     const trainingTasks = Array.from(document.getElementById('trainingTasksList').children).map(task => {
+//         const taskText = task.textContent.split('. ')[1].split(' - ');
+//         return `${taskText[0]} - ${taskText[1]}`;
+//     }).join('\n');
+
+//     if (!trainingTasks) {
+//         showToast("ไม่มีรายการงานอบรมที่จะแชร์", "warning");
+//         return;
+//     }
+
+//     const message = {
+//         type: 'text',
+//         text: `รายการงานอบรม:\n\n${trainingTasks}\n\nดูรายละเอียดเพิ่มเติมที่: https://liff.line.me/2005494853-4dby7rr9`
+//     };
+
+//     liff.init({ liffId: '2005494853-aVVwJPPd' })
+//         .then(() => {
+//             if (!liff.isLoggedIn()) {
+//                 liff.login();
+//             } else {
+//                 liff.shareTargetPicker([message])
+//                     .then((result) => {
+//                         if (result) {
+//                             showToast("แชร์รายการงานอบรมสำเร็จ", "success");
+//                         } else {
+//                             showToast("การแชร์ถูกยกเลิก", "warning");
+//                         }
+//                     })
+//                     .catch((error) => {
+//                         console.error("Error sharing to Line:", error);
+//                         showToast("เกิดข้อผิดพลาดในการแชร์", "warning");
+//                     });
+//             }
+//         })
+//         .catch((error) => {
+//             console.error("LIFF initialization failed:", error);
+//             showToast("การเชื่อมต่อ LINE ล้มเหลว", "warning");
+//         });
+// }
+function shareTrainingTasksToLine() {
+    const trainingTasks = Array.from(document.getElementById('trainingTasksList').children).map(task => {
+        const taskText = task.textContent.split('. ')[1].split(' - ');
+        return { name: taskText[0], date: taskText[1] };
+    });
+
+    if (trainingTasks.length === 0) {
+        showToast("ไม่มีรายการงานอบรมที่จะแชร์", "warning");
+        return;
+    }
+
+    const taskCount = trainingTasks.length;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const dateRange = startDate && endDate ? `${startDate} ถึง ${endDate}` : "ทั้งหมด";
+
+    // Get Assignee name
+    const assigneeDropdown = document.getElementById('assigneeDropdown');
+    const assigneeName = assigneeDropdown.options[assigneeDropdown.selectedIndex].text;
+
+    const latestTasks = trainingTasks.slice(0, 5); // Get up to 5 latest tasks
+
+    const flexMessage = {
+        type: "flex",
+        altText: "สรุปรายการงานอบรม",
+        contents: {
+            type: "bubble",
+            body: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                    {
+                        type: "text",
+                        text: "สรุปรายการงานอบรม",
+                        weight: "bold",
+                        size: "xl",
+                        margin: "md"
+                    },
+                    {
+                        type: "text",
+                        text: `Assignee: ${assigneeName}`,
+                        size: "sm",
+                        color: "#888888",
+                        margin: "md"
+                    },
+                    {
+                        type: "separator",
+                        margin: "xxl"
+                    },
+                    {
+                        type: "box",
+                        layout: "vertical",
+                        margin: "xxl",
+                        spacing: "sm",
+                        contents: [
+                            {
+                                type: "box",
+                                layout: "horizontal",
+                                contents: [
+                                    {
+                                        type: "text",
+                                        text: "จำนวนงานอบรม:",
+                                        size: "sm",
+                                        color: "#555555",
+                                        flex: 0
+                                    },
+                                    {
+                                        type: "text",
+                                        text: `${taskCount} รายการ`,
+                                        size: "sm",
+                                        color: "#111111",
+                                        align: "end"
+                                    }
+                                ]
+                            },
+                            {
+                                type: "box",
+                                layout: "horizontal",
+                                contents: [
+                                    {
+                                        type: "text",
+                                        text: "ช่วงวันที่:",
+                                        size: "sm",
+                                        color: "#555555",
+                                        flex: 0
+                                    },
+                                    {
+                                        type: "text",
+                                        text: dateRange,
+                                        size: "sm",
+                                        color: "#111111",
+                                        align: "end"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: "text",
+                        text: "รายการล่าสุด:",
+                        weight: "bold",
+                        size: "md",
+                        margin: "xl"
+                    },
+                    {
+                        type: "box",
+                        layout: "vertical",
+                        margin: "sm",
+                        spacing: "sm",
+                        contents: latestTasks.map((task, index) => ({
+                            type: "box",
+                            layout: "horizontal",
+                            contents: [
+                                {
+                                    type: "text",
+                                    text: `${index + 1}. ${task.name}`,
+                                    size: "sm",
+                                    color: "#555555",
+                                    flex: 0,
+                                    wrap: true
+                                }
+                            ]
+                        }))
+                    }
+                ]
+            },
+            footer: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                    {
+                        type: "button",
+                        style: "primary",
+                        action: {
+                            type: "uri",
+                            label: "ดูรายละเอียดเพิ่มเติม",
+                            uri: "https://liff.line.me/2005494853-JXGnqRR1"
+                        }
+                    }
+                ]
+            }
+        }
+    };
+
+    liff.init({ liffId: '2005494853-aVVwJPPd' })
+        .then(() => {
+            if (liff.isLoggedIn()) {
+                liff.shareTargetPicker([flexMessage])
+                    .then((result) => {
+                        if (result) {
+                            showToast("แชร์สรุปรายการงานอบรมสำเร็จ", "success");
+                        } else {
+                            showToast("การแชร์ถูกยกเลิก", "warning");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error sharing to Line:", err);
+                        showToast("เกิดข้อผิดพลาดในการแชร์", "warning");
+                    });
+            } else {
+                liff.login();
+            }
+        })
+        .catch(err => {
+            console.error("LIFF initialization failed:", err);
+            showToast("การเชื่อมต่อ LINE ล้มเหลว", "warning");
+        });
+}
+
+// ฟังก์ชันสำหรับดึงข้อมูลผู้ใช้ (ต้องสร้างเพิ่มเติม)
+function getUserProfile() {
+    // ตัวอย่างการดึงข้อมูลผู้ใช้จาก LIFF
+    if (liff.isLoggedIn()) {
+        return liff.getProfile();
+    }
+    return null;
+}
+
+// Event listener สำหรับปุ่ม Share to Line
+document.getElementById('shareToLineBtn').addEventListener('click', shareTrainingTasksToLine);
+  
+  
+///////จบส่วนของการอบรม
+
+  
+  
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing code
+    setDefaultDate(); // Load initial data
+    const todayString = new Date().toISOString().split('T')[0];
+    loadCheckedClassrooms(todayString); // Load checked classrooms data for today's date
+
+    // Event listener for carousel slide
+    document.getElementById('infoCarousel').addEventListener('slid.bs.carousel', function(event) {
+        const activeSlide = event.to || document.querySelector('#infoCarousel .carousel-item.active').dataset.bsSlideTo;
+        const savingStatsSlideIndex = 2; // Index of "สถิติการออมก่อนใช้" slide
+
+        if (activeSlide == savingStatsSlideIndex) {
+            loadLatestTransactionData();
+        }
+    });
+
+    // Update event listeners for dropdowns
+    document.getElementById('semesterDropdown').addEventListener('change', function() {
+        const selectedDate = document.getElementById('datePicker').value;
+        loadCheckedClassrooms(selectedDate); // Update checked classrooms data
+    });
+
+    document.getElementById('classDropdown').addEventListener('change', function() {
+        const selectedDate = document.getElementById('datePicker').value;
+        loadCheckedClassrooms(selectedDate); // Update checked classrooms data
+    });
+
+// Ensure that loadCheckedClassrooms is called when the date or carousel changes
+    document.getElementById('datePicker').addEventListener('change', function() {
+        const selectedDate = this.value;
+        loadCheckedClassrooms(selectedDate);
+    });
+
+    document.getElementById('infoCarousel').addEventListener('slid.bs.carousel', function() {
+        const selectedDate = document.getElementById('datePicker').value;
+        loadCheckedClassrooms(selectedDate);
+    });
+  
+});
+
+  
+
+
+function numberToThaiText(number) {
+    const units = ["ศูนย์", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
+    const tens = ["", "สิบ", "ยี่สิบ", "สามสิบ", "สี่สิบ", "ห้าสิบ", "หกสิบ", "เจ็ดสิบ", "แปดสิบ", "เก้าสิบ"];
+    const scales = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
+
+    if (number === 0) return units[0];
+
+    let words = "";
+    let numStr = number.toString();
+    let scale = 0;
+
+    for (let i = numStr.length - 1; i >= 0; i--) {
+        let digit = parseInt(numStr[i]);
+        if (digit !== 0) {
+            words = units[digit] + scales[scale] + words;
+        }
+        scale++;
+    }
+
+    // Special cases for Thai language
+    words = words.replace("หนึ่งสิบ", "สิบ");
+    words = words.replace("สองสิบ", "ยี่สิบ");
+
+    return words + "บาทถ้วน";
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    populateDropdowns();
+    setDefaultDate();  // Set default date to current date
+    loadAccountData();  // Load initial account data
+    updateTotalStudentsSaving();
+
+     document.getElementById('semesterDropdown').addEventListener('change', function() {
+        updateTotalStudentsSaving();
+        const selectedSemester = this.value;
+        loadStudentData(selectedSemester);
+        loadAccountData(); // Update account data based on new selection
+        loadTransactionData(document.getElementById('datePicker').value); // Update transaction data based on new selection
+        loadStudentAttendanceData(document.getElementById('datePicker').value); // Update attendance data based on new selection
+    });
+
+    document.getElementById('classDropdown').addEventListener('change', function() {
+        updateTotalStudentsSaving();
+        loadAccountData(); // Update account data based on new selection
+        loadTransactionData(document.getElementById('datePicker').value); // Update transaction data based on new selection
+        loadStudentAttendanceData(document.getElementById('datePicker').value); // Update attendance data based on new selection
+    });
+
+
+  
+  document.getElementById('datePicker').addEventListener('change', function() {
+    updateTotalStudentsSaving();
+    const selectedDate = this.value;
+    loadTransactionData(selectedDate);  // Load transaction data for the selected date
+    loadStudentAttendanceData(selectedDate);  // Load attendance data for the selected date
+    loadCheckedClassrooms(selectedDate);  // Load checked classrooms data for the selected date
+});
+
+    document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
+        element.addEventListener('click', function(e) {
+            if (window.innerWidth < 992) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.nextElementSibling.classList.toggle('show');
+            }
+        });
+    });
+
+    document.querySelectorAll('.dropdown-item').forEach(function(element) {
+        element.addEventListener('click', function() {
+            var navbarCollapse = document.querySelector('.navbar-collapse');
+            var bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+            if (bsCollapse) bsCollapse.hide();
+        });
+    });
+
+    const inputField = document.getElementById('studentIdSearch');
+    inputField.addEventListener('focus', function() {
+        var navbarCollapse = document.querySelector('.navbar-collapse');
+        var bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+        if (bsCollapse) bsCollapse.show();
+    });
+
+    inputField.addEventListener('blur', function() {
+        setTimeout(() => {
+            if (!inputField.matches(':focus')) {
+                var navbarCollapse = document.querySelector('.navbar-collapse');
+                var bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+                if (bsCollapse) bsCollapse.hide();
+            }
+        }, 200);
+    });
+
+    inputField.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+  
+ // Event listeners for share buttons
+    document.getElementById('shareButton5Days').addEventListener('click', function () {
+        const absentDetails = document.getElementById('studentsAbsent5DaysLi').getAttribute('data-bs-content').split('<br>').filter(detail => detail);
+        shareFlexMessage(absentDetails, 'มากกว่าร้อยละ 35');
+    });
+
+    document.getElementById('shareButton7Days').addEventListener('click', function () {
+        const absentDetails = document.getElementById('studentsAbsent7DaysLi').getAttribute('data-bs-content').split('<br>').filter(detail => detail);
+        shareFlexMessage(absentDetails, 'สะสมรวมเกิน 7 วัน/เดือน');
+    });
+
+
+    // Show share buttons if there are absent students
+    if (document.getElementById('studentsAbsent5Days').textContent.trim() !== '0 คน') {
+        document.getElementById('shareButton5Days').style.display = 'block';
+    }
+    if (document.getElementById('studentsAbsent7Days').textContent.trim() !== '0 คน') {
+        document.getElementById('shareButton7Days').style.display = 'block';
+    }
+  
+});
+
+function setDefaultDate() {
+    const today = new Date();
+    today.setHours(today.getHours() + 7); // Adjust to Thai local time (UTC+7)
+    const todayString = today.toISOString().split('T')[0];
+    document.getElementById('datePicker').value = todayString;
+    loadTransactionData(todayString);  // Load transaction data for today's date
+    loadStudentAttendanceData(todayString);  // Load attendance data for today's date
+}
+
+function populateDropdowns() {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/ปีการศึกษา')
+        .then(response => response.json())
+        .then(data => {
+            const semesterDropdown = document.getElementById('semesterDropdown');
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item['ปีการศึกษา'];
+                option.text = item['ปีการศึกษา'];
+                semesterDropdown.appendChild(option);
+            });
+
+            // Load data for the first semester by default
+            loadStudentData(data[0]['ปีการศึกษา']);
+        })
+        .catch(error => console.error('Error fetching semester data:', error));
+
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/DataStudentForWDInfo')
+        .then(response => response.json())
+        .then(data => {
+            studentData = data;
+            const classDropdown = document.getElementById('classDropdown');
+            const classes = [...new Set(data.map(item => item['ชั้น']))].sort();
+            classes.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.text = item;
+                classDropdown.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching class data:', error));
+}
+
+
+function updateTotalStudentsSaving() {
+    const classDropdown = document.getElementById('classDropdown');
+    const selectedClass = classDropdown.value || "ทั้งหมด";  // Default to "ทั้งหมด" if empty
+    const selectedSemester = document.getElementById('semesterDropdown').value || "1/2567";  // Default to "1/2567" if empty
+
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/ข้อมูลนักเรียนปัจจุบัน')
+        .then(response => response.json())
+        .then(data => {
+            if (selectedSemester) {
+                data = data.filter(student => student['ปีการศึกษา'] === selectedSemester);
+            }
+            if (selectedClass !== "ทั้งหมด") {
+                data = data.filter(student => student['ชั้น'] === selectedClass);
+            }
+
+            let total = data.reduce((sum, student) => sum + parseInt(student['รวม'], 0), 0);
+
+            document.getElementById('totalStudentsSaving').textContent = total + ' คน';
+            let totalStudentsSaving = total;
+
+            // Update totalStudentsToday
+            let totalStudentsToday = data.reduce((sum, student) => sum + parseInt(student['รวม'], 0), 0);
+
+            document.getElementById('totalStudentsToday').textContent = totalStudentsToday + ' คน';
+        })
+        .catch(error => console.error('Error fetching student data:', error));
+}
+
+
+
+
+function loadAccountData() {
+    fetch('https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/บัญชี')
+        .then(response => response.json())
+        .then(accountData => {
+            const selectedClass = document.getElementById('classDropdown').value;
+
+            let filteredAccounts = accountData;
+
+            if (selectedClass) {
+                filteredAccounts = filteredAccounts.filter(account => account['ห้อง'] === selectedClass);
+            }
+
+            const activeAccounts = filteredAccounts.filter(account => account['สถานะบัญชี'] === 'ปกติ');
+            uniqueSchoolAccounts = activeAccounts.length;
+
+            const bankAccounts = filteredAccounts.filter(account => account['ออมสิน'] === 'TRUE').length;
+
+            document.getElementById('schoolAccounts').textContent = uniqueSchoolAccounts + ' บัญชี';
+            document.getElementById('bankAccounts').textContent = bankAccounts + ' บัญชี';
+        })
+        .catch(error => console.error('Error fetching account data:', error));
+}
+
+$(document).ready(function() {
+    $("#footer-container").load("footer.html");
+});
+  
+  // Call the function once to load data initially
+loadTransactionData(new Date().toISOString().split('T')[0]);
+
+// Set interval to reload data every 30 minutes (1800000 milliseconds)
+setInterval(() => {
+    loadTransactionData(new Date().toISOString().split('T')[0]);
+}, 1800000);
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกม O-X ทอมมี่ vs เบลล่า</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            max-width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 300px;
+        }
+        .cell {
+            aspect-ratio: 1 / 1;
+            border: 2px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .cell img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #resetButton {
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #resetButton:hover {
+            background-color: #45a049;
+        }
+        @media (max-width: 400px) {
+            .board {
+                max-width: 90vw;
+            }
+            .cell {
+                font-size: 36px;
+            }
+            #resetButton {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="board" id="board"></div>
+        <button id="resetButton">เริ่มเกมใหม่</button>
+    </div>
+
+    <script>
+        const board = document.getElementById('board');
+        const resetButton = document.getElementById('resetButton');
+        let currentPlayer = 'tommy';
+        const cells = [];
+        let gameActive = true;
+
+        function initializeGame() {
+            board.innerHTML = '';
+            cells.length = 0;
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.addEventListener('click', () => makeMove(i));
+                board.appendChild(cell);
+                cells.push(cell);
+            }
+        }
+
+        function makeMove(index) {
+            if (gameActive && !cells[index].innerHTML) {
+                placeMove(index, currentPlayer);
+                if (checkWinner()) {
+                    gameActive = false;
+                    setTimeout(() => {
+                        alert(`${currentPlayer === 'tommy' ? 'ทอมมี่' : 'เบลล่า'} ชนะ!`);
+                    }, 100);
+                    return;
+                }
+                if (checkDraw()) {
+                    gameActive = false;
+                    setTimeout(() => {
+                        alert('เสมอ!');
+                    }, 100);
+                    return;
+                }
+                currentPlayer = currentPlayer === 'tommy' ? 'bella' : 'tommy';
+                if (currentPlayer === 'bella') {
+                    setTimeout(botMove, 500);
+                }
+            }
+        }
+
+        function placeMove(index, player) {
+            const img = document.createElement('img');
+            img.src = player === 'tommy' 
+                ? 'https://raw.githubusercontent.com/infobwd/wdconnect/main/449777110_122129116490294174_2293110360929796333_n.jpg' 
+                : 'https://raw.githubusercontent.com/infobwd/wdconnect/main/449366192_8106949645990102_5788855970207835364_n.jpg';
+            img.alt = player === 'tommy' ? 'ทอมมี่' : 'เบลล่า';
+            cells[index].appendChild(img);
+        }
+
+        function botMove() {
+            const emptyCells = cells.reduce((acc, cell, index) => {
+                if (!cell.innerHTML) acc.push(index);
+                return acc;
+            }, []);
+            
+            if (emptyCells.length > 0) {
+                const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                makeMove(randomIndex);
+            }
+        }
+
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (cells[a].innerHTML && cells[a].innerHTML === cells[b].innerHTML && cells[a].innerHTML === cells[c].innerHTML) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function checkDraw() {
+            return cells.every(cell => cell.innerHTML);
+        }
+
+        function resetGame() {
+            cells.forEach(cell => cell.innerHTML = '');
+            currentPlayer = 'tommy';
+            gameActive = true;
+        }
+
+        resetButton.addEventListener('click', resetGame);
+
+        initializeGame();
+    </script>
+</body>
+</html>

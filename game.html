@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมเปิดแผ่นป้าย โรงเรียนบ้านวังด้ง</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            font-family: 'Google Sans', sans-serif;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #puzzle {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2px;
+            max-width: 450px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+        }
+        .piece {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+            background-size: 300% 300%;
+            cursor: pointer;
+            background-color: #fff;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .revealed {
+            background-color: transparent;
+        }
+        #solution-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 15vw;
+            text-align: center;
+            z-index: 1000;
+        }
+        #solution-modal p {
+            margin: 0;
+        }
+        #solution-modal .red {
+            color: red;
+        }
+        #reveal-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #countdown {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 20px;
+            }
+            .piece {
+                font-size: 18px;
+            }
+            #countdown {
+                font-size: 16px;
+            }
+            #reveal-button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>เกมเปิดแผ่นป้าย โรงเรียนบ้านวังด้ง</h1>
+    <div id="countdown">Time left: 30 seconds</div>
+    <div id="puzzle"></div>
+    <button id="reveal-button">Reveal Solution</button>
+    <div id="solution-modal">
+        <p>ปลาวา<span class="red">ฬ</span></p>
+    </div>
+    <script>
+        // The script remains unchanged
+        const imageURL = "https://raw.githubusercontent.com/infobwd/STUDENT-CARE/main/DALL%C2%B7E%202024-07-17%2015.35.49%20-%20A%20cute%20cartoon%20whale%20swimming%20in%20the%20ocean.%20The%20whale%20is%20blue%20with%20a%20friendly%20expression%2C%20large%20eyes%2C%20and%20a%20big%20smile.%20The%20background%20features%20a%20color.webp";
+
+        const puzzle = document.getElementById('puzzle');
+        const revealButton = document.getElementById('reveal-button');
+        const solutionModal = document.getElementById('solution-modal');
+        const countdown = document.getElementById('countdown');
+
+        let timeLeft = 60;
+        let countdownInterval;
+
+        function startCountdown() {
+            timeLeft = 60;
+            countdown.textContent = `Time left: ${timeLeft} seconds`;
+            countdownInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    countdown.textContent = `Time left: ${timeLeft} seconds`;
+                } else {
+                    clearInterval(countdownInterval);
+                    revealSolution();
+                }
+            }, 1000);
+        }
+
+        function revealSolution() {
+            solutionModal.style.display = 'flex';
+            revealButton.disabled = true;
+        }
+
+        function resetGame() {
+            puzzle.innerHTML = '';
+            solutionModal.style.display = 'none';
+            revealButton.disabled = false;
+            clearInterval(countdownInterval);
+            startCountdown();
+            createPuzzle();
+        }
+
+        function createPuzzle() {
+            for (let i = 0; i < 9; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'piece';
+                piece.dataset.index = i;
+                piece.textContent = i + 1;
+                piece.addEventListener('click', () => {
+                    piece.style.backgroundImage = `url(${imageURL})`;
+                    piece.style.backgroundPosition = `${-100 * (i % 3)}% ${-100 * Math.floor(i / 3)}%`;
+                    piece.classList.add('revealed');
+                });
+                puzzle.appendChild(piece);
+            }
+        }
+
+        revealButton.addEventListener('click', revealSolution);
+        document.addEventListener('click', (event) => {
+            if (!puzzle.contains(event.target) && !revealButton.contains(event.target)) {
+                resetGame();
+            }
+        });
+
+        // Initialize the game
+        resetGame();
+    </script>
+</body>
+</html>

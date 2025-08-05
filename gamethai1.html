@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมเปิดแผ่นป้าย โรงเรียนบ้านวังด้ง</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            font-family: 'Google Sans', sans-serif;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #puzzle {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2px;
+            max-width: 450px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+        }
+        .piece {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+            background-size: 300% 300%;
+            cursor: pointer;
+            background-color: #fff;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .piece[data-index="0"] { background-color: #FFB3BA; }
+        .piece[data-index="1"] { background-color: #FFDFBA; }
+        .piece[data-index="2"] { background-color: #FFFFBA; }
+        .piece[data-index="3"] { background-color: #BAFFC9; }
+        .piece[data-index="4"] { background-color: #BAE1FF; }
+        .piece[data-index="5"] { background-color: #E3BAFF; }
+        .piece[data-index="6"] { background-color: #FFBAE1; }
+        .piece[data-index="7"] { background-color: #BAFFDA; }
+        .piece[data-index="8"] { background-color: #FFFAA0; }
+        .revealed {
+            background-color: transparent;
+        }
+        #solution-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 15vw;
+            text-align: center;
+            z-index: 1000;
+        }
+        #solution-modal p {
+            margin: 0;
+        }
+        #reset-button, #end-game-button, #hint-button, #fullscreen-button, #answer-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Google Sans', sans-serif;
+        }
+        #countdown {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        #team-setup {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        #team-setup input, #team-setup select, #team-setup button {
+            padding: 10px;
+            font-size: 18px;
+            font-family: 'Google Sans', sans-serif;
+        }
+        #teams-info {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .team-info {
+            font-size: 18px;
+            text-align: center;
+        }
+        .active-team {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        .score-button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 20px;
+            }
+            .piece {
+                font-size: 18px;
+            }
+            #countdown {
+                font-size: 16px;
+            }
+            #reset-button, #end-game-button, #hint-button, #fullscreen-button, #answer-button {
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <form id="team-setup">
+        <input type="text" id="team1-name" placeholder="Enter Team 1 name" required>
+        <select id="team1-icon">
+            <option value="🐶">🐶</option>
+            <option value="🐱">🐱</option>
+            <option value="🐭">🐭</option>
+            <option value="🐼">🐼</option>
+            <option value="🦁">🦁</option>
+        </select>
+        <input type="text" id="team2-name" placeholder="Enter Team 2 name" required>
+        <select id="team2-icon">
+            <option value="🐶">🐶</option>
+            <option value="🐱">🐱</option>
+            <option value="🐭">🐭</option>
+            <option value="🐼">🐼</option>
+            <option value="🦁">🦁</option>
+        </select>
+        <select id="word-set">
+            <!-- This will be populated dynamically -->
+        </select>
+        <select id="time-limit">
+            <option value="10">10 seconds</option>
+            <option value="20">20 seconds</option>
+            <option value="30">30 seconds</option>
+            <option value="60" selected>60 seconds</option>
+        </select>
+        <button type="submit">Start Game</button>
+    </form>
+
+    <div id="game-container" style="display: none;">
+        <h1>เกมเปิดแผ่นป้าย โรงเรียนบ้านวังด้ง</h1>
+        <div id="teams-info"></div>
+        <div id="countdown">Time left: 60 seconds</div>
+        <div id="puzzle"></div>
+        <button id="reset-button">Reset เกม</button>
+        <button id="end-game-button">จบเกม</button>
+        <button id="hint-button">คำใบ้</button>
+        <button id="fullscreen-button">Fullscreen</button>
+        <button id="answer-button">Answer</button>
+        <div id="solution-modal"></div>
+    </div>
+
+    <script>
+        let imageURL = "";
+        const puzzle = document.getElementById('puzzle');
+        const resetButton = document.getElementById('reset-button');
+        const endGameButton = document.getElementById('end-game-button');
+        const hintButton = document.getElementById('hint-button');
+        const fullscreenButton = document.getElementById('fullscreen-button');
+        const answerButton = document.getElementById('answer-button');
+        const solutionModal = document.getElementById('solution-modal');
+        const countdown = document.getElementById('countdown');
+        const teamsInfo = document.getElementById('teams-info');
+
+        let timeLeft = 60;
+        let countdownInterval;
+        let currentTeam = 0;
+        let teams = [];
+        let wordSets = [];
+        let words = [];
+        let currentWordSetIndex = 0;
+        let isWordRevealed = false;
+        let chosenWords = [];
+        let currentWord = "";
+
+        async function fetchWordSets() {
+            try {
+                const response = await fetch('https://opensheet.elk.sh/1YVZV9IN3K1bIXO0am28DHXONnQWFVs-gguHyYgsuXHQ/ชุดคำ');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                wordSets = await response.json();
+                const wordSetSelect = document.getElementById('word-set');
+                wordSets.forEach((set, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = set['ชื่อชุดคำ'];
+                    wordSetSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching word sets:', error);
+                Swal.fire('Error', 'ไม่สามารถโหลดชุดคำได้ กรุณาลองใหม่อีกครั้ง', 'error');
+            }
+        }
+
+        async function fetchWords() {
+            try {
+                const response = await fetch(`https://opensheet.elk.sh/1YVZV9IN3K1bIXO0am28DHXONnQWFVs-gguHyYgsuXHQ/คำ`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                words = await response.json();
+            } catch (error) {
+                console.error('Error fetching words:', error);
+                Swal.fire('Error', 'ไม่สามารถโหลดคำได้ กรุณาลองใหม่อีกครั้ง', 'error');
+            }
+        }
+
+        async function initializeGame(event) {
+            event.preventDefault();
+            try {
+                teams = [
+                    { name: document.getElementById('team1-name').value, icon: document.getElementById('team1-icon').value, score: 0 },
+                    { name: document.getElementById('team2-name').value, icon: document.getElementById('team2-icon').value, score: 0 }
+                ];
+                currentWordSetIndex = parseInt(document.getElementById('word-set').value);
+                timeLeft = parseInt(document.getElementById('time-limit').value);
+
+                document.getElementById('team-setup').style.display = 'none';
+                document.getElementById('game-container').style.display = 'block';
+                updateTeamsInfo();
+                await fetchWords();
+                await loadNewWord();
+            } catch (error) {
+                console.error('Error initializing game:', error);
+                Swal.fire('Error', 'เกิดข้อผิดพลาดในการเริ่มเกม กรุณาลองใหม่อีกครั้ง', 'error');
+            }
+        }
+
+        function getRandomWord() {
+            try {
+                const availableWords = words.filter(word => 
+                    word['ID ชุดคำ'] === wordSets[currentWordSetIndex]['ID ชุดคำ'] &&
+                    !chosenWords.includes(word['คำ'])
+                );
+                if (availableWords.length === 0) {
+                    showEndGameMessage();
+                    return null;
+                }
+                const randomIndex = Math.floor(Math.random() * availableWords.length);
+                return availableWords[randomIndex];
+            } catch (error) {
+                console.error('Error getting random word:', error);
+                Swal.fire('Error', 'เกิดข้อผิดพลาดในการเลือกคำ กรุณาลองใหม่อีกครั้ง', 'error');
+                return null;
+            }
+        }
+
+        async function loadNewWord() {
+            try {
+                const selectedWord = getRandomWord();
+                if (!selectedWord) return;
+
+                chosenWords.push(selectedWord['คำ']);
+                currentWord = selectedWord['คำ'];
+                imageURL = selectedWord['ลิงก์รูปภาพ'];
+                solutionModal.innerHTML = `<p>${currentWord}</p>`;
+
+                resetGame();
+            } catch (error) {
+                console.error('Error loading new word:', error);
+                Swal.fire('Error', 'เกิดข้อผิดพลาดในการโหลดคำใหม่ กรุณาลองใหม่อีกครั้ง', 'error');
+            }
+        }
+
+        function updateTeamsInfo() {
+            teamsInfo.innerHTML = teams.map((team, index) => 
+                `<div class="team-info ${index === currentTeam ? 'active-team' : ''}">
+                    ${team.icon} ${team.name}: ${team.score}
+                    <button class="score-button" onclick="addScore(${index}, 1)">+1</button>
+                    <button class="score-button" onclick="addScore(${index}, -1)">-1</button>
+                </div>`
+            ).join('');
+        }
+
+        function addScore(teamIndex, points) {
+            teams[teamIndex].score += points;
+            updateTeamsInfo();
+        }
+
+        function startCountdown() {
+            countdown.textContent = `Time left: ${timeLeft} seconds`;
+            countdownInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    countdown.textContent = `Time left: ${timeLeft} seconds`;
+                } else {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+
+        function resetGame() {
+            puzzle.innerHTML = '';
+            solutionModal.style.display = 'none';
+            clearInterval(countdownInterval);
+            timeLeft = parseInt(document.getElementById('time-limit').value);
+            isWordRevealed = false;
+            createPuzzle();
+            startCountdown();
+        }
+
+        function endGame() {
+            clearInterval(countdownInterval);
+            let resultMessage;
+            if (teams[0].score > teams[1].score) {
+                resultMessage = `ผู้ชนะ: <strong style="color: #0066cc;">${teams[0].name}</strong>`;
+            } else if (teams[1].score > teams[0].score) {
+                resultMessage = `ผู้ชนะ: <strong style="color: #0066cc;">${teams[1].name}</strong>`;
+            } else {
+                resultMessage = `<strong style="color: #0066cc;">ผลเสมอ</strong>`;
+            }
+            Swal.fire({
+                title: 'จบเกม!',
+                html: `<p>คะแนนทีม ${teams[0].name}: ${teams[0].score}</p>
+                       <p>คะแนนทีม ${teams[1].name}: ${teams[1].score}</p>
+                       <p>${resultMessage}</p>`,
+                confirmButtonText: 'ตกลง'
+            });
+        }
+
+        function showEndGameMessage() {
+            let resultMessage;
+            if (teams[0].score > teams[1].score) {
+                resultMessage = `ผู้ชนะ: <strong style="color: #0066cc;">${teams[0].name}</strong>`;
+            } else if (teams[1].score > teams[0].score) {
+                resultMessage = `ผู้ชนะ: <strong style="color: #0066cc;">${teams[1].name}</strong>`;
+            } else {
+                resultMessage = `<strong style="color: #0066cc;">ผลเสมอ</strong>`;
+            }
+            Swal.fire({
+                title: 'คำหมดแล้ว!',
+                html: `<p>คะแนนทีม ${teams[0].name}: ${teams[0].score}</p>
+                       <p>คะแนนทีม ${teams[1].name}: ${teams[1].score}</p>
+                       <p>${resultMessage}</p>`,
+                showCancelButton: true,
+                confirmButtonText: 'เริ่มเกมใหม่',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    resetToSetup();
+                }
+            });
+        }
+
+        async function nextWord() {
+            if (!isWordRevealed) return;
+            currentTeam = (currentTeam + 1) % 2;
+            isWordRevealed = false;
+            await loadNewWord();
+        }
+
+        function createPuzzle() {
+            for (let i = 0; i < 9; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'piece';
+                piece.dataset.index = i;
+                piece.textContent = i + 1;
+                piece.addEventListener('click', () => {
+                    if (!piece.classList.contains('revealed')) {
+                        piece.style.backgroundImage = `url(${imageURL})`;
+                        piece.style.backgroundPosition = `${-100 * (i % 3)}% ${-100 * Math.floor(i / 3)}%`;
+                        piece.classList.add('revealed');
+                        clearInterval(countdownInterval);
+                        startCountdown();
+                    }
+                });
+                puzzle.appendChild(piece);
+            }
+        }
+
+        function getHint() {
+            const wordLength = currentWord.length;
+            const numHidden = Math.floor(wordLength / 3);
+            let hiddenIndices = [];
+            while (hiddenIndices.length < numHidden) {
+                const randomIndex = Math.floor(Math.random() * wordLength);
+                if (!hiddenIndices.includes(randomIndex)) {
+                    hiddenIndices.push(randomIndex);
+                }
+            }
+            let hintWord = '';
+            for (let i = 0; i < wordLength; i++) {
+                hintWord += hiddenIndices.includes(i) ? '_' : currentWord[i];
+            }
+            Swal.fire({
+                title: 'คำใบ้',
+                text: hintWord,
+                confirmButtonText: 'ตกลง'
+            });
+        }
+
+        function resetToSetup() {
+            document.getElementById('team-setup').style.display = 'block';
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('word-set').innerHTML = '';
+            fetchWordSets();
+        }
+
+        resetButton.addEventListener('click', async () => {
+            await loadNewWord();
+        });
+        endGameButton.addEventListener('click', endGame);
+        hintButton.addEventListener('click', getHint);
+        fullscreenButton.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        });
+        answerButton.addEventListener('click', () => {
+            solutionModal.style.display = 'flex';
+            solutionModal.innerHTML = `<p>${currentWord}</p>`;
+            document.querySelectorAll('.piece').forEach(piece => {
+                piece.style.backgroundImage = `url(${imageURL})`;
+                const index = piece.dataset.index;
+                piece.style.backgroundPosition = `${-100 * (index % 3)}% ${-100 * Math.floor(index / 3)}%`;
+                piece.classList.add('revealed');
+            });
+        });
+
+        document.getElementById('team-setup').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            try {
+                await initializeGame(event);
+            } catch (error) {
+                console.error('Error starting game:', error);
+                Swal.fire('Error', 'เกิดข้อผิดพลาดในการเริ่มเกม กรุณาลองใหม่อีกครั้ง', 'error');
+            }
+        });
+
+        document.addEventListener('contextmenu', async (event) => {
+            event.preventDefault();
+            if (event.button === 2) {
+                await Swal.fire({
+                    title: 'คำถัดไป',
+                    text: 'คุณต้องการดูคำถัดไปหรือไม่?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'ใช่',
+                    cancelButtonText: 'ไม่'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        nextWord();
+                    }
+                });
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!event.target.classList.contains('piece')) {
+                nextWord();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                answerButton.click();
+            } else if (event.code === 'KeyH') {
+                getHint();
+            }
+        });
+
+        window.addEventListener('error', (event) => {
+            console.error('Uncaught error:', event.error);
+            Swal.fire('Error', 'เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณารีเฟรชหน้าและลองใหม่อีกครั้ง', 'error');
+        });
+
+        fetchWordSets();
+    </script>
+</body>
+</html>

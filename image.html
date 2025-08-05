@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ภาพประทับใจแด่ครูผู้เกษียณ กลุ่มหนองกุ่ม</title>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/infobwd/wdconnect/main/%E0%B8%AA%E0%B8%9E%E0%B8%90%203D%20%E0%B8%82%E0%B8%AD%E0%B8%9A.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      padding-top: 56px;
+      padding-bottom: 100px;
+    }
+
+    .carousel-item {
+      height: calc(100vh - 156px);
+    }
+
+    .carousel-item img {
+      object-fit: cover;
+      height: 100%;
+      width: 100%;
+    }
+
+    .album-thumbnail {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      margin: 0 2px;
+      cursor: pointer;
+    }
+
+    #thumbnailWrapper {
+      position: fixed;
+      bottom: 40px;
+      left: 0;
+      right: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 5px 0;
+      z-index: 1000;
+    }
+
+    #thumbnailContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      height: 70px;
+      padding: 0 40px;
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #f5f5f5;
+      text-align: center;
+      padding: 10px 0;
+      z-index: 999;
+    }
+
+    .carousel-caption {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .fullscreen-toggle, .download-icon {
+      position: absolute;
+      top: 15px;
+      z-index: 1000;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .fullscreen-toggle {
+      right: 10px;
+    }
+
+    .download-icon {
+      right: 110px;
+    }
+
+    .navbar-brand img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    #liffLoginButton,
+    #liffLogoutButton {
+      background-color: transparent;
+      border: 1px solid #333;
+      color: #333;
+      padding: 3px 10px ;
+          margin-left: 10px;
+      transition: all 0.3s ease;
+    }
+
+    #liffLoginButton:hover,
+    #liffLogoutButton:hover {
+      background-color: #333;
+      color: #FFF9C4;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .card {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-text {
+      flex-grow: 1;
+    }
+
+    .small-images {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .small-images img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin: 2px;
+    }
+
+    #prevThumbnail, #nextThumbnail {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+
+    .sort-buttons {
+      margin-bottom: 20px;
+    }
+
+    .sort-buttons button {
+      margin-right: 10px;
+    }
+
+    body.dark-theme {
+      background-color: #333;
+      color: #fff;
+    }
+
+    body.dark-theme .card {
+      background-color: #444;
+    }
+
+    body.dark-theme .card-body {
+      color: #fff;
+    }
+
+    body.dark-theme .navbar {
+      background-color: #222 !important;
+    }
+
+    body.dark-theme .navbar-light .navbar-brand,
+    body.dark-theme .navbar-light .navbar-nav .nav-link {
+      color: #fff;
+    }
+
+    body.dark-theme .footer {
+      background-color: #222;
+      color: #fff;
+    }
+
+    body.dark-theme #thumbnailWrapper {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    @media (max-width: 768px) {
+      .carousel-item {
+        height: calc(100vh - 200px);
+      }
+
+      .card-img-top {
+        height: 150px;
+      }
+    }
+    .view-count {
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+  margin-left: 10px;
+}
+.view-count i {
+  margin-right: 5px;
+}
+    .card-img-container {
+    position: relative;
+  }
+
+  .view-count-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
+  }
+
+  .view-count-overlay i {
+    margin-right: 5px;
+  }
+  .music-info {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+  }
+  .music-info img {
+      height: 20px;
+      margin-right: 10px;
+  }
+  .music-title {
+      font-size: 0.9em;
+      color: #333;
+  }
+  .music-title.dark-theme {
+      color: #fff;
+  }
+    htmlCopy<style>
+  /* ... (ส่วน CSS อื่นๆ คงเดิม) ... */
+
+  #musicControls {
+    display: flex;
+    align-items: center;
+  }
+#musicControls button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+#musicControls .fas {
+  font-size: 0.75rem;
+}
+  #playlistSelect {
+    font-size: 0.875rem;
+    height: calc(1.5em + 0.5rem + 2px);
+    padding: 0.25rem 0.5rem;
+  }
+    .navbar {
+      background-color: #FFD966 !important; /* Pastel yellow */
+    }
+
+    .navbar-light .navbar-brand,
+    .navbar-light .navbar-nav .nav-link {
+      color: #333;
+    }
+     .btn-minimal {
+      background-color: transparent;
+      border: 1px solid #333;
+      color: #333;
+      padding: 5px 10px;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-minimal:hover {
+      background-color: #333;
+      color: #FFF9C4;
+    }
+
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+
+    <a class="navbar-brand" href="https://wd-information.glitch.me/image.html">
+      <img src="https://raw.githubusercontent.com/infobwd/wdconnect/main/%E0%B8%AA%E0%B8%9E%E0%B8%90%203D%20%E0%B8%82%E0%B8%AD%E0%B8%9A.png" alt="Logo">
+      ภาพประทับใจแด่ครูผู้เกษียณ
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="https://wd-information.glitch.me/image.html">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="uploadLink">Upload</a>
+        </li>
+      </ul>
+      <div id="musicPlayer"></div>
+      <div id="playlistStatus"></div>
+      <div id="musicControls" class="d-flex align-items-center">
+        <button class="btn btn-outline-primary btn-sm mx-1" id="prevButton"><i class="fas fa-backward fa-xs"></i></button>
+        <button class="btn btn-outline-primary btn-sm mx-1" id="playButton"><i class="fas fa-play fa-xs"></i></button>
+        <button class="btn btn-outline-primary btn-sm mx-1" id="nextButton"><i class="fas fa-forward fa-xs"></i></button>
+        <button class="btn btn-outline-primary btn-sm mx-1" id="repeatButton"><i class="fas fa-redo fa-xs"></i></button>
+        <button class="btn btn-outline-primary btn-sm mx-1" id="shuffleButton"><i class="fas fa-random fa-xs"></i></button>
+        <button class="btn btn-outline-primary btn-sm mx-1" id="playlistButton"><i class="fas fa-list fa-xs"></i></button>
+        <button class="btn btn-outline-primary btn-sm mx-1" id="volumeDownButton"><i class="fas fa-volume-down fa-xs"></i></button>
+        <button class="btn btn-outline-primary btn-sm mx-1" id="volumeUpButton"><i class="fas fa-volume-up fa-xs"></i></button>
+        <button class="btn btn-outline-primary btn-sm mx-1" id="muteButton"><i class="fas fa-volume-mute fa-xs"></i></button>
+        <div class="music-info">
+          <img src="https://cdn-icons-png.flaticon.com/128/11736/11736677.png" alt="YouTube Music Logo">
+          <div class="music-title" id="musicTitle">Title</div>
+        </div>
+        <div id="timeRemaining" class="ml-2">00:00</div>
+        <select id="playlistSelect" class="form-control form-control-sm ml-2" style="width: auto;">
+          <option value="PLurOTK7foPZ8yEOYOfBP_TrCWVaqE3MbS">Playlist 1</option>
+          <option value="PLMC9KNkIncKtPzgY-5rmhvj7fax8fdxoj">Playlist 2</option>
+        </select>
+      </div>
+
+
+      <button id="liffLoginButton" class="btn btn-outline-success my-2 my-sm-0" style="display: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="Line" style="height: 20px; margin-right: 5px;">
+        Login with Line
+      </button>
+      <button id="liffLogoutButton" class="btn btn-outline-danger my-2 my-sm-0" style="display: none;">
+        Logout
+      </button>
+      <img id="userProfileImage" class="rounded-circle" style="width: 40px; height: 40px; display: none; margin-left: 10px;" alt="User Profile">
+    </div>
+  </nav>
+
+  <div class="container-fluid p-0">
+    <div id="googleDriveCarousel" class="carousel slide" data-ride="carousel">
+      <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="spinner-border text-light" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <ol class="carousel-indicators" id="carousel-indicators"></ol>
+      <div class="carousel-inner" id="carousel-inner"></div>
+      <a class="carousel-control-prev" href="#googleDriveCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#googleDriveCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+      <button class="fullscreen-toggle" onclick="toggleFullscreen()">Fullscreen</button>
+      <button class="download-icon" onclick="downloadCurrentImage()">
+        <i class="fas fa-download"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="thumbnailWrapper" class="position-fixed bottom-0 left-0 right-0 bg-light py-2">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-1">
+          <button id="prevThumbnail" class="btn btn-outline-secondary">&lt;</button>
+        </div>
+        <div class="col-10">
+          <div id="thumbnailContainer" class="d-flex overflow-auto"></div>
+        </div>
+        <div class="col-1 text-right">
+          <button id="nextThumbnail" class="btn btn-outline-secondary">&gt;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cardContainer" class="container mt-4">
+  </div>
+  <br>
+  <footer class="footer">
+    <div class="container">
+      <span class="text-muted">© ภาพประทับใจแด่ครูผู้เกษียณ กลุ่มหนองกุ่ม ๒๐๒๔. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="uploadModalLabel">Upload</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>คลิกปุ่มด้านล่างเพื่อไปยังแบบฟอร์มอัปโหลด</p>
+          <a href="https://forms.gle/FGt6HwfbZoLtMxbP6" class="btn btn-primary" target="_blank">ไปยังแบบฟอร์มอัปโหลด</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--   <div id="musicPlayer"></div> -->
+  <script>
+    const sheetUrl = 'https://opensheet.elk.sh/1I7Rx1BCLav0IWaM_8p-vvTZThgMHsksDm3n3mxFkZlA/การตอบแบบฟอร์ม 1';
+    const liffId = "2005494853-om02Qqq5";
+    let liffClient;
+    let allImages = [];
+    let currentThumbnailIndex = 0;
+    const thumbnailsPerPage = 12;
+
+  let player;
+    let currentPlaylist;
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('musicPlayer', {
+        height: '0',
+        width: '0',
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange,
+          'onError': onPlayerError
+        }
+      });
+    }
+
+
+    
+
+
+// อัปเดตฟังก์ชัน onPlayerStateChange เพื่อจัดการกับการเล่นซ้ำ
+function onPlayerStateChange(event) {
+  if (event.data == YT.PlayerState.PLAYING) {
+    updateMusicTitle();
+    document.getElementById('playButton').innerHTML = '<i class="fas fa-pause"></i>';
+    startTimer();
+  } else if (event.data == YT.PlayerState.PAUSED) {
+    document.getElementById('playButton').innerHTML = '<i class="fas fa-play"></i>';
+    clearInterval(timerInterval);
+  } else if (event.data == YT.PlayerState.ENDED) {
+    if (isRepeatEnabled) {
+      player.playVideo();
+    }
+  }
+}
+
+
+    function onPlayerError(event) {
+      console.error("Player error:", event.data);
+      nextVideo(); // Try to play the next video on error
+    }
+
+    // }
+    
+    
+let currentPlaylistId = '';
+
+function loadPlaylist(playlistId) {
+  if (player && player.loadPlaylist) {
+    currentPlaylistId = playlistId;
+    
+    player.loadPlaylist({
+      list: playlistId,
+      listType: 'playlist',
+      index: 0,
+      startSeconds: 0
+    });
+    
+    console.log("กำลังโหลด Playlist:", playlistId);
+  } else {
+    console.error("Player ยังไม่พร้อมหรือไม่มีฟังก์ชัน loadPlaylist");
+  }
+}
+
+function onPlaylistLoaded(event) {
+  // ตรวจสอบว่า playlist ที่โหลดเสร็จตรงกับที่เลือกล่าสุดหรือไม่
+  if (event.data === currentPlaylistId) {
+    console.log("Playlist โหลดเสร็จแล้ว:", event.data);
+    document.getElementById('playlistStatus').textContent = 'Playlist พร้อมเล่น';
+    player.playVideo(); // เริ่มเล่นวิดีโอ
+  } else {
+    console.log("ได้รับการแจ้งเตือน Playlist โหลดเสร็จ แต่ไม่ตรงกับที่เลือกล่าสุด");
+  }
+  
+  // ลบ event listener เพื่อป้องกันการทำงานซ้ำ
+  player.removeEventListener('onPlaylistLoaded', onPlaylistLoaded);
+}
+
+    
+    
+let isRepeatEnabled = false;
+let isShuffleEnabled = false;
+
+function onPlayerReady(event) {
+  console.log("Player พร้อมแล้ว");
+  loadPlaylist(document.getElementById('playlistSelect').value);
+  
+  document.getElementById('playButton').addEventListener('click', togglePlayPause);
+  document.getElementById('nextButton').addEventListener('click', nextVideo);
+  document.getElementById('prevButton').addEventListener('click', previousVideo);
+  document.getElementById('repeatButton').addEventListener('click', toggleRepeat);
+  document.getElementById('shuffleButton').addEventListener('click', toggleShuffle);
+  document.getElementById('playlistButton').addEventListener('click', showPlaylist);
+  document.getElementById('volumeUpButton').addEventListener('click', increaseVolume);
+  document.getElementById('volumeDownButton').addEventListener('click', decreaseVolume);
+  document.getElementById('muteButton').addEventListener('click', toggleMute);
+  document.getElementById('playlistSelect').addEventListener('change', function() {
+    loadPlaylist(this.value);
+  });
+}
+
+function increaseVolume() {
+  if (player && player.getVolume) {
+    let currentVolume = player.getVolume();
+    player.setVolume(Math.min(currentVolume + 10, 100));
+  }
+}
+
+function decreaseVolume() {
+  if (player && player.getVolume) {
+    let currentVolume = player.getVolume();
+    player.setVolume(Math.max(currentVolume - 10, 0));
+  }
+}
+
+function toggleMute() {
+  if (player && player.isMuted) {
+    if (player.isMuted()) {
+      player.unMute();
+      document.getElementById('muteButton').innerHTML = '<i class="fas fa-volume-mute fa-xs"></i>';
+    } else {
+      player.mute();
+      document.getElementById('muteButton').innerHTML = '<i class="fas fa-volume-off fa-xs"></i>';
+    }
+  }
+}
+
+function toggleRepeat() {
+  isRepeatEnabled = !isRepeatEnabled;
+  player.setLoop(isRepeatEnabled);
+  document.getElementById('repeatButton').classList.toggle('btn-primary', isRepeatEnabled);
+}
+
+function toggleShuffle() {
+  isShuffleEnabled = !isShuffleEnabled;
+  player.setShuffle(isShuffleEnabled);
+  document.getElementById('shuffleButton').classList.toggle('btn-primary', isShuffleEnabled);
+}
+
+function showPlaylist() {
+  if (player && player.getPlaylist) {
+    const playlist = player.getPlaylist();
+    let playlistHtml = '<ul class="list-group">';
+    playlist.forEach((videoId, index) => {
+      playlistHtml += `<li class="list-group-item" onclick="player.playVideoAt(${index})">${index + 1}. ${getVideoTitle(videoId)}</li>`;
+    });
+    playlistHtml += '</ul>';
+
+    Swal.fire({
+      title: 'รายชื่อเพลง',
+      html: playlistHtml,
+      width: '80%',
+      confirmButtonText: 'ปิด'
+    });
+  }
+}
+
+function getVideoTitle(videoId) {
+  // ในที่นี้คุณอาจต้องใช้ YouTube Data API เพื่อดึงชื่อวิดีโอจริงๆ
+  // สำหรับตัวอย่างนี้ เราจะใช้ ID แทน
+  return `Video ${videoId}`;
+}
+    function togglePlayPause() {
+      if (player && typeof player.getPlayerState === 'function') {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+          pauseVideo();
+        } else {
+          playVideo();
+        }
+      }
+    }
+
+    function playVideo() {
+      if (player && player.playVideo) {
+        try {
+          player.playVideo();
+          document.getElementById('playButton').innerHTML = '<i class="fas fa-pause"></i>';
+        } catch (error) {
+          console.error("Error playing video:", error);
+        }
+      }
+    }
+
+    function pauseVideo() {
+      if (player && player.pauseVideo) {
+        try {
+          player.pauseVideo();
+          document.getElementById('playButton').innerHTML = '<i class="fas fa-play"></i>';
+        } catch (error) {
+          console.error("Error pausing video:", error);
+        }
+      }
+    }
+
+    function nextVideo() {
+      if (player && player.nextVideo) {
+        try {
+          player.nextVideo();
+        } catch (error) {
+          console.error("Error playing next video:", error);
+        }
+      }
+    }
+
+    function previousVideo() {
+      if (player && player.previousVideo) {
+        try {
+          player.previousVideo();
+        } catch (error) {
+          console.error("Error playing previous video:", error);
+        }
+      }
+    }
+
+ function updateMusicTitle() {
+  if (player && player.getVideoData) {
+    try {
+      const videoData = player.getVideoData();
+      document.getElementById('musicTitle').textContent = videoData.title || 'Unknown Title';
+    } catch (error) {
+      console.error("Error updating music title:", error);
+    }
+  }
+}
+
+    let timerInterval;
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(updateTimeRemaining, 1000);
+    }
+
+    function updateTimeRemaining() {
+      if (player && player.getDuration && player.getCurrentTime) {
+        try {
+          const duration = player.getDuration();
+          const currentTime = player.getCurrentTime();
+          const timeRemaining = duration - currentTime;
+          const minutes = Math.floor(timeRemaining / 60);
+          const seconds = Math.floor(timeRemaining % 60);
+          document.getElementById('timeRemaining').textContent = 
+            `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        } catch (error) {
+          console.error("Error updating time remaining:", error);
+        }
+      }
+    }
+
+// เพิ่มฟังก์ชันนี้เพื่อตรวจสอบว่า API ถูกโหลดแล้ว
+function checkYouTubeApiLoaded() {
+  if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+    setTimeout(checkYouTubeApiLoaded, 100);
+  } else {
+    onYouTubeIframeAPIReady();
+  }
+}
+
+// เรียกใช้ฟังก์ชันตรวจสอบเมื่อหน้าเว็บโหลดเสร็จ
+window.onload = checkYouTubeApiLoaded;
+
+
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function downloadCurrentImage() {
+      const activeItem = document.querySelector('.carousel-item.active img');
+      if (activeItem) {
+        const imageUrl = activeItem.src;
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = 'image.jpg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    function initializeLiff() {
+      liff.init({ liffId: liffId })
+        .then(() => {
+          console.log("LIFF initialized");
+          liffClient = liff;
+          if (liff.isInClient()) {
+            document.getElementById("liffLoginButton").style.display = "none";
+            document.getElementById("liffLogoutButton").style.display = "none";
+          } else {
+            if (liff.isLoggedIn()) {
+              document.getElementById("liffLogoutButton").style.display = "inline-block";
+              document.getElementById("liffLogoutButton").addEventListener("click", liffLogout);
+              updateUserProfile();
+            } else {
+              document.getElementById("liffLoginButton").style.display = "inline-block";
+              document.getElementById("liffLoginButton").addEventListener("click", liffLogin);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("LIFF initialization failed", error);
+        });
+    }
+
+    function updateUserProfile() {
+      liff.getProfile()
+        .then((profile) => {
+          const userProfileImage = document.getElementById("userProfileImage");
+          userProfileImage.src = profile.pictureUrl;
+          userProfileImage.style.display = "inline-block";
+        })
+        .catch((err) => {
+          console.error("Error getting profile:", err);
+        });
+    }
+
+    function liffLogin() {
+      if (!liffClient.isLoggedIn()) {
+        liffClient.login();
+      }
+    }
+
+    function liffLogout() {
+      if (liffClient.isLoggedIn()) {
+        liffClient.logout();
+        document.getElementById("liffLogoutButton").style.display = "none";
+        document.getElementById("liffLoginButton").style.display = "inline-block";
+        document.getElementById("userProfileImage").style.display = "none";
+      }
+    }
+
+function getGoogleDriveImageUrl(url, size = 'w1000') {
+  if (!url) return ''; // Return empty string if url is null or undefined
+  let fileId;
+  if (url.includes('id=')) {
+    fileId = url.split('id=')[1].split('&')[0];
+  } else if (url.includes('/d/')) {
+    fileId = url.split('/d/')[1].split('/')[0];
+  } else {
+    // If the URL doesn't contain identifiable patterns, return the original URL
+    return url;
+  }
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=${size}`;
+}
+
+    function getGoogleDriveDownloadUrl(url) {
+      if (!url) return '';
+      const fileId = url.split('=').pop();
+      return `https://drive.google.com/uc?export=download&id=${fileId}`;
+    }
+
+    function toggleLoadingOverlay(show) {
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.style.display = show ? 'flex' : 'none';
+    }
+
+   function createCarouselItems(images) {
+  const carouselInner = document.getElementById('carousel-inner');
+  const carouselIndicators = document.getElementById('carousel-indicators');
+  carouselInner.innerHTML = '';
+  carouselIndicators.innerHTML = '';
+
+  images.forEach((image, index) => {
+    const imageUrl = getGoogleDriveImageUrl(image.url);
+    const carouselItem = document.createElement('div');
+    carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.className = 'd-block w-100';
+    img.alt = `Image ${index + 1}`;
+    img.style.cursor = 'pointer';
+    img.onerror = () => {
+      img.src = 'https://via.placeholder.com/800x400'; // Fallback image if main image fails to load
+    };
+    img.addEventListener('click', () => shareFlexMessage(image));
+    
+    img.onload = () => {
+      if (index === 0) toggleLoadingOverlay(false);
+    };
+    img.onerror = () => {
+      if (index === 0) toggleLoadingOverlay(false);
+    };
+
+    carouselItem.appendChild(img);
+
+    const caption = document.createElement('div');
+    caption.className = 'carousel-caption d-none d-md-block';
+    caption.innerHTML = `
+      <h5>${image.group}</h5>
+      <p></p>
+      <p><small></small></p>
+    `;
+    carouselItem.appendChild(caption);
+
+    carouselInner.appendChild(carouselItem);
+
+    const indicator = document.createElement('li');
+    indicator.setAttribute('data-target', '#googleDriveCarousel');
+    indicator.setAttribute('data-slide-to', index.toString());
+    if (index === 0) indicator.className = 'active';
+    carouselIndicators.appendChild(indicator);
+  });
+
+  toggleLoadingOverlay(true);
+
+  // สุ่ม carousel-item active
+  randomizeActiveCarouselItem();
+}
+
+    function shareFlexMessage(image) {
+  if (!liff.isLoggedIn()) {
+    Swal.fire({
+      title: 'กรุณาเข้าสู่ระบบ',
+      text: 'คุณต้องเข้าสู่ระบบ LINE ก่อนใช้งานฟีเจอร์นี้',
+      icon: 'warning',
+      confirmButtonText: 'เข้าสู่ระบบ',
+      showCancelButton: true,
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        liff.login();
+      }
+    });
+    return;
+  }
+
+  // Find all images from the same group
+  const groupImages = allImages.filter(img => img.group === image.group);
+  const imagesToShow = groupImages.slice(0, 5); // Get up to 5 images
+
+  const flexMessage = {
+    type: "flex",
+    altText: "ภาพประทับใจแด่ครูผู้เกษียณ",
+    contents: {
+      type: "bubble",
+      hero: {
+        type: "image",
+        url: getGoogleDriveImageUrl(image.url),
+        size: "full",
+        aspectRatio: "1:1",
+        aspectMode: "cover"
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "text",
+            text: image.group,
+            weight: "bold",
+            size: "xl"
+          },
+          {
+            type: "text",
+            text: `จำนวนรูปภาพทั้งหมด: ${groupImages.length}`,
+            size: "sm",
+            color: "#888888"
+          },
+          {
+            type: "box",
+            layout: "horizontal",
+            margin: "md",
+            contents: imagesToShow.map(img => ({
+              type: "image",
+              url: getGoogleDriveImageUrl(img.url, 'w100'),
+              size: "xs",
+              aspectMode: "cover"
+            }))
+          }
+        ]
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        spacing: "sm",
+        contents: [
+          {
+            type: "button",
+            style: "link",
+            height: "sm",
+            action: {
+              type: "uri",
+              label: "ดูรูปภาพทั้งหมด",
+              uri: "https://liff.line.me/2005494853-om02Qqq5"
+            }
+          },
+          {
+            type: "button",
+            style: "link",
+            height: "sm",
+            action: {
+              type: "uri",
+              label: "เพิ่มรูปภาพ",
+              uri: "https://forms.gle/Qc7WJtN93peEJ9SeA"
+            }
+          }
+        ]
+      }
+    }
+  };
+
+  if (liff.isApiAvailable('shareTargetPicker')) {
+    liff.shareTargetPicker([flexMessage])
+      .then(() => {
+        Swal.fire({
+          title: 'ส่งข้อความสำเร็จ',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      })
+      .catch((error) => {
+        console.error('Error sending message via shareTargetPicker', error);
+        Swal.fire({
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถส่งข้อความได้',
+          icon: 'error'
+        });
+      });
+  } else {
+    Swal.fire({
+      title: 'ไม่สามารถใช้งานได้',
+      text: 'ฟีเจอร์นี้ไม่สามารถใช้งานได้บนอุปกรณ์ของคุณ',
+      icon: 'error'
+    });
+  }
+}
+
+    function updateThumbnails() {
+      const thumbnailContainer = document.getElementById('thumbnailContainer');
+      thumbnailContainer.innerHTML = '';
+
+      const start = currentThumbnailIndex;
+      const end = Math.min(start + thumbnailsPerPage, allImages.length);
+
+      for (let i = start; i < end; i++) {
+        const image = allImages[i];
+        const thumbnailUrl = getGoogleDriveImageUrl(image.url, 'w100');
+        const thumbnail = document.createElement('img');
+        thumbnail.src = thumbnailUrl;
+        thumbnail.className = 'album-thumbnail';
+        thumbnail.alt = `Thumbnail ${i + 1}`;
+        thumbnail.onerror = () => {
+          thumbnail.src = 'https://via.placeholder.com/60'; // Fallback image if thumbnail fails to load
+        };
+        thumbnail.onclick = () => {
+          $('#googleDriveCarousel').carousel(i);
+        };
+        thumbnailContainer.appendChild(thumbnail);
+      }
+    }
+
+    function prevThumbnails() {
+      currentThumbnailIndex = Math.max(0, currentThumbnailIndex - thumbnailsPerPage);
+      updateThumbnails();
+    }
+
+    function nextThumbnails() {
+      currentThumbnailIndex = Math.min(allImages.length - thumbnailsPerPage, currentThumbnailIndex + thumbnailsPerPage);
+      updateThumbnails();
+    }
+
+    let currentPage = 1;
+    const cardsPerPage = 10;
+
+    function createCards(data) {
+      const cardContainer = document.getElementById('cardContainer');
+      cardContainer.innerHTML = '';
+      const groupedByDateAndGroup = {};
+
+      function getThaiDate(dateString) {
+        const [datePart, timePart] = dateString.split(', ');
+        const [day, month, year] = datePart.split('/');
+        const date = new Date(year, month - 1, day);
+        const thaiDays = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+        const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+        if (isNaN(date.getTime())) {
+          return 'วันที่ไม่ถูกต้อง';
+        }
+
+        const thaiDay = thaiDays[date.getDay()];
+        const thaiMonth = thaiMonths[date.getMonth()];
+        return `วัน${thaiDay}ที่ ${day} ${thaiMonth} ${parseInt(year) + 543}`;
+      }
+
+      data.forEach(row => {
+        const date = row['ประทับเวลา'].split(', ')[0];
+        const group = row['รายชื่อ'];
+        if (!groupedByDateAndGroup[date]) {
+          groupedByDateAndGroup[date] = {};
+        }
+        if (!groupedByDateAndGroup[date][group]) {
+          groupedByDateAndGroup[date][group] = [];
+        }
+        groupedByDateAndGroup[date][group].push(row);
+      });
+
+      const allCards = [];
+      Object.keys(groupedByDateAndGroup).sort((a, b) => new Date(b.split('/').reverse()) - new Date(a.split('/').reverse())).forEach(date => {
+        const dateHeader = document.createElement('h2');
+        const [day, month, year] = date.split('/');
+        const daysAgo = Math.floor((new Date() - new Date(year, month - 1, day)) / (1000 * 60 * 60 * 24));
+        dateHeader.textContent = `${daysAgo} วันที่แล้ว (${date})`;
+        dateHeader.className = 'col-12 mb-3';
+
+        allCards.push({ date: dateHeader.outerHTML, card: '' });
+
+        const dateCards = [];
+        Object.keys(groupedByDateAndGroup[date]).forEach(group => {
+          const rows = groupedByDateAndGroup[date][group];
+          const card = document.createElement('div');
+          card.className = 'col-md-4 mb-4';
+
+          const allImages = rows.flatMap(row => row['อัปโหลดรูปภาพ 📒'].split(',').map(url => url.trim()));
+          const randomImageUrl = allImages[Math.floor(Math.random() * allImages.length)];
+          const thumbnailUrl = getGoogleDriveImageUrl(randomImageUrl, 'w300');
+
+          let imagesHtml = '';
+          allImages.forEach(img => {
+            imagesHtml += `<img src="${getGoogleDriveImageUrl(img, 'w100')}" class="mr-2 mb-2" style="width: 50px; height: 50px; object-fit: cover;">`;
+          });
+
+          const thaiDate = getThaiDate(rows[0]['ประทับเวลา']);
+          const viewCount = rows[0]['ดู'] || 0; // เพิ่มการดึงข้อมูล view count จากแถวข้อมูล
+
+          card.innerHTML = `
+            <div class="card h-100" data-timestamp="${rows[0]['ประทับเวลา']}" data-group="${group}">
+              <div class="card-img-container">
+                <img src="${thumbnailUrl}" class="card-img-top" alt="Card image" style="height: 200px; object-fit: cover;">
+                <div class="view-count-overlay">
+                  <i class="fas fa-eye"></i> <span class="view-count-number">${viewCount}</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">${group}</h5>
+                <p class="card-text">จำนวนโพสต์: ${rows.length}</p>
+                <div class="small-images mt-2">
+                  ${imagesHtml}
+                </div>
+              </div>
+              <div class="card-footer text-left">
+                <small class="text-muted">${thaiDate}</small>
+              </div>
+            </div>
+          `;
+          dateCards.push(card.outerHTML);
+        });
+
+        for (let i = 0; i < dateCards.length; i += 3) {
+          const rowCards = dateCards.slice(i, i + 3);
+          const rowHtml = `<div class="row">${rowCards.join('')}</div>`;
+          allCards.push({ date: '', card: rowHtml });
+        }
+      });
+
+      window.allCardsData = allCards;
+
+      displayCards(allCards, currentPage);
+      createPagination(allCards.length);
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    const debouncedUpdateClickCount = debounce(updateClickCount, 300);
+
+    let isUpdating = false;
+
+    function showCardDetails(card) {
+  if (!card) {
+    console.error('Card element is null');
+    return;
+  }
+
+  const cardElement = card.querySelector('.card');
+  if (!cardElement) {
+    console.error('Card inner element (.card) not found');
+    return;
+  }
+
+  const title = card.querySelector('.card-title')?.textContent || 'ไม่มีชื่อ';
+  const group = cardElement.dataset.group || 'ไม่ระบุรายชื่อ';
+  const postCount = card.querySelector('.card-text')?.textContent || 'ไม่มีข้อมูล';
+  const date = card.querySelector('.card-footer small')?.textContent || 'ไม่มีวันที่';
+  const timestamp = cardElement.dataset.timestamp;
+  const viewCount = card.querySelector('.view-count-number')?.textContent || '0';
+
+  console.log('Timestamp from card:', timestamp);
+  console.log('Group from card:', group);
+
+  if (!timestamp) {
+    console.error('Timestamp not found in card data');
+    return;
+  }
+
+  const images = Array.from(card.querySelectorAll('.small-images img')).map(img => {
+    const fileId = img.src.includes('id=') ? img.src.split('id=')[1].split('&')[0] : null;
+    const downloadUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : img.src;
+    return {
+      viewUrl: getGoogleDriveImageUrl(img.src, 'w1000'), // สำหรับการแสดงผลในหน้าต่าง Swal
+      carouselUrl: getGoogleDriveImageUrl(img.src, 'w2000'), // สำหรับ carousel
+      thumbnailUrl: getGoogleDriveImageUrl(img.src, 'w300'), // สำหรับ thumbnail
+      downloadUrl: downloadUrl
+    };
+  });
+
+  // อัปเดต carousel ด้วยรูปภาพทั้งหมดและข้อมูลของการ์ด
+  updateCarouselWithImages(images, title, group, date);
+
+  if (isUpdating) {
+    console.log('Update is already in progress. Ignoring this click.');
+    return;
+  }
+
+  isUpdating = true;
+  updateClickCount(timestamp, group)
+    .then(response => {
+      if (response.success) {
+        const viewCountElement = card.querySelector('.view-count-number');
+        if (viewCountElement) {
+          viewCountElement.textContent = response.newValue;
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error updating view count:', error);
+    })
+    .finally(() => {
+      isUpdating = false;
+    });
+
+  let imageHtml = '';
+  images.forEach((img, index) => {
+    imageHtml += `
+      <div class="mb-3">
+        <img src="${img.viewUrl}" class="img-fluid mb-2" style="max-height: 300px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200';">
+        <button class="btn btn-sm btn-primary download-btn" data-url="${img.downloadUrl}" data-filename="image_${index + 1}.jpg">ดาวน์โหลด</button>
+      </div>
+    `;
+  });
+
+  Swal.fire({
+    title: title,
+    html: `
+      <p><strong>รายชื่อ:</strong> ${group}</p>
+      <p><strong>จำนวนโพสต์:</strong> ${postCount}</p>
+      <p><strong>จำนวนการดู:</strong> ${viewCount}</p>
+      <p><strong>วันที่ (ไทย):</strong> ${date}</p>
+      <p><strong>ประทับเวลา:</strong> ${timestamp}</p>
+      <div class="mt-3">${imageHtml}</div>
+    `,
+    width: '80%',
+    confirmButtonText: 'ปิด',
+    didOpen: () => {
+      document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const url = e.target.dataset.url;
+          const filename = e.target.dataset.filename;
+          downloadImage(url, filename);
+        });
+      });
+    }
+  });
+}
+    
+function updateCarouselActiveItem(imageUrl, title, group, date) {
+  const carouselInner = document.getElementById('carousel-inner');
+  const activeItem = carouselInner.querySelector('.carousel-item.active');
+  if (activeItem) {
+    const img = activeItem.querySelector('img');
+    img.src = imageUrl;
+    img.onload = () => {
+      // รีเซ็ตขนาดของ carousel หลังจากโหลดรูปภาพใหม่
+      $('#googleDriveCarousel').carousel('dispose');
+      $('#googleDriveCarousel').carousel();
+    };
+
+    // อัปเดต carousel caption
+    const caption = activeItem.querySelector('.carousel-caption');
+    if (caption) {
+      caption.innerHTML = `
+        <h5>${title}</h5>
+        <p>${group}</p>
+        <p><small>${date}</small></p>
+      `;
+    } else {
+      // สร้าง caption ใหม่ถ้ายังไม่มี
+      const newCaption = document.createElement('div');
+      newCaption.className = 'carousel-caption d-none d-md-block';
+      newCaption.innerHTML = `
+        <h5>${title}</h5>
+        <p>${group}</p>
+        <p><small>${date}</small></p>
+      `;
+      activeItem.appendChild(newCaption);
+    }
+  }
+}
+
+    function downloadImage(url, filename) {
+      console.log('Downloading image:', url, filename);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      Swal.fire({
+        title: 'กำลังดาวน์โหลด',
+        text: 'หากการดาวน์โหลดไม่เริ่มต้นอัตโนมัติ กรุณาคลิกขวาที่รูปภาพและเลือก "บันทึกรูปภาพเป็น"',
+        icon: 'info',
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
+    }
+
+    function updateClickCount(timestamp, group) {
+      console.log('Updating click count for timestamp:', timestamp, 'and group:', group);
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbwVnmlz7U5tXe3V4RliUhYL5iVKw-sUSSwijc0wA_py0hugqSx0PhMs8LnF_8RawDRhOg/exec';
+
+      // แปลง timestamp เป็นรูปแบบที่ตรงกับ Google Sheets
+      const [datePart, timePart] = timestamp.split(', ');
+      const [day, month, year] = datePart.split('/');
+      const formattedTimestamp = `${parseInt(day)}/${parseInt(month)}/${year}, ${timePart}`;
+
+      console.log('Formatted timestamp:', formattedTimestamp);
+      console.log('Group:', group);
+
+      return new Promise((resolve, reject) => {
+        const callbackName = 'callback_' + Math.random().toString(36).substr(2, 9);
+        window[callbackName] = function(response) {
+          console.log('Response from server:', response);
+          if (response.success) {
+            console.log(`Click count updated successfully. Old value: ${response.oldValue}, New value: ${response.newValue}`);
+            const cardElement = document.querySelector(`.card[data-timestamp="${timestamp}"][data-group="${group}"]`);
+            if (cardElement) {
+              const viewCountElement = cardElement.querySelector('.view-count-number');
+              if (viewCountElement) {
+                viewCountElement.textContent = response.newValue;
+              }
+            }
+            resolve(response);
+          } else {
+            console.error('Error updating click count:', response.message);
+            console.log('Received timestamp:', response.receivedTimestamp);
+            console.log('Received group:', response.receivedGroup);
+            console.log('First few rows in sheet:', response.firstFewRows);
+
+            // เพิ่มการแสดงข้อความแจ้งเตือนให้ผู้ใช้
+           // alert('ไม่พบข้อมูลสำหรับวันที่และรายชื่อนี้ในระบบ กรุณาติดต่อผู้ดูแลระบบ');
+            reject(new Error(response.message));
+          }
+          delete window[callbackName];
+        };
+
+        const script = document.createElement('script');
+        script.src = `${scriptUrl}?timestamp=${encodeURIComponent(formattedTimestamp)}&group=${encodeURIComponent(group)}&action=incrementClickCount&callback=${callbackName}`;
+        document.body.appendChild(script);
+      });
+    }
+
+    function displayCards(allCards, page) {
+      const cardContainer = document.getElementById('cardContainer');
+      cardContainer.innerHTML = '';
+
+      const startIndex = (page - 1) * cardsPerPage;
+      const endIndex = startIndex + cardsPerPage;
+      const cardsToDisplay = allCards.slice(startIndex, endIndex);
+
+      cardsToDisplay.forEach(cardData => {
+        if (cardData.date) {
+          cardContainer.innerHTML += cardData.date;
+        }
+        if (cardData.card) {
+          cardContainer.innerHTML += cardData.card;
+        }
+      });
+
+      cardContainer.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', () => showCardDetails(card.closest('.col-md-4')));
+      });
+    }
+
+    function createPagination(totalCards) {
+      const totalPages = Math.ceil(totalCards / cardsPerPage);
+      const paginationContainer = document.createElement('nav');
+      paginationContainer.setAttribute('aria-label', 'Page navigation');
+      paginationContainer.innerHTML = `
+        <ul class="pagination justify-content-center">
+          <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage - 1})" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          ${[...Array(totalPages).keys()].map(i => `
+            <li class="page-item ${currentPage === i + 1 ? 'active' : ''}">
+              <a class="page-link" href="#" onclick="changePage(${i + 1})">${i + 1}</a>
+            </li>
+          `).join('')}
+          <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage + 1})" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      `;
+      const existingPagination = document.querySelector('nav[aria-label="Page navigation"]');
+      if (existingPagination) {
+        existingPagination.replaceWith(paginationContainer);
+      } else {
+        document.getElementById('cardContainer').after(paginationContainer);
+      }
+    }
+
+    function changePage(page) {
+      currentPage = page;
+      const allCards = window.allCardsData;
+      displayCards(allCards, currentPage);
+      createPagination(allCards.length);
+    }
+
+    function refreshData() {
+      toggleLoadingOverlay(true);
+      fetch(sheetUrl)
+        .then(response => response.json())
+        .then(data => {
+          console.log('Data refreshed:', data);
+
+          allImages = [];
+
+          data.forEach((row) => {
+            const imageField = row['อัปโหลดรูปภาพ 📒'];
+            const group = row['รายชื่อ'];
+            if (!imageField) return;
+
+            const urls = imageField.split(',').map(url => url.trim());
+            urls.forEach(url => {
+              allImages.push({ url, group });
+            });
+          });
+
+          updateThumbnails();
+          createCarouselItems(allImages);
+          createCards(data);
+          toggleLoadingOverlay(false);
+        })
+        .catch(error => {
+          console.error('Error refreshing data:', error);
+          toggleLoadingOverlay(false);
+          Swal.fire({
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถรีเฟรชข้อมูลได้',
+            icon: 'error'
+          });
+        });
+    }
+
+    function searchCards() {
+      currentPage = 1;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const allCards = window.allCardsData;
+
+      const filteredCards = allCards.filter(cardData => {
+        if (cardData.card) {
+          const cardContent = cardData.card.toLowerCase();
+          return cardContent.includes(searchTerm);
+        }
+        return false;
+      });
+
+      displayCards(filteredCards, currentPage);
+      createPagination(filteredCards.length);
+    }
+
+    function sortCards(sortBy) {
+      currentPage = 1;
+      const allCards = window.allCardsData;
+
+      const sortedCards = [...allCards].sort((a, b) => {
+        if (a.date && b.date) {
+          const dateA = new Date(a.date.match(/\(([^)]+)\)/)[1].split('/').reverse().join('-'));
+          const dateB = new Date(b.date.match(/\(([^)]+)\)/)[1].split('/').reverse().join('-'));
+          return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
+        }
+        return 0;
+      });
+
+      window.allCardsData = sortedCards;
+      displayCards(sortedCards, currentPage);
+      createPagination(sortedCards.length);
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+      const themeIcon = document.getElementById('themeIcon');
+      if (document.body.classList.contains('dark-theme')) {
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+        localStorage.setItem('theme', 'light');
+      }
+      document.getElementById('musicTitle').classList.toggle('dark-theme');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const uploadLink = document.getElementById('uploadLink');
+      uploadLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        $('#uploadModal').modal('show');
+      });
+
+      document.querySelector('.fullscreen-toggle').addEventListener('click', toggleFullscreen);
+      document.querySelector('.download-icon').addEventListener('click', downloadCurrentImage);
+
+      document.addEventListener('click', function(e) {
+        const cardElement = e.target.closest('.col-md-4');
+        if (cardElement) {
+          showCardDetails(cardElement);
+        }
+      });
+
+      if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-theme');
+        document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
+      }
+    });
+
+    fetch(sheetUrl)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Data received:', data);
+
+        allImages = [];
+
+        data.forEach((row) => {
+          const imageField = row['อัปโหลดรูปภาพ 📒'];
+          const group = row['รายชื่อ'];
+          if (!imageField) return;
+
+          const urls = imageField.split(',').map(url => url.trim());
+          urls.forEach(url => {
+            allImages.push({ url, group });
+          });
+        });
+
+        updateThumbnails();
+        createCarouselItems(allImages);
+        createCards(data);
+
+        document.getElementById('prevThumbnail').addEventListener('click', prevThumbnails);
+        document.getElementById('nextThumbnail').addEventListener('click', nextThumbnails);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        toggleLoadingOverlay(false);
+      });
+
+    window.addEventListener("load", initializeLiff);
+
+    liff.ready.then(() => {
+      console.log("LIFF is ready");
+      if (liff.isLoggedIn()) {
+        updateUIForLiff();
+      }
+    });
+
+    function updateUIForLiff() {
+      if (liff.isLoggedIn()) {
+        document.getElementById("liffLogoutButton").style.display = "inline-block";
+        document.getElementById("liffLoginButton").style.display = "none";
+        updateUserProfile();
+      } else {
+        document.getElementById("liffLogoutButton").style.display = "none";
+        document.getElementById("liffLoginButton").style.display = "inline-block";
+      }
+    }
+    // Update button classes
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.classList.add('btn-minimal');
+    });
+    
+    
+    function randomizeActiveCarouselItem() {
+  const carouselItems = document.querySelectorAll('#carousel-inner .carousel-item');
+  const randomIndex = Math.floor(Math.random() * carouselItems.length);
+  
+  carouselItems.forEach((item, index) => {
+    item.classList.remove('active');
+    if (index === randomIndex) {
+      item.classList.add('active');
+    }
+  });
+  
+  // อัปเดต carousel indicators
+  const indicators = document.querySelectorAll('#carousel-indicators li');
+  indicators.forEach((indicator, index) => {
+    indicator.classList.remove('active');
+    if (index === randomIndex) {
+      indicator.classList.add('active');
+    }
+  });
+}
+    
+    function updateCarouselWithImages(images, title, group, date) {
+  const carouselInner = document.getElementById('carousel-inner');
+  const carouselIndicators = document.getElementById('carousel-indicators');
+  
+  // ล้าง carousel เดิม
+  carouselInner.innerHTML = '';
+  carouselIndicators.innerHTML = '';
+
+  images.forEach((image, index) => {
+    const carouselItem = document.createElement('div');
+    carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+    
+    const img = document.createElement('img');
+    img.src = image.carouselUrl; // ใช้รูปภาพขนาดใหญ่สำหรับ carousel
+    img.className = 'd-block w-100';
+    img.alt = `Image ${index + 1}`;
+    
+    carouselItem.appendChild(img);
+
+    const caption = document.createElement('div');
+    caption.className = 'carousel-caption d-none d-md-block';
+    caption.innerHTML = `
+      <h5>${title}</h5>
+      <p>${group}</p>
+      <p><small>${date}</small></p>
+    `;
+    carouselItem.appendChild(caption);
+
+    carouselInner.appendChild(carouselItem);
+
+    // สร้าง indicator สำหรับแต่ละรูปภาพ
+    const indicator = document.createElement('li');
+    indicator.setAttribute('data-target', '#googleDriveCarousel');
+    indicator.setAttribute('data-slide-to', index.toString());
+    if (index === 0) indicator.className = 'active';
+    carouselIndicators.appendChild(indicator);
+  });
+
+  // รีเซ็ต carousel
+  $('#googleDriveCarousel').carousel('dispose');
+  $('#googleDriveCarousel').carousel();
+}
+  </script>
+</body>
+</html>

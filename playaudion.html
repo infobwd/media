@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประชาสัมพันธ์ตัวน้อยบ้านวังด้ง</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.20.0/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="https://raw.githubusercontent.com/infobwd/wdconnect/main/reporter.gif" type="image/x-icon">
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.13/lottie.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1080;
+        }
+        .cover {
+            width: 50px;
+            height: 50px;
+        }
+        .playlist-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .list-group-item {
+            position: relative;
+            padding: 0.5rem;
+        }
+        .remove-button {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+        }
+        .active-song {
+            background-color: #fffacd;
+        }
+        .order-badge {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 14px;
+            color: #555;
+            background: #f0f0f0;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        .profile-section {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .profile-section img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .profile-section span {
+            margin-left: 10px;
+        }
+        .time-countdown {
+            position: absolute;
+            top: 5px;
+            left: 100px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<!-- Nav Section -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+        <a class="navbar-brand" href="https://wd-information.glitch.me/playaudion.html">
+            <img src="https://raw.githubusercontent.com/infobwd/wdconnect/main/reporter.png" alt="Logo" width="30" height="30" class="d-inline-block align-top"> ประชาสัมพันธ์ตัวน้อยบ้านวังด้ง
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        เมนู
+                    </a>
+                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                       <li><a class="dropdown-item" href="index.html"><i class="fas fa-info-circle"></i> ข้อมูลพื้นฐาน</a></li>
+                       <li><a class="dropdown-item" href="playaudion.html"><i class="fas fa-bullhorn"></i> ประชาสัมพันธ์ตัวน้อยบ้านวังด้ง</a></li>
+
+                    </ul>
+                </li>
+            </ul>
+            <form class="d-flex flex-fill" role="search" action="search.html" method="get">
+<!--                 <input class="form-control me-2" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ค้นหาโดยรหัสนักเรียน" aria-label="Search" id="studentIdSearch" name="studentId"> -->
+<!--                 <button class="btn btn-outline-light me-2" type="submit">ค้นหา</button> -->
+            </form>
+            <button id="fullscreenButton" class="btn btn-outline-light me-2">ขยายเต็มจอ</button>
+            <div class="btn-group me-2">
+                <button id="fontSizeSmall" class="btn btn-outline-light">ก เล็ก</button>
+                <button id="fontSizeMedium" class="btn btn-outline-light">ก กลาง</button>
+                <button id="fontSizeLarge" class="btn btn-outline-light">ก ใหญ่</button>
+            </div>
+            <button id="login-button" class="btn btn-primary"><i class="fab fa-line"></i> LINE Login</button>
+        </div>
+    </div>
+</nav>
+<br>
+<div id="content-section" class="container mt-5" style="margin-top: 70px;">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+        <div class="text-start order-2 order-md-1">
+            <span id="currentDateTime" class="currentDateTime"></span>
+        </div>
+        <div class="text-end order-1 order-md-2">
+            <img id="profile-picture" src="" alt="Profile Picture" class="rounded-circle" width="50" height="50" style="display: none;">
+            <span id="profile-name" class="ms-2"></span>
+            <button id="logout-button" class="btn btn-secondary ms-2" style="display: none;">Logout</button>
+            <button id="share-button" class="btn btn-success ms-2" style="display: none;"><i class="fab fa-line"></i> Share</button>
+        </div>
+    </div>
+
+    <div class="container mt-5 playlist-container">
+        <h1 class="text-right">🎧 DJ WDSchool | เพลงฮิตของพวกเรา</h1><br>
+
+        <div class="accordion" id="playlistAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Playlist: <span id="playlistName"></span>
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#playlistAccordion">
+                    <div id="fileInputsContainer" class="list-group list-group-flush"></div>
+                </div>
+            </div>
+        </div><br>
+        <div class="d-flex justify-content-center mb-4 flex-wrap">
+            <button id="addFileButton" class="btn btn-primary me-2 mb-2 btn-sm btn-md">Add File</button>
+            <button id="savePlaylistButton" class="btn btn-success me-2 mb-2 btn-sm btn-md">Save Playlist</button>
+            <button id="loadPlaylistButton" class="btn btn-info me-2 mb-2 btn-sm btn-md">Load Playlist</button>
+            <button id="playAllButton" class="btn btn-secondary me-2 mb-2 btn-sm btn-md">Play All</button>
+            <button id="stopButton" class="btn btn-danger me-2 mb-2 btn-sm btn-md">Stop</button>
+            <button id="shuffleButton" class="btn btn-warning me-2 mb-2 btn-sm btn-md">Shuffle</button>
+            <button id="renamePlaylistButton" class="btn btn-outline-warning me-2 mb-2 btn-sm btn-md">Rename Playlist</button>
+            <select id="playlistDropdown" class="form-select me-2 mb-2 btn-sm btn-md">
+                <option value="" selected>Select a Playlist</option>
+            </select>
+            <button id="newPlaylistButton" class="btn btn-outline-primary me-2 mb-2 btn-sm btn-md">New Playlist</button>
+            <button id="deletePlaylistButton" class="btn btn-outline-danger me-2 mb-2 btn-sm btn-md">Delete Playlist</button>
+            <select id="port-select" class="form-select me-2 mb-2 btn-sm btn-md" disabled>
+                <option value="">Select a COM port</option>
+            </select>
+            <button id="check-ports" class="btn btn-info me-2 mb-2 btn-sm btn-md">Check Ports</button>
+            <button id="connect-port" class="btn btn-outline-primary mb-2 btn-sm btn-md">Connect COM Port</button>
+            <button id="showAllButton" class="btn btn-outline-secondary mb-2 btn-sm btn-md">Show All</button>
+        </div>
+    </div>
+<a href="https://suno.com/song/f837702f-beb3-47a8-a166-33c24013c53b" target="_blank">ฟังเพลงบน Suno</a>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <button class="page-link" id="prevPage" aria-label="Previous" disabled>
+                    <span aria-hidden="true">&laquo;</span>
+                </button>
+            </li>
+            <li class="page-item">
+                <button class="page-link" id="nextPage" aria-label="Next" disabled>
+                    <span aria-hidden="true">&raquo;</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<div class="toast-container"></div>
+
+<footer class="bg-light text-center text-lg-start">
+    <div class="container p-4">
+        <div class="row">
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <div class="footer-profile" id="footer-profile" style="display: none;">
+                    <img src="" alt="Profile Picture" class="profile-pic" id="footerProfilePic" width="50" height="50">
+                    <div id="footerProfileName"></div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <div id="footerPlayer" class="footer-player-controls d-flex justify-content-center align-items-center">
+                    <button id="prevButton" class="btn btn-outline-secondary me-2"><i class="fas fa-backward"></i></button>
+                    <audio id="currentAudioPlayer" controls class="me-2"></audio>
+                    <button id="nextButton" class="btn btn-outline-secondary me-2"><i class="fas fa-forward"></i></button>
+                    <button id="autoPlayButton" class="btn btn-outline-secondary me-2"><i class="fas fa-play-circle"></i></button>
+                    <button id="repeatButton" class="btn btn-outline-secondary"><i class="fas fa-redo"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <h5>Address</h5>
+                <p>โรงเรียนบ้านวังด้ง 111 หมู่ 11 ตำบลหนองกุ่ม อำเภอบ่อพลอย จังหวัดกาญจนบุรี รหัสไปรษณีย์ 71160</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h5>Contact Us</h5>
+                <ul class="list-unstyled">
+                    <li><a href="mailto:info@bwd.ac.th"><i class="fa fa-envelope"></i> info@bwd.ac.th</a></li>
+                    <li><a href="tel:+66836645989"><i class="fa fa-phone"></i> 083-664-5989 [ผอ.นพรุจ]</a></li>
+                    <li><a href="tel:+66655066852"><i class="fa fa-phone"></i> 065-506-6852 [คุณครูหทัยชนก]</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h5>Social Media</h5>
+                <ul class="list-unstyled list-inline">
+                    <li class="list-inline-item">
+                        <a href="#" class="btn btn-social"><i class="fab fa-facebook-f"></i></a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#" class="btn btn-social"><i class="fab fa-youtube"></i></a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#" class="btn btn-social"><i class="fab fa-instagram"></i></a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#" class="btn btn-social"><i class="fab fa-tiktok"></i></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h5>Follow Us</h5>
+                <img src="https://raw.githubusercontent.com/infobwd/wdconnect/main/M_747spikt_GW.png" alt="QR Code" width="100" height="100" class="mb-2">
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <p>
+                <div id="sfcpllq5gtm98dc5kma1fqmbtwb2z7aqd34"></div>
+                <script type="text/javascript" src="https://counter8.optistats.ovh/private/counter.js?c=pllq5gtm98dc5kma1fqmbtwb2z7aqd34&down=async" async></script>
+            </p>
+            <p>&copy; 2024 โรงเรียนบ้านวังด้ง. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+<script>
+    const liffId = "2005494853-OmBe7AAY"; // Replace with your LIFF ID
+
+    async function main() {
+        await liff.init({ liffId });
+
+        if (liff.isLoggedIn()) {
+            const profile = await liff.getProfile();
+            document.getElementById('profile-picture').src = profile.pictureUrl;
+            document.getElementById('profile-name').innerText = profile.displayName;
+            document.getElementById('footerProfilePic').src = profile.pictureUrl;
+            document.getElementById('footerProfileName').innerText = profile.displayName;
+            document.getElementById('profile-picture').style.display = 'inline';
+            document.getElementById('profile-name').style.display = 'inline';
+            document.getElementById('logout-button').style.display = 'inline';
+            document.getElementById('share-button').style.display = 'inline';
+            document.getElementById('login-button').style.display = 'none';
+            document.getElementById('footer-profile').style.display = 'flex';
+            loadPlaylist(); // Load playlist on login
+        } else {
+            document.getElementById('login-button').style.display = 'inline';
+            document.getElementById('login-button').addEventListener('click', () => {
+                liff.login();
+            });
+        }
+
+        document.getElementById('logout-button').addEventListener('click', () => {
+            liff.logout();
+            window.location.reload();
+        });
+    }
+
+    main();
+
+    let fileCount = 0;
+    const maxFiles = 10;
+    let currentPlayingIndex = -1;
+    let autoPlay = false;
+    let repeat = false;
+
+    // Open IndexedDB connection
+    let db;
+    const request = indexedDB.open("PlaylistDB", 1);
+
+    request.onerror = (event) => {
+        console.error("Database error: " + event.target.errorCode);
+    };
+
+    request.onsuccess = (event) => {
+        db = event.target.result;
+        initializePlaylists();
+    };
+
+    request.onupgradeneeded = (event) => {
+        db = event.target.result;
+        const objectStore = db.createObjectStore("playlists", { keyPath: "id", autoIncrement: true });
+    };
+
+    document.getElementById('addFileButton').addEventListener('click', function() {
+        if (fileCount < maxFiles) {
+            addFileInput(fileCount);
+            fileCount++;
+        } else {
+            alert('You can only add up to 10 files.');
+        }
+    });
+
+    document.getElementById('savePlaylistButton').addEventListener('click', savePlaylist);
+    document.getElementById('loadPlaylistButton').addEventListener('click', loadPlaylist);
+    document.getElementById('newPlaylistButton').addEventListener('click', newPlaylist);
+    document.getElementById('deletePlaylistButton').addEventListener('click', deletePlaylist);
+    document.getElementById('renamePlaylistButton').addEventListener('click', renamePlaylist);
+    document.getElementById('playlistDropdown').addEventListener('change', loadPlaylist);
+    document.getElementById('playAllButton').addEventListener('click', playAll);
+    document.getElementById('stopButton').addEventListener('click', stopPlayback);
+    document.getElementById('shuffleButton').addEventListener('click', shufflePlaylist);
+    document.getElementById('autoPlayButton').addEventListener('click', toggleAutoPlay);
+    document.getElementById('repeatButton').addEventListener('click', toggleRepeat);
+    document.getElementById('nextButton').addEventListener('click', playNext);
+    document.getElementById('prevButton').addEventListener('click', playPrevious);
+    document.getElementById('check-ports').addEventListener('click', checkPorts);
+    document.getElementById('connect-port').addEventListener('click', connectPort);
+    document.getElementById('showAllButton').addEventListener('click', showAll);
+
+    const audioPlayer = document.getElementById('currentAudioPlayer');
+    audioPlayer.addEventListener('ended', handleAudioEnd);
+
+    function addFileInput(index, fileData = null, timeData = null, profilePictureUrl = '') {
+    const fileInputsContainer = document.getElementById('fileInputsContainer');
+
+    const fileInputWrapper = document.createElement('div');
+    fileInputWrapper.classList.add('list-group-item');
+    fileInputWrapper.dataset.index = index;
+    if (currentPlayingIndex === index) {
+        fileInputWrapper.classList.add('active-song');
+    }
+
+    const orderBadge = document.createElement('div');
+    orderBadge.classList.add('order-badge');
+    orderBadge.textContent = index + 1;
+
+    const fileInputLabel = document.createElement('label');
+    fileInputLabel.htmlFor = `audioFileInput${index}`;
+    fileInputLabel.textContent = `Select File ${index + 1}`;
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'audio/*';
+    fileInput.id = `audioFileInput${index}`;
+
+    const timeInput = document.createElement('input');
+    timeInput.type = 'time';
+    timeInput.id = `timeInput${index}`;
+    if (timeData) {
+        timeInput.value = timeData;
+    }
+
+    const setTimeButton = document.createElement('button');
+    setTimeButton.textContent = 'Set Time';
+    setTimeButton.classList.add('btn', 'btn-outline-secondary', 'me-2');
+    setTimeButton.addEventListener('click', function() {
+        setPlayTime(index);
+    });
+
+    const downloadButton = document.createElement('button');
+    downloadButton.innerHTML = '<i class="fas fa-download"></i>';
+    downloadButton.classList.add('btn', 'btn-outline-success', 'me-2');
+    downloadButton.addEventListener('click', function() {
+        downloadFile(fileInput);
+    });
+
+    // const removeButton = document.createElement('button');
+    // removeButton.innerHTML = '<i class="fas fa-trash"></i>';
+    // removeButton.classList.add('btn', 'btn-outline-danger', 'me-2');
+    // removeButton.addEventListener('click', function() {
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: "You won't be able to revert this!",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, delete it!'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             removeFileInput(fileInputWrapper);
+    //             Swal.fire(
+    //                 'Deleted!',
+    //                 'Your file has been deleted.',
+    //                 'success'
+    //             );
+    //         }
+    //     });
+    // });
+      
+      
+    const removeButton = document.createElement('button');
+      removeButton.innerHTML = '<i class="fas fa-trash"></i>';
+      removeButton.classList.add('btn', 'btn-outline-danger', 'me-2');
+      removeButton.addEventListener('click', function() {
+          Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  removeFileInput(fileInputWrapper);
+                  Swal.fire(
+                      'Deleted!',
+                      'Your file has been deleted.',
+                      'success'
+                  );
+              }
+          });
+      });
+
+
+    const playButton = document.createElement('button');
+    playButton.innerHTML = '<i class="fas fa-play"></i>';
+    playButton.classList.add('btn', 'btn-outline-secondary', 'me-2');
+    playButton.addEventListener('click', function() {
+        togglePlayPause(index);
+    });
+
+      
+
+    const stopButton = document.createElement('button');
+    stopButton.innerHTML = '<i class="fas fa-stop"></i>';
+    stopButton.classList.add('btn', 'btn-outline-secondary', 'me-2');
+    stopButton.addEventListener('click', function() {
+        stopAudio(index);
+    });
+
+    const pauseButton = document.createElement('button');
+    pauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+    pauseButton.classList.add('btn', 'btn-outline-secondary');
+    pauseButton.addEventListener('click', function() {
+        pauseAudio(index);
+    });
+
+    const coverImage = document.createElement('img');
+    coverImage.classList.add('cover', 'me-2');
+    coverImage.id = `coverImage${index}`;
+    coverImage.src = "https://cdn-icons-png.flaticon.com/128/3293/3293810.png"; // default cover image
+
+    const profileImage = document.createElement('img');
+    profileImage.classList.add('profile-img', 'me-2');
+    profileImage.src = profilePictureUrl;
+    profileImage.alt = 'Profile Picture';
+    if (!liff.isLoggedIn()) {
+        profileImage.style.display = 'none';
+    }
+
+    const fileLabelWrapper = document.createElement('div');
+    fileLabelWrapper.classList.add('d-flex', 'align-items-center', 'w-100');
+    fileLabelWrapper.appendChild(coverImage);
+    fileLabelWrapper.appendChild(fileInputLabel);
+
+    const timeCountdown = document.createElement('div');
+    timeCountdown.classList.add('time-countdown');
+    timeCountdown.id = `timeCountdown${index}`;
+
+    fileInputWrapper.appendChild(orderBadge);
+    fileInputWrapper.appendChild(playButton);
+    fileInputWrapper.appendChild(stopButton);
+    fileInputWrapper.appendChild(pauseButton);
+    fileInputWrapper.appendChild(downloadButton);
+    fileInputWrapper.appendChild(removeButton);
+    fileInputWrapper.appendChild(fileLabelWrapper);
+    fileInputWrapper.appendChild(fileInput);
+    fileInputWrapper.appendChild(timeInput);
+    fileInputWrapper.appendChild(setTimeButton);
+    fileInputWrapper.appendChild(profileImage);
+    fileInputWrapper.appendChild(timeCountdown);
+    fileInputsContainer.appendChild(fileInputWrapper);
+
+//    fileInput.addEventListener('change', async function(event) {
+//         const file = event.target.files[0];
+//         if (file) {
+//             fileInputLabel.textContent = file.name;
+            
+//             let lineUid = '';
+//             let playlistName = document.getElementById('playlistDropdown').value;
+
+//             if (liff.isLoggedIn()) {
+//                 try {
+//                     const profile = await liff.getProfile();
+//                     lineUid = profile.userId;
+//                 } catch (error) {
+//                     console.error("Error getting LINE profile: ", error);
+//                 }
+//             }
+
+//             sendDataToSheet(index, file.name, file.type, timeInput.value, profilePictureUrl, lineUid, playlistName);
+//         }
+//     });
+
+//       fileInput.addEventListener('change', async function(event) {
+//     const file = event.target.files[0];
+//     if (file) {
+//         fileInputLabel.textContent = file.name;
+
+//         let lineUid = '';
+//         let playlistName = document.getElementById('playlistDropdown').value;
+
+//         if (liff.isLoggedIn()) {
+//             try {
+//                 const profile = await liff.getProfile();
+//                 lineUid = profile.userId;
+//             } catch (error) {
+//                 console.error("Error getting LINE profile: ", error);
+//             }
+//         }
+
+//         const reader = new FileReader();
+//         reader.onloadend = async function() {
+//             const fileContent = reader.result.split(',')[1]; // Get base64 content
+
+//             const data = {
+//                 action: 'upload',
+//                 index: index,
+//                 fileName: file.name,
+//                 fileType: file.type,
+//                 fileContent: fileContent,
+//                 timeInput: timeInput.value,
+//                 profilePictureUrl: profilePictureUrl,
+//                 lineUid: lineUid,
+//                 playlistName: playlistName
+//             };
+
+//             await fetch('https://script.google.com/macros/s/AKfycbwWUD2wYDwcvq2DXJsui-CnzkczYMfMSyutru8tWilNhNoAU0NULl39EFa9qab0AUs-Mw/exec', {
+//                 method: 'POST',
+//                 mode: 'no-cors',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                 },
+//                 body: JSON.stringify(data),
+//             })
+//             .then(response => console.log('File uploaded and data sent to Google Sheet'))
+//             .catch((error) => console.error('Error:', error));
+//         };
+
+//         reader.readAsDataURL(file);
+//     }
+// });
+      
+    fileInput.addEventListener('change', async function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        fileInputLabel.textContent = file.name;
+
+        let lineUid = '';
+        let playlistName = document.getElementById('playlistDropdown').value;
+
+        if (liff.isLoggedIn()) {
+            try {
+                const profile = await liff.getProfile();
+                lineUid = profile.userId;
+            } catch (error) {
+                console.error("Error getting LINE profile: ", error);
+            }
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = async function() {
+            const fileContent = reader.result.split(',')[1]; // Get base64 content
+
+            const data = {
+                action: 'upload',
+                index: index,
+                fileName: file.name,
+                fileType: file.type,
+                fileContent: fileContent,
+                timeInput: timeInput.value,
+                profilePictureUrl: profilePictureUrl,
+                lineUid: lineUid,
+                playlistName: playlistName
+            };
+
+            await fetch('https://script.google.com/macros/s/AKfycbwWUD2wYDwcvq2DXJsui-CnzkczYMfMSyutru8tWilNhNoAU0NULl39EFa9qab0AUs-Mw/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                console.log('File uploaded and data sent to Google Sheet');
+                return response.text();
+            })
+            .then(text => {
+                console.log(text);
+            })
+            .catch((error) => console.error('Error:', error));
+        };
+
+        reader.readAsDataURL(file);
+    }
+});
+
+
+      
+      
+    if (fileData && fileData.content) {
+        const byteString = atob(fileData.content.split(',')[1]);
+        const mimeString = fileData.content.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        const file = new File([blob], fileData.name, { type: mimeString });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+        fileInputLabel.textContent = file.name;
+    }
+
+    updateOrderBadges();
+    showPage(currentPage);
+}
+
+    function sendDataToSheet(index, fileName, fileType, timeInput, profilePictureUrl, lineUid, playlistName) {
+          var data = {
+            index: index,
+            fileName: fileName,
+            fileType: fileType,
+            timeInput: timeInput,
+            profilePictureUrl: profilePictureUrl,
+            lineUid: lineUid,
+            playlistName: playlistName
+          };
+
+          fetch('https://script.google.com/macros/s/AKfycbwWUD2wYDwcvq2DXJsui-CnzkczYMfMSyutru8tWilNhNoAU0NULl39EFa9qab0AUs-Mw/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+          .then(response => console.log('Data sent to Google Sheet'))
+          .catch((error) => console.error('Error:', error));
+    }
+  
+    function downloadFile(fileInput) {
+        if (fileInput && fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const url = URL.createObjectURL(file);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    }
+
+    function setPlayTime(index) {
+        const timeInput = document.getElementById(`timeInput${index}`).value;
+        if (timeInput) {
+            const now = new Date();
+            const playTimeParts = timeInput.split(':');
+            const playTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), playTimeParts[0], playTimeParts[1]);
+
+            if (playTime < now) {
+                playTime.setDate(playTime.getDate() + 1); // ถ้าตั้งเวลาที่ผ่านมาแล้ว จะตั้งเวลาเป็นวันถัดไป
+            }
+
+            const timeDifference = playTime - now;
+            setTimeout(() => playAudioAtTime(index, true), timeDifference);
+
+            const countdownElement = document.getElementById(`timeCountdown${index}`);
+            startCountdown(countdownElement, timeDifference);
+
+            alert('Music for file ' + (index + 1) + ' will play at ' + playTime.toLocaleTimeString());
+        }
+    }
+
+    function startCountdown(element, timeDifference) {
+        let remainingTime = timeDifference;
+
+        const countdownInterval = setInterval(() => {
+            remainingTime -= 1000;
+
+            const minutes = Math.floor(remainingTime / 60000);
+            const seconds = Math.floor((remainingTime % 60000) / 1000);
+
+            element.textContent = `จะเล่นใน ${minutes} นาที ${seconds} วินาที`;
+
+            if (remainingTime <= 0) {
+                clearInterval(countdownInterval);
+                element.textContent = '';
+            }
+        }, 1000);
+    }
+
+    function togglePlayPause(index) {
+        const audioPlayer = document.getElementById('currentAudioPlayer');
+        if (currentPlayingIndex === index && !audioPlayer.paused) {
+            audioPlayer.pause();
+            document.querySelector(`#fileInputsContainer .list-group-item[data-index="${index}"] button i`).classList.replace('fa-pause', 'fa-play');
+        } else {
+            playAudioAtTime(index, true);
+        }
+    }
+  
+//   function togglePlayPause(index) {
+//     const audioPlayer = document.getElementById('currentAudioPlayer');
+//     if (currentPlayingIndex === index && !audioPlayer.paused) {
+//         audioPlayer.pause();
+//         document.querySelector(`#fileInputsContainer .list-group-item[data-index="${index}"] button i`).classList.replace('fa-pause', 'fa-play');
+//     } else {
+//         playAudioAtTime(index, true);
+//         updatePlayCount(index); // เพิ่มการเรียกฟังก์ชันนี้
+//     }
+// }
+//   //////เพิ่ม
+//   function updatePlayCount(index) {
+//     const fileInput = document.getElementById(`audioFileInput${index}`);
+//     if (fileInput && fileInput.files.length > 0) {
+//         const fileName = fileInput.files[0].name;
+//         const data = {
+//             action: 'updatePlayCount',
+//             fileName: fileName
+//         };
+
+//         fetch('https://script.google.com/macros/s/AKfycbwWUD2wYDwcvq2DXJsui-CnzkczYMfMSyutru8tWilNhNoAU0NULl39EFa9qab0AUs-Mw/exec', {
+//             method: 'POST',
+//             mode: 'no-cors',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(data),
+//         })
+//         .then(response => console.log('Play count updated in Google Sheet'))
+//         .catch((error) => console.error('Error updating play count:', error));
+//     }
+// }
+
+//     function playAudioAtTime(index, immediate = false) {
+//         if (currentPlayingIndex >= 0) {
+//             // Pause and reset the previous audio player if any
+//             const previousAudioPlayer = document.getElementById('currentAudioPlayer');
+//             previousAudioPlayer.pause();
+//             previousAudioPlayer.src = '';
+//             document.querySelector('.list-group-item.active-song')?.classList.remove('active-song');
+//             document.getElementById(`coverImage${currentPlayingIndex}`).src = "https://cdn-icons-png.flaticon.com/128/3293/3293810.png"; // set to default cover image
+//             document.querySelector(`#fileInputsContainer .list-group-item[data-index="${currentPlayingIndex}"] button i`).classList.replace('fa-pause', 'fa-play');
+//         }
+//         currentPlayingIndex = index;
+//         const fileInput = document.getElementById(`audioFileInput${index}`);
+//         if (fileInput && fileInput.files.length > 0) {
+//             const file = fileInput.files[0];
+//             const audioPlayer = document.getElementById('currentAudioPlayer');
+//             audioPlayer.src = URL.createObjectURL(file);
+//             if (immediate) {
+//                 audioPlayer.play();
+//                 showToast(file.name);
+//                 document.querySelector(`#fileInputsContainer .list-group-item[data-index="${index}"] button i`).classList.replace('fa-play', 'fa-pause');
+//             }
+//             document.getElementById('footerPlayer').style.display = 'flex';
+//             document.querySelector(`.list-group-item[data-index="${index}"]`).classList.add('active-song');
+//             document.getElementById(`coverImage${index}`).src = "https://cdn-icons-png.flaticon.com/128/709/709559.png"; // set to playing cover image
+
+//             // // Move the currently playing song to the top of the list
+//             // const currentItem = document.querySelector(`.list-group-item[data-index="${index}"]`);
+//             // fileInputsContainer.insertBefore(currentItem, fileInputsContainer.firstChild);
+//             // updateOrderBadges();
+//             //           // Move the currently playing song to the top of the list
+
+//         } else {
+//             alert('Please select an audio file for file ' + (index + 1) + ' first.');
+//         }
+//     }
+
+  
+  function playAudioAtTime(index, immediate = false) {
+    if (currentPlayingIndex >= 0) {
+        // Pause and reset the previous audio player if any
+        const previousAudioPlayer = document.getElementById('currentAudioPlayer');
+        previousAudioPlayer.pause();
+        previousAudioPlayer.src = '';
+        document.querySelector('.list-group-item.active-song')?.classList.remove('active-song');
+        document.getElementById(`coverImage${currentPlayingIndex}`).src = "https://cdn-icons-png.flaticon.com/128/3293/3293810.png"; // set to default cover image
+        document.querySelector(`#fileInputsContainer .list-group-item[data-index="${currentPlayingIndex}"] button i`).classList.replace('fa-pause', 'fa-play');
+    }
+    currentPlayingIndex = index;
+    const fileInput = document.getElementById(`audioFileInput${index}`);
+    if (fileInput && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const audioPlayer = document.getElementById('currentAudioPlayer');
+        audioPlayer.src = URL.createObjectURL(file);
+        if (immediate) {
+            audioPlayer.play();
+            showToast(file.name);
+            document.querySelector(`#fileInputsContainer .list-group-item[data-index="${index}"] button i`).classList.replace('fa-play', 'fa-pause');
+            updatePlayCount(file.name); // Update play count
+        }
+        document.getElementById('footerPlayer').style.display = 'flex';
+        document.querySelector(`.list-group-item[data-index="${index}"]`).classList.add('active-song');
+        document.getElementById(`coverImage${index}`).src = "https://cdn-icons-png.flaticon.com/128/709/709559.png"; // set to playing cover image
+    } else {
+        alert('Please select an audio file for file ' + (index + 1) + ' first.');
+    }
+}
+
+  
+  function updatePlayCount(fileName) {
+    fetch('https://script.google.com/macros/s/AKfycbwWUD2wYDwcvq2DXJsui-CnzkczYMfMSyutru8tWilNhNoAU0NULl39EFa9qab0AUs-Mw/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action: 'updatePlayCount', fileName: fileName }),
+    })
+    .then(response => console.log('Play count updated for', fileName))
+    .catch((error) => console.error('Error updating play count:', error));
+}
+
+  
+    function stopAudio(index) {
+        const audioPlayer = document.getElementById('currentAudioPlayer');
+        if (currentPlayingIndex === index) {
+            audioPlayer.pause();
+            audioPlayer.src = '';
+            document.querySelector(`#fileInputsContainer .list-group-item[data-index="${index}"] button i`).classList.replace('fa-pause', 'fa-play');
+            document.querySelector(`.list-group-item[data-index="${index}"]`).classList.remove('active-song');
+            document.getElementById(`coverImage${index}`).src = "https://cdn-icons-png.flaticon.com/128/3293/3293810.png"; // reset to default cover image
+            currentPlayingIndex = -1;
+        }
+    }
+
+    function pauseAudio(index) {
+        const audioPlayer = document.getElementById('currentAudioPlayer');
+        if (currentPlayingIndex === index) {
+            audioPlayer.pause();
+            document.querySelector(`#fileInputsContainer .list-group-item[data-index="${index}"] button i`).classList.replace('fa-pause', 'fa-play');
+        }
+    }
+
+    function stopPlayback() {
+        const audioPlayer = document.getElementById('currentAudioPlayer');
+        audioPlayer.pause();
+        audioPlayer.src = '';
+        if (currentPlayingIndex >= 0) {
+            document.querySelector(`#fileInputsContainer .list-group-item[data-index="${currentPlayingIndex}"] button i`).classList.replace('fa-pause', 'fa-play');
+            document.querySelector(`.list-group-item[data-index="${currentPlayingIndex}"]`).classList.remove('active-song');
+            document.getElementById(`coverImage${currentPlayingIndex}`).src = "https://cdn-icons-png.flaticon.com/128/3293/3293810.png"; // reset to default cover image
+            currentPlayingIndex = -1;
+        }
+    }
+
+    // function removeFileInput(element) {
+    //     if (element && element.parentNode) {
+    //         element.parentNode.removeChild(element);
+    //         fileCount--;
+    //         updateIndices();
+    //         updateOrderBadges();
+    //         showPage(currentPage);
+    //     }
+    // }
+
+// function deleteDataFromSheet(index, fileName) {
+//     var data = {
+//         action: 'delete',
+//         fileName: fileName,
+//     };
+
+//     fetch('https://script.google.com/macros/s/AKfycbwWUD2wYDwcvq2DXJsui-CnzkczYMfMSyutru8tWilNhNoAU0NULl39EFa9qab0AUs-Mw/exec', {
+//         method: 'POST',
+//         mode: 'no-cors',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(data),
+//     })
+//     .then(response => console.log('Data deleted from Google Sheet'))
+//     .catch((error) => console.error('Error:', error));
+// }
+  
+  function deleteDataFromSheet(index, fileName) {
+    var data = {
+        action: 'delete',
+        fileName: fileName,
+    };
+
+    fetch('https://script.google.com/macros/s/AKfycbwWUD2wYDwcvq2DXJsui-CnzkczYMfMSyutru8tWilNhNoAU0NULl39EFa9qab0AUs-Mw/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => console.log('Data deleted from Google Sheet'))
+    .catch((error) => console.error('Error:', error));
+}
+
+
+      //   function removeFileInput(fileInputWrapper) {
+      //     const index = fileInputWrapper.dataset.index;
+      //     deleteDataFromSheet(index);
+      //     fileInputWrapper.remove();
+      //     updateOrderBadges();
+      //     showPage(currentPage);
+      // }
+  
+//   function removeFileInput(fileInputWrapper) {
+//     const index = fileInputWrapper.dataset.index;
+//     const fileName = fileInputWrapper.querySelector('label').textContent;
+//     deleteDataFromSheet(index, fileName);
+//     fileInputWrapper.remove();
+//     updateOrderBadges();
+//     showPage(currentPage);
+// }
+  
+  function removeFileInput(fileInputWrapper) {
+    const index = fileInputWrapper.dataset.index;
+    const fileName = fileInputWrapper.querySelector('label').textContent;
+    deleteDataFromSheet(index, fileName);
+    fileInputWrapper.remove();
+    updateOrderBadges();
+    showPage(currentPage);
+}
+
+
+  
+    function updateIndices() {
+        const fileInputsContainer = document.getElementById('fileInputsContainer');
+        const items = Array.from(fileInputsContainer.getElementsByClassName('list-group-item'));
+
+        items.forEach((item, index) => {
+            item.dataset.index = index;
+            item.querySelector('label').htmlFor = `audioFileInput${index}`;
+            item.querySelector('input[type="file"]').id = `audioFileInput${index}`;
+            item.querySelector('input[type="time"]').id = `timeInput${index}`;
+            item.querySelector('.cover').id = `coverImage${index}`;
+            item.querySelector('.profile-img').id = `profileImage${index}`;
+            item.querySelector('.btn-outline-secondary').setAttribute('onclick', `setPlayTime(${index})`);
+            item.querySelector('.btn-outline-danger').setAttribute('onclick', `removeFileInput(this.closest('.list-group-item'))`);
+            item.querySelector('.order-badge').textContent = index + 1;
+        });
+    }
+
+    function handleAudioEnd() {
+        document.querySelector(`#fileInputsContainer .list-group-item[data-index="${currentPlayingIndex}"] button i`).classList.replace('fa-pause', 'fa-play');
+        if (repeat) {
+            audioPlayer.play();
+        } else if (autoPlay) {
+            playNext();
+        }
+    }
+
+    function toggleAutoPlay() {
+        autoPlay = !autoPlay;
+        document.getElementById('autoPlayButton').classList.toggle('active', autoPlay);
+    }
+
+    function toggleRepeat() {
+        repeat = !repeat;
+        document.getElementById('repeatButton').classList.toggle('active', repeat);
+    }
+
+    function playNext() {
+        if (currentPlayingIndex >= 0 && currentPlayingIndex < fileCount - 1) {
+            playAudioAtTime(currentPlayingIndex + 1, true);
+        } else {
+            playAudioAtTime(0, true);
+        }
+    }
+
+    function playPrevious() {
+        if (currentPlayingIndex > 0) {
+            playAudioAtTime(currentPlayingIndex - 1, true);
+        } else {
+            playAudioAtTime(fileCount - 1, true);
+        }
+    }
+
+    function playAll() {
+        if (fileCount > 0) {
+            playAudioAtTime(0, true);
+        }
+    }
+
+//     function savePlaylist() {
+//         const playlist = [];
+//         const playlistName = document.getElementById('playlistDropdown').value;
+
+//         if (!playlistName) {
+//             Swal.fire({
+//                 icon: 'warning',
+//                 title: 'No Playlist Selected',
+//                 text: 'Please select or create a playlist to save.',
+//             });
+//             return;
+//         }
+
+//         for (let i = 0; i < fileCount; i++) {
+//             const fileInput = document.getElementById(`audioFileInput${i}`);
+//             const timeInput = document.getElementById(`timeInput${i}`);
+
+//             if (fileInput.files.length > 0) {
+//                 const file = fileInput.files[0];
+//                 const fileReader = new FileReader();
+
+//                 fileReader.onload = function(event) {
+//                     playlist.push({
+//                         name: file.name,
+//                         type: file.type,
+//                         content: event.target.result,
+//                         time: timeInput.value
+//                     });
+
+//                     if (playlist.length === fileCount) {
+//                         const transaction = db.transaction(["playlists"], "readwrite");
+//                         const objectStore = transaction.objectStore("playlists");
+//                         objectStore.put({ id: playlistName, data: playlist });
+//                         Swal.fire({
+//                             icon: 'success',
+//                             title: 'Playlist saved!',
+//                             text: 'Your playlist has been saved successfully.',
+//                         });
+//                     }
+//                 };
+
+//                 fileReader.readAsDataURL(file);
+//             } else {
+//                 playlist.push({
+//                     name: null,
+//                     content: null,
+//                     time: timeInput.value
+//                 });
+
+//                 if (playlist.length === fileCount) {
+//                     const transaction = db.transaction(["playlists"], "readwrite");
+//                     const objectStore = transaction.objectStore("playlists");
+//                     objectStore.put({ id: playlistName, data: playlist });
+//                     Swal.fire({
+//                         icon: 'success',
+//                         title: 'Playlist saved!',
+//                         text: 'Your playlist has been saved successfully.',
+//                     });
+//                 }
+//             }
+//         }
+//     }
+  
+function savePlaylist() {
+    const playlist = [];
+    const playlistName = document.getElementById('playlistDropdown').value;
+
+    if (!playlistName) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Playlist Selected',
+            text: 'Please select or create a playlist to save.',
+        });
+        return;
+    }
+
+    const fileInputs = document.querySelectorAll('input[type="file"][id^="audioFileInput"]');
+    const timeInputs = document.querySelectorAll('input[type="time"][id^="timeInput"]');
+    const fileCount = fileInputs.length;
+
+    fileInputs.forEach((fileInput, index) => {
+        const timeInput = timeInputs[index];
+
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const fileReader = new FileReader();
+
+            fileReader.onload = function(event) {
+                playlist.push({
+                    name: file.name,
+                    type: file.type,
+                    content: event.target.result,
+                    time: timeInput.value
+                });
+
+                if (playlist.length === fileCount) {
+                    savePlaylistToDB(playlistName, playlist);
+                }
+            };
+
+            fileReader.readAsDataURL(file);
+        } else {
+            playlist.push({
+                name: null,
+                content: null,
+                time: timeInput.value
+            });
+
+            if (playlist.length === fileCount) {
+                savePlaylistToDB(playlistName, playlist);
+            }
+        }
+    });
+}
+
+function savePlaylistToDB(playlistName, playlist) {
+    const transaction = db.transaction(["playlists"], "readwrite");
+    const objectStore = transaction.objectStore("playlists");
+    objectStore.put({ id: playlistName, data: playlist });
+    Swal.fire({
+        icon: 'success',
+        title: 'Playlist saved!',
+        text: 'Your playlist has been saved successfully.',
+    });
+}
+
+
+    function loadPlaylist() {
+        const playlistName = document.getElementById('playlistDropdown').value;
+
+        if (!playlistName) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Playlist Selected',
+                text: 'Please select a playlist to load.',
+            });
+            return;
+        }
+
+        const transaction = db.transaction(["playlists"], "readonly");
+        const objectStore = transaction.objectStore("playlists");
+        const request = objectStore.get(playlistName);
+
+        request.onsuccess = (event) => {
+            const savedPlaylist = event.target.result;
+            if (savedPlaylist) {
+                document.getElementById('fileInputsContainer').innerHTML = '';
+                fileCount = 0;
+                savedPlaylist.data.forEach((fileData, index) => {
+                    addFileInput(index, fileData, fileData.time, document.getElementById('footerProfilePic').src);
+                    fileCount++;
+                });
+                sortPlaylist();
+                showPage(currentPage);  // Ensure pagination is updated after loading
+                document.getElementById('playlistName').textContent = `${playlistName} (${fileCount} เพลง)`;
+            } else {
+                alert('No saved playlist found.');
+            }
+        };
+    }
+
+    function newPlaylist() {
+        const playlistName = prompt('Enter New Playlist Name:');
+        if (playlistName) {
+            const option = document.createElement('option');
+            option.value = playlistName;
+            option.textContent = playlistName;
+            document.getElementById('playlistDropdown').appendChild(option);
+            document.getElementById('playlistDropdown').value = playlistName;
+            savePlaylist();
+        }
+    }
+
+    function deletePlaylist() {
+        const playlistName = document.getElementById('playlistDropdown').value;
+        if (!playlistName) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Playlist Selected',
+                text: 'Please select a playlist to delete.',
+            });
+            return;
+        }
+
+        const transaction = db.transaction(["playlists"], "readwrite");
+        const objectStore = transaction.objectStore("playlists");
+        objectStore.delete(playlistName).onsuccess = () => {
+            const dropdown = document.getElementById('playlistDropdown');
+            dropdown.remove(dropdown.selectedIndex);
+            document.getElementById('fileInputsContainer').innerHTML = '';
+            fileCount = 0;
+            document.getElementById('playlistName').textContent = '';
+            Swal.fire({
+                icon: 'success',
+                title: 'Playlist Deleted',
+                text: 'Your playlist has been deleted successfully.',
+            });
+        };
+    }
+
+    function renamePlaylist() {
+        const oldName = document.getElementById('playlistDropdown').value;
+        if (!oldName) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Playlist Selected',
+                text: 'Please select a playlist to rename.',
+            });
+            return;
+        }
+
+        const newName = prompt('Enter New Playlist Name:', oldName);
+        if (newName && newName !== oldName) {
+            const transaction = db.transaction(["playlists"], "readwrite");
+            const objectStore = transaction.objectStore("playlists");
+
+            const request = objectStore.get(oldName);
+            request.onsuccess = (event) => {
+                const playlist = event.target.result;
+                if (playlist) {
+                    objectStore.delete(oldName);
+                    playlist.id = newName;
+                    objectStore.put(playlist).onsuccess = () => {
+                        const dropdown = document.getElementById('playlistDropdown');
+                        dropdown.options[dropdown.selectedIndex].text = newName;
+                        dropdown.options[dropdown.selectedIndex].value = newName;
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Playlist Renamed',
+                            text: 'Your playlist has been renamed successfully.',
+                        });
+                        document.getElementById('playlistName').textContent = `${newName} (${fileCount} เพลง)`;
+                    };
+                }
+            };
+        }
+    }
+
+    // Initialize the playlists dropdown on page load
+    function initializePlaylists() {
+        const transaction = db.transaction(["playlists"], "readonly");
+        const objectStore = transaction.objectStore("playlists");
+        const request = objectStore.getAllKeys();
+
+        request.onsuccess = (event) => {
+            const keys = event.target.result;
+            const dropdown = document.getElementById('playlistDropdown');
+            keys.forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = key;
+                dropdown.appendChild(option);
+            });
+        };
+    }
+
+    function sortPlaylist() {
+        const fileInputsContainer = document.getElementById('fileInputsContainer');
+        const items = Array.from(fileInputsContainer.getElementsByClassName('list-group-item'));
+
+        items.sort((a, b) => {
+            const timeA = a.querySelector('input[type="time"]').value;
+            const timeB = b.querySelector('input[type="time"]').value;
+            return timeA.localeCompare(timeB);
+        });
+
+        items.forEach(item => fileInputsContainer.appendChild(item));
+        updateOrderBadges();
+    }
+
+    function updateOrderBadges() {
+        const fileInputsContainer = document.getElementById('fileInputsContainer');
+        const items = Array.from(fileInputsContainer.getElementsByClassName('list-group-item'));
+
+        items.forEach((item, index) => {
+            item.querySelector('.order-badge').textContent = index + 1;
+        });
+    }
+
+    function shufflePlaylist() {
+        const fileInputsContainer = document.getElementById('fileInputsContainer');
+        const items = Array.from(fileInputsContainer.getElementsByClassName('list-group-item'));
+
+        for (let i = items.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [items[i], items[j]] = [items[j], items[i]];
+        }
+
+        items.forEach(item => fileInputsContainer.appendChild(item));
+        updateIndices();
+        updateOrderBadges();
+    }
+
+    document.getElementById('fullscreenButton').addEventListener('click', function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    });
+
+    document.getElementById('fontSizeSmall').addEventListener('click', function() {
+        setFontSize('14px');
+    });
+
+    document.getElementById('fontSizeMedium').addEventListener('click', function() {
+        setFontSize('16px');
+    });
+
+    document.getElementById('fontSizeLarge').addEventListener('click', function() {
+        setFontSize('18px');
+    });
+
+    function setFontSize(size) {
+        document.getElementById('content-section').style.fontSize = size;
+    }
+
+    function showToast(songName) {
+        const toastContainer = document.querySelector('.toast-container');
+        const toastElement = document.createElement('div');
+        toastElement.classList.add('toast', 'align-items-center', 'text-white', 'bg-primary', 'border-0');
+        toastElement.setAttribute('role', 'alert');
+        toastElement.setAttribute('aria-live', 'assertive');
+        toastElement.setAttribute('aria-atomic', 'true');
+        toastElement.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    Now playing: ${songName}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        toastContainer.appendChild(toastElement);
+
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastContainer.removeChild(toastElement);
+        });
+    }
+
+    async function checkPorts() {
+        if ('serial' in navigator) {
+            try {
+                const ports = await navigator.serial.getPorts();
+                const portSelect = document.getElementById('port-select');
+                portSelect.innerHTML = '<option value="">Select a COM port</option>';
+                
+                if (ports.length === 0) {
+                    alert('No ports found');
+                } else {
+                    ports.forEach((port, index) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = `COM Port ${index + 1}`;
+                        portSelect.appendChild(option);
+                    });
+                    portSelect.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error accessing serial ports:', error);
+                alert('Error accessing serial ports');
+            }
+        } else {
+            alert('Web Serial API is not supported in this browser.');
+        }
+    }
+
+async function connectPort() {
+    if ('serial' in navigator) {
+        try {
+            const port = await navigator.serial.requestPort();
+            await port.open({ baudRate: 9600 });
+
+            const textEncoder = new TextEncoder();
+            const writer = port.writable.getWriter();
+
+            // ข้อความที่จะส่งไปยัง Arduino
+            const message = '0';
+            await writer.write(textEncoder.encode(message));
+            console.log('Sent:', message);  // แสดงข้อความที่ส่งไปยังพอร์ตใน Console
+            writer.releaseLock();
+
+            alert('Connected to COM port');
+
+            // อ่านข้อมูลตอบกลับจาก Arduino
+            const textDecoder = new TextDecoder();
+            const reader = port.readable.getReader();
+            try {
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) {
+                        break;
+                    }
+                    const receivedMessage = textDecoder.decode(value);
+                    console.log('Received:', receivedMessage);  // แสดงข้อความที่รับจากพอร์ตใน Console
+                }
+            } finally {
+                reader.releaseLock();
+            }
+
+        } catch (error) {
+            console.error('Error connecting to COM port:', error);
+            alert('Error connecting to COM port');
+        }
+    } else {
+        alert('Web Serial API is not supported in this browser.');
+    }
+}
+
+
+
+
+    let currentPage = 1;
+    const songsPerPage = 1;
+    let allShown = false;
+
+    function showPage(page) {
+        if (allShown) return;
+
+        const items = Array.from(document.getElementsByClassName('list-group-item'));
+        const totalPages = Math.ceil(items.length / songsPerPage);
+
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+
+        items.forEach((item, index) => {
+            if (index < (page - 1) * songsPerPage || index >= page * songsPerPage) {
+                item.style.display = 'none';
+            } else {
+                item.style.display = 'block';
+            }
+        });
+
+        document.getElementById('prevPage').disabled = (page === 1);
+        document.getElementById('nextPage').disabled = (page === totalPages);
+        currentPage = page;
+    }
+
+    document.getElementById('prevPage').addEventListener('click', () => showPage(currentPage - 1));
+    document.getElementById('nextPage').addEventListener('click', () => showPage(currentPage + 1));
+    document.getElementById('showAllButton').addEventListener('click', showAll);
+
+    function showAll() {
+        const items = Array.from(document.getElementsByClassName('list-group-item'));
+        items.forEach(item => item.style.display = 'block');
+        document.getElementById('prevPage').disabled = true;
+        document.getElementById('nextPage').disabled = true;
+        allShown = true;
+    }
+
+    // Initialize the display
+    showPage(currentPage);
+</script>
+</body>
+</html>

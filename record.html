@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตัวช่วยการประชุม</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { 
+            font-family: 'Google Sans', Arial, sans-serif; 
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4285F4;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        button { 
+            font-family: 'Google Sans', Arial, sans-serif;
+            margin: 10px 5px; 
+            padding: 10px 15px; 
+            font-size: 14px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #output, #meetingTopic { 
+            width: 100%; 
+            max-width: 100%;
+            margin: 10px 0; 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+            border-radius: 5px;
+            font-family: 'Google Sans', Arial, sans-serif;
+            font-size: 14px;
+        }
+        #output {
+            min-height: 150px;
+            resize: vertical;
+        }
+        #meetingTopic {
+            height: 40px;
+        }
+        #userInfo {
+            margin-top: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #profilePic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .textarea-container {
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 3px;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background-color: #e0e0e0;
+        }
+        #actionButtons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .image-upload-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .image-upload {
+            width: 22%;
+            position: relative;
+        }
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .image-upload input[type="file"] {
+            display: none;
+        }
+        .image-links {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .image-links a {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-bottom: none;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            button {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ตัวช่วยการประชุม</h1>
+        <div id="userInfo"></div>
+        <button id="lineLoginBtn"><i class="fab fa-line"></i> เข้าสู่ระบบด้วย LINE</button>
+        <textarea id="meetingTopic" placeholder="กรอกหัวข้อการประชุม..."></textarea>
+        <div class="textarea-container">
+            <textarea id="output" placeholder="ข้อความจะปรากฏที่นี่..."></textarea>
+            <button class="copy-btn" onclick="copyText()"><i class="fas fa-copy"></i></button>
+        </div>
+        <div id="actionButtons">
+            <button id="startButton" disabled><i class="fas fa-microphone"></i> เริ่มบันทึกเสียง</button>
+            <button id="stopButton" disabled><i class="fas fa-stop"></i> หยุดบันทึกเสียง</button>
+            <button id="downloadButton" disabled><i class="fas fa-download"></i> ดาวน์โหลด</button>
+            <button id="saveLocalButton" disabled><i class="fas fa-save"></i> บันทึก Offline</button>
+            <button id="updateLocalButton" disabled><i class="fas fa-sync"></i> อัปเดตบันทึก Offline</button>
+            <button id="saveGDriveButton" disabled><i class="fab fa-google-drive"></i> บันทึกใน Google Drive</button>
+            <button id="readTextButton" disabled><i class="fas fa-volume-up"></i> อ่านข้อความ</button>
+        </div>
+        <div class="image-upload-container">
+            <div class="image-upload">
+                <img class="image-preview" id="preview1" src="https://img.icons8.com/?size=100&id=oYT65Xw4lfrz&format=png&color=000000" alt="Preview 1" onclick="document.getElementById('imageInput1').click();">
+                <input type="file" id="imageInput1" accept="image/*" onchange="previewImage(this, 'preview1')">
+            </div>
+            <div class="image-upload">
+                <img class="image-preview" id="preview2" src="https://img.icons8.com/?size=100&id=oYT65Xw4lfrz&format=png&color=000000" alt="Preview 2" onclick="document.getElementById('imageInput2').click();">
+                <input type="file" id="imageInput2" accept="image/*" onchange="previewImage(this, 'preview2')">
+            </div>
+            <div class="image-upload">
+                <img class="image-preview" id="preview3" src="https://img.icons8.com/?size=100&id=oYT65Xw4lfrz&format=png&color=000000" alt="Preview 3" onclick="document.getElementById('imageInput3').click();">
+                <input type="file" id="imageInput3" accept="image/*" onchange="previewImage(this, 'preview3')">
+            </div>
+            <div class="image-upload">
+                <img class="image-preview" id="preview4" src="https://img.icons8.com/?size=100&id=oYT65Xw4lfrz&format=png&color=000000" alt="Preview 4" onclick="document.getElementById('imageInput4').click();">
+                <input type="file" id="imageInput4" accept="image/*" onchange="previewImage(this, 'preview4')">
+            </div>
+        </div>
+        <div id="imageLinks" class="image-links"></div>
+        <div class="tabs">
+            <div class="tab active" onclick="openTab(event, 'offlineData')">บันทึก Offline</div>
+            <div class="tab" onclick="openTab(event, 'sheetData')">บันทึกใน Google Sheet</div>
+        </div>
+        <div id="offlineData" class="tab-content active">
+            <h3>บันทึกที่เก็บไว้แบบ Offline</h3>
+            <ul id="recordsList"></ul>
+        </div>
+        <div id="sheetData" class="tab-content">
+            <h3>บันทึกใน Google Sheet</h3>
+            <table id="sheetDataTable">
+                <thead>
+                    <tr>
+                        <th>วันที่</th>
+                        <th>หัวข้อการประชุม</th>
+                        <th>ชื่อไฟล์</th>
+                        <th>รูปภาพ</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let recognition;
+        let finalTranscript = '';
+        let mediaRecorder;
+        let audioChunks = [];
+        let currentKey = '';
+        let lineUID = '';
+        const LIFF_ID = '2005494853-jXR9Vww0';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuDcfRxl6X45OuTRzqzyrNIPDhMyypk2cvqdfTqV9uWstwxR4vocya9tVKnSlwL1t9/exec';
+
+        // Global functions
+        function logout() {
+            liff.logout();
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('lineLoginBtn').style.display = 'inline-block';
+            document.getElementById('startButton').disabled = true;
+        }
+            // Global functions
+        function loadSheetData() {
+            fetch(`${SCRIPT_URL}?action=getSheetData&uid=${lineUID}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        const tableBody = document.querySelector('#sheetDataTable tbody');
+                        tableBody.innerHTML = '';
+                        data.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${row.timestamp}</td>
+                                <td>${row.meetingTopic}</td>
+                                <td>${row.fileName}</td>
+                                <td>${row.imageUrls.map(url => url ? `<a href="${url}" target="_blank">ดู</a>` : '').join(', ')}</td>
+                            `;
+                            tableBody.appendChild(tr);
+                        });
+                    } else {
+                        throw new Error(data.error || 'Failed to load sheet data');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถโหลดข้อมูลจาก Google Sheet ได้');
+                });
+        }
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "https://img.icons8.com/?size=100&id=oYT65Xw4lfrz&format=png&color=000000";
+            }
+        }
+
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+
+            if (tabName === 'sheetData') {
+                loadSheetData();
+            }
+        }
+
+        function copyText() {
+            const outputTextarea = document.getElementById('output');
+            outputTextarea.select();
+            document.execCommand('copy');
+            showAlert('success', 'คัดลอกสำเร็จ', 'คัดลอกข้อความเรียบร้อยแล้ว');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const lineLoginBtn = document.getElementById('lineLoginBtn');
+            const startButton = document.getElementById('startButton');
+            const stopButton = document.getElementById('stopButton');
+            const downloadButton = document.getElementById('downloadButton');
+            const saveLocalButton = document.getElementById('saveLocalButton');
+            const updateLocalButton = document.getElementById('updateLocalButton');
+            const saveGDriveButton = document.getElementById('saveGDriveButton');
+            const readTextButton = document.getElementById('readTextButton');
+            const outputTextarea = document.getElementById('output');
+
+            lineLoginBtn.onclick = lineLogin;
+            startButton.onclick = startRecording;
+            stopButton.onclick = stopRecording;
+            downloadButton.onclick = downloadText;
+            saveLocalButton.onclick = () => saveLocally(false);
+            updateLocalButton.onclick = () => saveLocally(true);
+            saveGDriveButton.onclick = saveToGoogleDrive;
+            readTextButton.onclick = readText;
+            outputTextarea.oninput = updateTranscript;
+
+            function initializeLiff() {
+                liff.init({ liffId: LIFF_ID })
+                    .then(() => {
+                        if (liff.isLoggedIn()) {
+                            updateUIForLoggedInUser();
+                            getLineUID();
+                        } else {
+                            lineLoginBtn.style.display = 'inline-block';
+                            document.getElementById('userInfo').style.display = 'none';
+                        }
+                    })
+                    .catch((err) => {
+                        console.error('LIFF Initialization failed', err);
+                    });
+            }
+
+            function getLineUID() {
+                liff.getProfile()
+                    .then((profile) => {
+                        lineUID = profile.userId;
+                        loadSavedRecords();
+                        loadSheetData();
+                    })
+                    .catch((err) => {
+                        console.error('Error getting profile', err);
+                    });
+            }
+
+            function lineLogin() {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                }
+            }
+
+            function updateUIForLoggedInUser() {
+                liff.getProfile()
+                    .then((profile) => {
+                        const userInfo = document.getElementById('userInfo');
+                        userInfo.innerHTML = `
+                            <img id="profilePic" src="${profile.pictureUrl}" alt="Profile Picture">
+                            <span>ยินดีต้อนรับ, ${profile.displayName}!</span>
+                            <button id="logoutBtn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</button>
+                        `;
+                        userInfo.style.display = 'flex';
+                        lineLoginBtn.style.display = 'none';
+                        startButton.disabled = false;
+                    })
+                    .catch((err) => {
+                        console.error('Error getting profile', err);
+                    });
+            }
+
+            function startRecording() {
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.lang = 'th-TH';
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 1;
+
+                recognition.onresult = (event) => {
+                    let interimTranscript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript + ' ';
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+                    outputTextarea.value = finalTranscript + interimTranscript;
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error', event.error);
+                    showAlert('error', 'เกิดข้อผิดพลาด', 'เกิดข้อผิดพลาดในการรับรู้เสียง: ' + event.error);
+                };
+
+                recognition.onend = () => {
+                    if (stopButton.disabled === false) {
+                        recognition.start();
+                    }
+                };
+
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ audio: true })
+                        .then(stream => {
+                            mediaRecorder = new MediaRecorder(stream);
+                            mediaRecorder.ondataavailable = event => {
+                                audioChunks.push(event.data);
+                            };
+                            mediaRecorder.start();
+                        })
+                        .catch(error => {
+                            console.error('Error accessing microphone:', error);
+                            showAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถเข้าถึงไมโครโฟนได้: ' + error.message);
+                        });
+                } else {
+                    showAlert('warning', 'ไม่รองรับ', 'เบราว์เซอร์ของคุณไม่รองรับการบันทึกเสียง');
+                }
+
+                recognition.start();
+                startButton.disabled = true;
+                stopButton.disabled = false;
+                saveGDriveButton.disabled = true;
+            }
+
+            function stopRecording() {
+                if (recognition) {
+                    recognition.stop();
+                    startButton.disabled = false;
+                    stopButton.disabled = true;
+                    downloadButton.disabled = false;
+                    saveLocalButton.disabled = false;
+                    updateLocalButton.disabled = false;
+                    saveGDriveButton.disabled = false;
+                    readTextButton.disabled = false;
+                }
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                }
+            }
+
+            function updateTranscript() {
+                finalTranscript = outputTextarea.value;
+            }
+
+            function downloadText() {
+                const topic = document.getElementById('meetingTopic').value;
+                const text = outputTextarea.value;
+                const content = `หัวข้อการประชุม: ${topic}\n\n${text}`;
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'speech-to-text.txt';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }, 100);
+                showAlert('success', 'ดาวน์โหลดสำเร็จ', 'ดาวน์โหลดไฟล์ข้อความเรียบร้อยแล้ว');
+            }
+
+            function saveLocally(isUpdate) {
+                const topic = document.getElementById('meetingTopic').value;
+                const text = outputTextarea.value;
+                const content = JSON.stringify({ topic, text, uid: lineUID });
+
+                if (isUpdate && currentKey) {
+                    localStorage.setItem(currentKey, content);
+                    showAlert('success', 'อัปเดตสำเร็จ', `อัปเดตข้อความแบบ Offline เรียบร้อยแล้ว (key: ${currentKey})`);
+                } else {
+                    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                    const key = `speech-to-text-${timestamp}`;
+                    localStorage.setItem(key, content);
+                    currentKey = key;
+                    showAlert('success', 'บันทึกสำเร็จ', `บันทึกข้อความแบบ Offline เรียบร้อยแล้ว (key: ${key})`);
+                }
+                loadSavedRecords();
+            }
+
+            function loadSavedRecords() {
+                const recordsList = document.getElementById('recordsList');
+                recordsList.innerHTML = '';
+                let invalidKeys = [];
+
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('speech-to-text-')) {
+                        try {
+                            const item = localStorage.getItem(key);
+                            let content;
+
+                            try {
+                                content = JSON.parse(item);
+                            } catch (jsonError) {
+                                content = { topic: 'Legacy Record', text: item, uid: 'unknown' };
+                            }
+
+                            if (content.uid === lineUID) {
+                                const li = document.createElement('li');
+                                li.textContent = `${key}: ${content.topic} - ${content.text.substr(0, 50)}...`;
+                                
+                                const loadButton = document.createElement('button');
+                                loadButton.innerHTML = '<i class="fas fa-upload"></i> โหลด';
+                                loadButton.onclick = () => loadRecord(key);
+                                li.appendChild(loadButton);
+                                
+                                const deleteButton = document.createElement('button');
+                                deleteButton.innerHTML = '<i class="fas fa-trash"></i> ลบ';
+                                deleteButton.onclick = () => deleteRecord(key);
+                                li.appendChild(deleteButton);
+                                
+                                recordsList.appendChild(li);
+                            }
+                        } catch (error) {
+                            console.error(`Error processing key ${key}:`, error);
+                            invalidKeys.push(key);
+                        }
+                    }
+                }
+
+                if (invalidKeys.length > 0) {
+                    const cleanupButton = document.createElement('button');
+                    cleanupButton.textContent = 'Clean up invalid records';
+                    cleanupButton.onclick = () => cleanupInvalidRecords(invalidKeys);
+                    recordsList.appendChild(cleanupButton);
+                }
+
+                updateLocalButton.disabled = !currentKey;
+            }
+
+            function loadRecord(key) {
+                try {
+                    const item = localStorage.getItem(key);
+                    let content;
+
+                    try {
+                        content = JSON.parse(item);
+                    } catch (jsonError) {
+                        content = { topic: 'Legacy Record', text: item };
+                    }
+
+                    document.getElementById('meetingTopic').value = content.topic;
+                    outputTextarea.value = content.text;
+                    finalTranscript = content.text;
+                    currentKey = key;
+                    showAlert('success', 'โหลดสำเร็จ', 'โหลดข้อความเรียบร้อยแล้ว');
+                } catch (error) {
+                    console.error(`Error loading record for key ${key}:`, error);
+                    showAlert('error', 'โหลดไม่สำเร็จ', 'เกิดข้อผิดพลาดในการโหลดข้อความ');
+                }
+            }
+
+            function deleteRecord(key) {
+                localStorage.removeItem(key);
+                if (key === currentKey) {
+                    currentKey = '';
+                    document.getElementById('meetingTopic').value = '';
+                    outputTextarea.value = '';
+                    finalTranscript = '';
+                }
+                loadSavedRecords();
+                showAlert('success', 'ลบสำเร็จ', 'ลบบันทึกเรียบร้อยแล้ว');
+            }
+
+            function cleanupInvalidRecords(keys) {
+                keys.forEach(key => {
+                    localStorage.removeItem(key);
+                });
+                showAlert('info', 'ทำความสะอาดเรียบร้อย', 'ลบรายการที่ไม่ถูกต้องแล้ว');
+                loadSavedRecords();
+            }
+
+            function readText() {
+                if ('speechSynthesis' in window) {
+                    const topic = document.getElementById('meetingTopic').value;
+                    const text = outputTextarea.value;
+                    const content = `หัวข้อการประชุม: ${topic}. ${text}`;
+                    const utterance = new SpeechSynthesisUtterance(content);
+                    utterance.lang = 'th-TH';
+                    utterance.onend = function(event) {
+                        showAlert('success', 'อ่านเสร็จสิ้น', 'อ่านข้อความเสร็จสิ้นแล้ว');
+                    };
+                    utterance.onerror = function(event) {
+                        showAlert('error', 'เกิดข้อผิดพลาด', 'เกิดข้อผิดพลาดในการอ่านข้อความ: ' + event.error);
+                    };
+                    speechSynthesis.speak(utterance);
+                } else {
+                    showAlert('warning', 'ไม่รองรับ', 'เบราว์เซอร์ของคุณไม่รองรับการอ่านข้อความ');
+                }
+            }
+
+            function saveToGoogleDrive() {
+                Swal.fire({
+                    title: 'กำลังอัพโหลด',
+                    html: 'กำลังเตรียมข้อมูล...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const audioReader = new FileReader();
+                audioReader.readAsDataURL(audioBlob);
+                audioReader.onloadend = function() {
+                    const audioBase64 = audioReader.result.split(',')[1];
+                    const fileName = `speech_to_text_${new Date().toISOString()}`;
+                    const meetingTopic = document.getElementById('meetingTopic').value;
+                    
+                    const formData = new FormData();
+                    formData.append('audio', audioBase64);
+                    formData.append('fileName', fileName);
+                    formData.append('meetingTopic', meetingTopic);
+                    formData.append('action', 'saveToGoogleDriveAndSheet');
+                    formData.append('uid', lineUID);
+
+                    // Append image files
+                    const imagePromises = [];
+                    for (let i = 1; i <= 4; i++) {
+                        const imageInput = document.getElementById(`imageInput${i}`);
+                        if (imageInput.files && imageInput.files[0]) {
+                            const promise = new Promise((resolve) => {
+                                const reader = new FileReader();
+                                reader.onloadend = function() {
+                                    const base64data = reader.result.split(',')[1];
+                                    formData.append(`image${i}`, base64data);
+                                    formData.append(`imageName${i}`, imageInput.files[0].name);
+                                    resolve();
+                                };
+                                reader.readAsDataURL(imageInput.files[0]);
+                            });
+                            imagePromises.push(promise);
+                        } else {
+                            formData.append(`image${i}`, '');
+                            formData.append(`imageName${i}`, '');
+                        }
+                    }
+
+                    Promise.all(imagePromises).then(() => {
+                        Swal.update({
+                            title: 'กำลังอัพโหลด',
+                            html: 'กำลังอัพโหลดไฟล์เสียงและรูปภาพ...'
+                        });
+
+                        fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.result === 'success') {
+                                Swal.fire({
+                                    title: 'อัพโหลดสำเร็จ',
+                                    text: 'บันทึกไฟล์เสียงและรูปภาพเรียบร้อยแล้ว',
+                                    icon: 'success',
+                                    confirmButtonText: 'ตกลง'
+                                });
+                                saveGDriveButton.disabled = true;
+                                displayImageLinks(data.data.imageUrls);
+                            } else {
+                                throw new Error(data.error || 'Upload failed');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+Swal.fire({
+                                title: 'เกิดข้อผิดพลาด',
+                                text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + error.message,
+                                icon: 'error',
+                                confirmButtonText: 'ตกลง'
+                            });
+                        });
+                    });
+                };
+            }
+
+            function displayImageLinks(imageUrls) {
+                const imageLinksDiv = document.getElementById('imageLinks');
+                imageLinksDiv.innerHTML = '<h3>ลิงก์รูปภาพ:</h3>';
+                imageUrls.forEach((url, index) => {
+                    if (url) {
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.target = '_blank';
+                        link.textContent = `รูปภาพที่ ${index + 1}`;
+                        imageLinksDiv.appendChild(link);
+                    }
+                });
+            }
+
+
+
+
+            function showAlert(icon, title, text) {
+                Swal.fire({
+                    icon: icon,
+                    title: title,
+                    text: text
+                });
+            }
+
+            // Initialize the app
+            initializeLiff();
+            loadSavedRecords();
+        });
+    </script>
+</body>
+</html>
