@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำไหนดี : WDSchool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #ffecd2;
+        }
+        .consonant { color: black; }
+        .vowel { color: red; }
+        .final { color: blue; }
+        .tone { color: green; }
+      
+.consonant {
+    color: black;
+/*     border-bottom: 2px solid blue; */
+    display: inline-block;
+    margin: -2px 0; /* Adjust for border width */
+    vertical-align: bottom;
+}
+
+.vowel {
+    color: red;
+/*     border-bottom: 2px solid blue; */
+    display: inline-block;
+    margin: -2px 0; /* Adjust for border width */
+    vertical-align: bottom;
+}
+
+.final {
+    color: blue;
+/*     border-bottom: 2px solid blue; */
+    display: inline-block;
+    margin: -2px 0; /* Adjust for border width */
+    vertical-align: bottom;
+}
+
+.tone {
+    color: green;
+    display: inline-block;
+    vertical-align: bottom;
+}
+    
+      
+      
+        .carousel-item {
+            height: 78vh;
+            position: relative;
+        }
+        #wordCarousel {
+            background-color: rgba(248, 249, 250, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        #userProfile {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+        #userProfile img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        #currentDate {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+        #countdownTimer {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .words-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+        .word-item {
+            text-align: center;
+            margin: 20px;
+            cursor: pointer;
+            flex: 1 1 auto;
+        }
+        .word-display {
+            font-size: calc(14.5rem + 4vw); /* Responsive font size */
+            font-weight: 556;
+            line-height: 1.3;
+        }
+        .percentage-display {
+            font-size: calc(0.2rem + 1vw);
+        }
+        .play-button {
+            font-size: calc(1rem + 1vw);
+            cursor: pointer;
+        }
+        #controlPanel {
+            position: fixed;
+            bottom: 20px;
+            right: 50%;
+            transform: translateX(50%);
+            z-index: 1000;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        #fullscreenBtn, #lineLoginBtn, #wordsCountBtn, #supportUsBtn, #wordSetBtn, #shareLineBtn, #gameBtn, #speedControlBtn {
+            padding: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+        }
+        #fullscreenBtn i, #lineLoginBtn i, #wordsCountBtn i, #supportUsBtn i, #wordSetBtn i, #shareLineBtn i, #gameBtn i, #speedControlBtn i {
+            margin-right: 3px;
+        }
+        @media (max-width: 767px) {
+            #controlPanel {
+                bottom: 10px;
+                right: 50%;
+                transform: translateX(50%);
+                padding: 5px;
+            }
+            #fullscreenBtn, #lineLoginBtn, #wordsCountBtn, #supportUsBtn, #wordSetBtn, #shareLineBtn, #gameBtn, #speedControlBtn {
+                padding: 3px;
+                font-size: 0.6rem;
+            }
+        }
+        #gameModal .modal-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #gameModal .word-display {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        #guessOptions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2px;
+            margin-top: 10px;
+        }
+        #scoreDisplay {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="controlPanel">
+        <button id="lineLoginBtn"><i class="bi bi-person-circle"></i> LINE Login</button>
+        <button id="fullscreenBtn"><i class="bi bi-fullscreen"></i> เต็มจอ</button>
+        <button id="wordsCountBtn"><i class="bi bi-list"></i> จำนวนคำ</button>
+        <button id="wordSetBtn"><i class="bi bi-folder"></i> เลือกชุดคำ</button>
+        <button id="shareLineBtn"><i class="bi bi-share"></i> Share LINE</button>
+        <button id="gameBtn"><i class="bi bi-play-circle"></i> เล่นเกม</button>
+        <button id="speedControlBtn"><i class="bi bi-speedometer2"></i> ความเร็ว</button>
+        <button id="supportUsBtn"><i class="bi bi-heart"></i> สนับสนุนเรา</button>
+    </div>
+
+    <div id="scoreDisplay">คะแนน: <span id="score">0</span></div>
+
+    <div class="container-fluid mt-3">
+        <h2 class="text-center mb-4">คำไหนดี : WDSchool</h2>
+        <div id="wordCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div id="userProfile">
+                <img src="" alt="LINE Profile Picture">
+                <span></span>
+            </div>
+            <div id="currentDate"></div>
+            <div class="carousel-inner">
+                <!-- Carousel items will be inserted here -->
+            </div>
+            <div id="countdownTimer">30</div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#wordCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#wordCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Word Count Modal -->
+    <div class="modal fade" id="wordsCountModal" tabindex="-1" aria-labelledby="wordsCountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="wordsCountModalLabel">ตั้งค่าจำนวนคำที่จะแสดงต่อสไลด์</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="number" id="wordsCountInput" class="form-control" value="5" min="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="setWordsCountBtn">ตั้งค่า</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Word Set Modal -->
+    <div class="modal fade" id="wordSetModal" tabindex="-1" aria-labelledby="wordSetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="wordSetModalLabel">เลือกชุดคำ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group" id="wordSetList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Modal -->
+    <div class="modal fade" id="gameModal" tabindex="-1" aria-labelledby="gameModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gameModalLabel">เติมตัวอักษร</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="word-display" id="gameWordDisplay"></div>
+                    <div id="guessOptions" class="d-flex justify-content-center flex-wrap gap-2 mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Speed Control Modal -->
+    <div class="modal fade" id="speedControlModal" tabindex="-1" aria-labelledby="speedControlModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="speedControlModalLabel">ควบคุมความเร็ว Carousel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="range" class="form-range" id="speedControl" min="1000" max="60000" step="1000" value="5000">
+                    <p>ความเร็วปัจจุบัน: <span id="currentSpeed">5</span> วินาที</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="applySpeedBtn">ใช้งาน</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const SHEET_URL = 'https://opensheet.elk.sh/1EZtfvb0h9wYZbRFTGcm0KVPScnyu6B-boFG6aMpWEUo/สถิติคำอ่านปี 66';
+    const PERCENTAGE_THRESHOLD = 100;
+    let WORDS_PER_SLIDE = 1;
+    let SLIDE_INTERVAL = 5000; // 5 seconds
+    let countdownInterval;
+    let carousel;
+    let score = 0;
+    let currentWord = '';
+    let missingCharIndex = 0;
+
+    function setBodyBackgroundColor() {
+        const dayOfWeek = new Date().getDay();
+        const pastelColors = ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#E0BBE4', '#FFDAC1'];
+        document.body.style.backgroundColor = pastelColors[dayOfWeek];
+        document.querySelector('.carousel-control-prev-icon').style.backgroundColor = pastelColors[dayOfWeek];
+        document.querySelector('.carousel-control-next-icon').style.backgroundColor = pastelColors[dayOfWeek];
+    }
+
+    function fetchData(wordSet = '') {
+        fetch(SHEET_URL)
+            .then(response => response.json())
+            .then(data => {
+                const filteredData = data.filter(row => {
+                    const percentage = parseFloat(row['ร้อยละ']);
+                    const set = row['ชื่อชุด'] || '';
+                    return (!wordSet || set === wordSet) && !isNaN(percentage) && percentage < PERCENTAGE_THRESHOLD;
+                });
+                displayWords(groupRhymingWords(filteredData));
+                startCarousel();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchWordSets() {
+        fetch(SHEET_URL)
+            .then(response => response.json())
+            .then(data => {
+                const setCounts = data.reduce((acc, row) => {
+                    const set = row['ชื่อชุด'] || '';
+                    if (set) {
+                        acc[set] = (acc[set] || 0) + 1;
+                    }
+                    return acc;
+                }, {});
+
+                const wordSetList = document.getElementById('wordSetList');
+                wordSetList.innerHTML = '';
+                for (const [set, count] of Object.entries(setCounts)) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.textContent = `${set} (${count} คำ)`;
+                    listItem.addEventListener('click', () => {
+                        fetchData(set);
+                        document.querySelector('#wordSetModal .btn-close').click();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'เลือกชุดคำเรียบร้อย',
+                            text: `ชุดคำที่เลือก: ${set}`
+                        });
+                    });
+                    wordSetList.appendChild(listItem);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function groupRhymingWords(data) {
+        const groups = {};
+        data.forEach(row => {
+            const word = row['Word'];
+            if (word) {
+                const lastChar = word[word.length - 1];
+                if (!groups[lastChar]) {
+                    groups[lastChar] = [];
+                }
+                groups[lastChar].push(row);
+            }
+        });
+        return Object.values(groups);
+    }
+
+    function displayWords(groupedData) {
+        const carouselInner = document.querySelector('#wordCarousel .carousel-inner');
+        carouselInner.innerHTML = '';
+
+        groupedData.forEach((group, groupIndex) => {
+            for (let i = 0; i < group.length; i += WORDS_PER_SLIDE) {
+                const slideWords = group.slice(i, i + WORDS_PER_SLIDE);
+                const carouselItem = document.createElement('div');
+                carouselItem.className = `carousel-item ${groupIndex === 0 && i === 0 ? 'active' : ''}`;
+                
+                let slideContent = '<div class="words-container">';
+                slideWords.forEach(row => {
+                    const word = row['Word'] || '';
+                    const percentage = row['ร้อยละ'] || 'N/A';
+                    const coloredWord = colorWord(word);
+                    slideContent += `
+                        <div class="word-item" onclick="playAudio('${word}')">
+                            <div class="word-display">${coloredWord}</div>
+                            <div class="percentage-display">ร้อยละ: ${percentage}</div>
+                            <div class="play-button">🔊</div>
+                        </div>
+                    `;
+                });
+                slideContent += '</div>';
+                
+                carouselItem.innerHTML = slideContent;
+                carouselInner.appendChild(carouselItem);
+            }
+        });
+    }
+
+    function colorWord(word) {
+        const consonants = 'กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ';
+        const vowels = 'ะัาำิีึืุูเแโใไๅัว';
+        const tones = '่้๊๋';
+
+        let result = '';
+        let i = 0;
+
+        while (i < word.length) {
+            let char = word[i];
+            let nextChar = word[i + 1] || '';
+            let prevChar = i > 0 ? word[i - 1] : '';
+
+            if (vowels.includes(char)) {
+                result += `<span class="vowel">${char}</span>`;
+                i++;
+            } else if (consonants.includes(char)) {
+                if (i === 0 || vowels.includes(prevChar) || tones.includes(prevChar)) {
+                    result += `<span class="consonant">${char}</span>`;
+                } else {
+                    result += `<span class="final">${char}</span>`;
+                }
+                i++;
+            } else if (tones.includes(char)) {
+                result += `<span class="tone">${char}</span>`;
+                i++;
+            } else {
+                result += char;
+                i++;
+            }
+        }
+
+        return result;
+    }
+
+    function playAudio(word) {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'th-TH';
+            speechSynthesis.speak(utterance);
+        } else {
+            console.log('Text-to-speech not supported.');
+            alert('ขออภัย เบราว์เซอร์ของคุณไม่รองรับการอ่านออกเสียง');
+        }
+    }
+
+    // Fullscreen functionality
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> ออกจากเต็มจอ';
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen"></i> เต็มจอ';
+            }
+        }
+    }
+
+    // LINE Login functionality
+    const lineLoginBtn = document.getElementById('lineLoginBtn');
+    const userProfileDiv = document.getElementById('userProfile');
+    
+    // Initialize LIFF
+    liff.init({ liffId: '2005494853-7R0WaOOk' })
+        .then(() => {
+            console.log('LIFF initialization succeeded');
+            if (liff.isLoggedIn()) {
+                lineLoginBtn.innerHTML = '<i class="bi bi-person-x"></i> LINE Logout';
+                lineLoginBtn.onclick = logout;
+                displayLineProfile();
+            } else {
+                lineLoginBtn.onclick = login;
+            }
+        })
+        .catch((error) => {
+            console.error('LIFF initialization failed', error);
+            // Handle the error gracefully
+            Swal.fire({
+                icon: 'error',
+                title: 'LIFF Initialization Failed',
+                text: 'Could not initialize LIFF. Please try again later.'
+            });
+        });
+
+    function login() {
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        }
+    }
+
+    function logout() {
+        if (liff.isLoggedIn()) {
+            liff.logout();
+            lineLoginBtn.innerHTML = '<i class="bi bi-person-circle"></i> LINE Login';
+            lineLoginBtn.onclick = login;
+            userProfileDiv.innerHTML = '';
+        }
+    }
+
+    function displayLineProfile() {
+        liff.getProfile()
+            .then(profile => {
+                const img = document.createElement('img');
+                img.src = profile.pictureUrl;
+                img.alt = 'LINE Profile Picture';
+                const name = document.createElement('span');
+                name.textContent = profile.displayName;
+                userProfileDiv.innerHTML = '';
+                userProfileDiv.appendChild(img);
+                userProfileDiv.appendChild(name);
+            })
+            .catch((err) => {
+                console.error('Error getting profile:', err);
+            });
+    }
+
+    // Words Count Button functionality
+    const wordsCountBtn = document.getElementById('wordsCountBtn');
+    wordsCountBtn.addEventListener('click', () => {
+        const wordsCountModal = new bootstrap.Modal(document.getElementById('wordsCountModal'));
+        wordsCountModal.show();
+    });
+
+    document.getElementById('setWordsCountBtn').addEventListener('click', () => {
+        const newCount = document.getElementById('wordsCountInput').value;
+        if (newCount && !isNaN(newCount) && newCount > 0) {
+            WORDS_PER_SLIDE = parseInt(newCount);
+            fetchData();
+            const wordsCountModal = bootstrap.Modal.getInstance(document.getElementById('wordsCountModal'));
+            wordsCountModal.hide();
+            Swal.fire({
+                icon: 'success',
+                title: 'ตั้งค่าเรียบร้อย',
+                text: `จำนวนคำที่จะแสดงต่อสไลด์: ${WORDS_PER_SLIDE}`
+            });
+        }
+    });
+
+    // Word Set Button functionality
+    const wordSetBtn = document.getElementById('wordSetBtn');
+    wordSetBtn.addEventListener('click', () => {
+        const wordSetModal = new bootstrap.Modal(document.getElementById('wordSetModal'));
+        wordSetModal.show();
+    });
+
+    // Share on LINE Button functionality
+    const shareLineBtn = document.getElementById('shareLineBtn');
+    shareLineBtn.addEventListener('click', () => {
+        const activeItem = document.querySelector('.carousel-item.active .words-container');
+        const words = activeItem ? [...activeItem.querySelectorAll('.word-display')].map(el => el.textContent).join(', ') : 'No active words';
+        if (liff.isApiAvailable('shareTargetPicker')) {
+            liff.shareTargetPicker([
+                {
+                    "type": "flex",
+                    "altText": "คำอ่านที่ได้ร้อยละน้อย",
+                    "contents": {
+                        "type": "bubble",
+                        "hero": {
+                            "type": "image",
+                            "url": "https://raw.githubusercontent.com/infobwd/STUDENT-CARE/main/ImageOnly.jpg",
+                            "size": "full",
+                            "aspectRatio": "20:13",
+                            "aspectMode": "cover",
+                            "action": {
+                                "type": "uri",
+                                "uri": window.location.href
+                            }
+                        },
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "คำอ่านที่ได้ร้อยละน้อย",
+                                    "weight": "bold",
+                                    "size": "xl"
+                                },
+                                {
+                                    "type": "text",
+                                    "text": words,
+                                    "wrap": true,
+                                    "color": "#666666",
+                                    "size": "md",
+                                    "margin": "lg"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "margin": "lg",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "ลดภาษีได้ 2 เท่าจากยอดสนับสนุน",
+                                                    "wrap": true,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "สนับสนุนค่ากาแฟ ผอ.นพรุจ ได้ที่ พร้อมเพย์ 0836645989",
+                                                    "wrap": true,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "button",
+                                    "style": "link",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "เปิดเว็บไซต์",
+                                        "uri": "https://liff.line.me/2005494853-7R0WaOOk"
+                                    }
+                                },
+                                {
+                                    "type": "spacer",
+                                    "size": "sm"
+                                }
+                            ],
+                            "flex": 0
+                        }
+                    }
+                }
+            ])
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'แชร์เรียบร้อย',
+                    text: 'แชร์ผ่าน LINE สำเร็จแล้ว'
+                });
+            })
+            .catch((err) => {
+                console.error('Error sharing:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถแชร์ผ่าน LINE ได้'
+                });
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'ไม่รองรับการแชร์',
+                text: 'อุปกรณ์ของคุณไม่รองรับการแชร์ผ่าน LINE'
+            });
+        }
+    });
+
+    // Support Us Button functionality
+    const supportUsBtn = document.getElementById('supportUsBtn');
+    supportUsBtn.addEventListener('click', () => {
+        Swal.fire({
+            title: 'สนับสนุนเรา',
+            text: 'ลดภาษีได้ 2 เท่าจากยอดสนับสนุน สนับสนุนค่ากาแฟ ผอ.นพรุจ ได้ที่ พร้อมเพย์ 0836645989',
+            imageUrl: 'https://raw.githubusercontent.com/infobwd/STUDENT-CARE/main/ImageOnly.jpg',
+            imageWidth: 300,
+            imageHeight: 450,
+            imageAlt: 'สนับสนุนเรา',
+        });
+    });
+
+    // Game Button functionality
+    const gameBtn = document.getElementById('gameBtn');
+    gameBtn.addEventListener('click', () => {
+        startGame();
+        const gameModal = new bootstrap.Modal(document.getElementById('gameModal'));
+        gameModal.show();
+    });
+
+    function startGame() {
+        const words = getCurrentWords();
+        const randomWord = words[Math.floor(Math.random() * words.length)];
+        currentWord = randomWord;
+        missingCharIndex = Math.floor(Math.random() * randomWord.length);
+        const gameWordDisplay = document.getElementById('gameWordDisplay');
+        gameWordDisplay.innerHTML = generateGameWordDisplay(randomWord, missingCharIndex);
+        displayGuessOptions(randomWord[missingCharIndex]);
+    }
+
+    function getCurrentWords() {
+        const activeItem = document.querySelector('.carousel-item.active .words-container');
+        return activeItem ? [...activeItem.querySelectorAll('.word-display')].map(el => el.textContent) : [];
+    }
+
+    function generateGameWordDisplay(word, missingIndex) {
+        return word.split('').map((char, index) => index === missingIndex ? '_' : char).join('');
+    }
+
+    function displayGuessOptions(correctChar) {
+        const guessOptions = document.getElementById('guessOptions');
+        guessOptions.innerHTML = '';
+
+        const chars = 'กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮะัาำิีึืุูเแโใไๅ่้๊๋'.split('');
+        const shuffledChars = chars.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+        if (!shuffledChars.includes(correctChar)) {
+            shuffledChars[Math.floor(Math.random() * 5)] = correctChar;
+        }
+
+        shuffledChars.forEach(char => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-primary';
+            button.textContent = char;
+            button.onclick = () => submitGuess(char);
+            guessOptions.appendChild(button);
+        });
+    }
+
+    function submitGuess(guess) {
+        if (guess === currentWord[missingCharIndex]) {
+            score++;
+            Swal.fire({
+                icon: 'success',
+                title: 'ถูกต้อง!',
+                text: `คุณทำคะแนนได้ ${score} คะแนน`
+            });
+            updateScore();
+            startGame();
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'ผิดพลาด!',
+                text: 'เกมจบแล้ว! ลองอีกครั้ง'
+            });
+            score = 0; // Reset score
+            updateScore();
+        }
+    }
+
+    function updateScore() {
+        document.getElementById('score').textContent = score;
+    }
+
+    function startCarousel() {
+        const carouselElement = document.querySelector('#wordCarousel');
+        if (carousel) {
+            carousel.dispose();
+        }
+        carousel = new bootstrap.Carousel(carouselElement, {
+            interval: SLIDE_INTERVAL,
+            ride: 'carousel'
+        });
+        startCountdown();
+        carouselElement.addEventListener('slide.bs.carousel', startCountdown);
+    }
+
+    // Countdown timer
+    function startCountdown() {
+        const countdownElement = document.getElementById('countdownTimer');
+        clearInterval(countdownInterval);
+        let countdown = SLIDE_INTERVAL / 1000;
+        countdownElement.textContent = countdown;
+
+        countdownInterval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+    }
+
+    // Display current date and time
+    function displayCurrentDate() {
+        const dateElement = document.getElementById('currentDate');
+        setInterval(() => {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const thaiDate = now.toLocaleDateString('th-TH', options);
+            dateElement.textContent = thaiDate;
+        }, 1000);
+    }
+
+    function adjustWordsPerSlide() {
+        const container = document.querySelector('.words-container');
+        if (!container) return;
+
+        const containerWidth = container.offsetWidth;
+        const wordWidth = 200; // ประมาณการความกว้างของแต่ละคำ
+        let newWordsPerSlide = Math.floor(containerWidth / wordWidth);
+        newWordsPerSlide = Math.max(1, Math.min(newWordsPerSlide, 5)); // จำกัดระหว่าง 1 ถึง 5 คำ
+
+        if (newWordsPerSlide !== WORDS_PER_SLIDE) {
+            WORDS_PER_SLIDE = newWordsPerSlide;
+            fetchData(); // โหลดข้อมูลใหม่ด้วยจำนวนคำที่ปรับแล้ว
+        }
+    }
+
+    document.getElementById('speedControlBtn').addEventListener('click', () => {
+        const speedControlModal = new bootstrap.Modal(document.getElementById('speedControlModal'));
+        speedControlModal.show();
+    });
+
+    const speedControl = document.getElementById('speedControl');
+    const currentSpeedDisplay = document.getElementById('currentSpeed');
+
+    speedControl.addEventListener('input', () => {
+        currentSpeedDisplay.textContent = speedControl.value / 1000;
+    });
+
+    document.getElementById('applySpeedBtn').addEventListener('click', () => {
+        SLIDE_INTERVAL = parseInt(speedControl.value);
+        if (carousel) {
+            carousel.dispose();
+        }
+        startCarousel();
+        bootstrap.Modal.getInstance(document.getElementById('speedControlModal')).hide();
+        Swal.fire({
+            icon: 'success',
+            title: 'ความเร็วถูกปรับแล้ว',
+            text: `ความเร็วใหม่: ${SLIDE_INTERVAL / 1000} วินาที`
+        });
+    });
+
+    // เรียกใช้ฟังก์ชันเมื่อโหลดหน้าและเมื่อปรับขนาดหน้าจอ
+    window.addEventListener('load', adjustWordsPerSlide);
+    window.addEventListener('resize', adjustWordsPerSlide);
+
+    setBodyBackgroundColor();
+    displayCurrentDate();
+    fetchWordSets();
+    fetchData();
+
+    const carouselElement = document.querySelector('#wordCarousel');
+
+    carouselElement.addEventListener('mouseenter', () => {
+        if (carousel) {
+            carousel.pause();
+        }
+    });
+
+    carouselElement.addEventListener('mouseleave', () => {
+        if (carousel) {
+            carousel.cycle();
+        }
+    });
+
+</script>
+
+</body>
+</html>
